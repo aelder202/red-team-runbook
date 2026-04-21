@@ -19,7 +19,5 @@
 	* Check box `if not already present, add as a: cookie`
 * In the Scope tab, select all Tools scope and the URL scope
 
-> Lab reference [Imagery](Imagery.md#^hvdyrl)
-
 ## Sorting Intruder Payloads
 When configuring an intruder attack, send the payload through Repeater first to see the expected, or errored, response. Use `grep match` in Intruder settings to filter by this HTTP response if present. 

@@ -107,8 +107,6 @@ DC01: 10.10.110.44
 
 You've deployed Ligolo-ng onto MS01 (agent) and are running the proxy from your kali VM. After you've gained initial access to MS01, you notice an MSSQL server on an nmap scan for MS02. You can connect to the MSSQL server from the kali VM, however, to execute shell code, you **must** use MS01 as your connecting IP, not the tun0 address in kali VM. To do this, setup a listener on the port you choose for the shell code which will allow you to catch the shell using netcat from kali.
 
-Reference: [OSCP-B](OSCP-B.md#^px8wak) (10.10.110.148 >> nmap scan results)
-
 ---
 ## Chisel
 

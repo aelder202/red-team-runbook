@@ -1,8 +1,6 @@
 !!! tip "Start here"
     Probe Aggressive Mode for PSK capture: `ike-scan -A $IP` — if it responds, capture the PSK hash with `ike-scan -A -P ike_psk_params.txt $IP` and crack offline with `psk-crack -d wordlist.txt ike_psk_params.txt` or hashcat mode 5300/5400. Aggressive Mode + PSK is the most common IKEv1 weakness.
 
-References: [Expressway](Expressway.md#Foothold%20—%20IKE%20PSK%20recovery)
-
 ---
 ## Key Concepts (quick reference)
 
