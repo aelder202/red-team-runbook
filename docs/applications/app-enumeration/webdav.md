@@ -1,24 +1,10 @@
 # WebDAV – Web Distributed Authoring and Versioning
 
-**WebDAV** is an HTTP extension that allows users to **remotely manage files** on web servers. It enables **read/write** operations via standard HTTP methods like `PUT`, `DELETE`, `PROPFIND`, and `MKCOL`.
+!!! tip "Tip"
+    Use `cadaver` for interactive WebDAV access or `davtest` to quickly test which file types can be uploaded. If PUT is allowed, try uploading `.asp`, `.aspx`, `.php` — whichever matches the server stack.
 
-WebDAV is often found **enabled by default** on:
-
-- **IIS** (with WebDAV Publishing Feature)
-    
-- **Apache** (with `mod_dav`)
-    
-- **Nginx** (when explicitly configured)
-    
-
-If misconfigured, WebDAV allows:
-
-- **Uploading arbitrary files** (e.g., web shells)
-    
-- **Script execution** (if file handlers like `.php`, `.asp`, etc. are supported)
-    
-- **Privilege escalation** or **initial foothold** via client-side interaction (e.g., mapped WebDAV shares)
-    
+!!! warning "Watch out"
+    WebDAV PROPFIND can enumerate the directory structure even without write access — always check what's exposed before focusing on upload attacks.
 
 ---
 ## How to Identify WebDAV on a Target

@@ -1,6 +1,10 @@
-Brute-force attacks involve systematically guessing login credentials using **wordlists** and **automated tools**. If rate limiting or account lockout is not implemented, brute-forcing can lead to full account takeover.
-
 ## Identifying Authentication Mechanism
+
+!!! tip "Tip"
+    Username enumeration via timing or error message differences is often easier than brute-forcing — confirm valid usernames first, then target those with a password list.
+
+!!! warning "Watch out"
+    Always check for account lockout before running hydra or Burp Intruder. A single locked account will alert a blue team immediately. Test with 2-3 attempts on a throwaway account first.
 
 Before brute-forcing, determine the type of authentication used:
 

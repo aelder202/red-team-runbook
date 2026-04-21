@@ -1,6 +1,10 @@
-Responder is a powerful tool for performing **LLMNR, NBT-NS, and MDNS poisoning** to intercept and capture authentication hashes on a local network. It is commonly used in internal network penetration testing to identify misconfigurations and weak authentication mechanisms.
-
 ## Basic Usage
+
+!!! tip "Tip"
+    Run Responder in analyze mode first (`-A`) to see what traffic is hitting your interface before poisoning — this avoids disrupting the network unnecessarily.
+
+!!! warning "Watch out"
+    Responder and Impacket's SMB server conflict on port 445. If you're running both, disable Responder's SMB (`--lm`) or stop one before starting the other.
 
 ```
 sudo responder -I eth0

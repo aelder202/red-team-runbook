@@ -1,6 +1,10 @@
-Nikto is a web server scanner designed to identify vulnerabilities, outdated software, and security misconfigurations in web applications.
-
 ## Basic Usage
+
+!!! tip "Tip"
+    Nikto is loud and slow — use it when you're not worried about detection. Pair with `-o output.html` to save results. For a faster scan, use `-Tuning 9` to check for SQL injection only.
+
+!!! warning "Watch out"
+    Nikto generates a lot of false positives. Cross-reference findings manually before reporting — especially header-based findings.
 
 ```
 nikto -h http://target.com

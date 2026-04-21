@@ -1,17 +1,11 @@
 # WordPress – Attack Surface & Exploitation
 
-**WordPress** is the most widely used CMS on the internet, often targeted due to:
+!!! tip "Tip"
+    `wpscan --url <target> --enumerate u` to enumerate users first — then target those accounts. Check `/wp-json/wp/v2/users` for unauthenticated user enumeration even if wpscan is blocked.
 
-- Widespread deployment with default settings
-    
-- Vulnerable plugins/themes
-    
-- Weak admin credentials
-    
-- File upload features
-    
-- Outdated WordPress core or dependencies
-    
+!!! warning "Watch out"
+    wpscan's plugin/theme detection is noisy and slow. Run `--enumerate p` only after confirming the scan won't trip rate limiting or WAF rules.
+
 ---
 ## Enumeration and Recon
 

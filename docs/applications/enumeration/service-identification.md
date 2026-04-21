@@ -1,6 +1,10 @@
-Fingerprinting web applications involves analyzing headers, technology stacks, and version numbers to identify potential vulnerabilities. This is useful for detecting outdated software, misconfigurations, or missing security headers.
-
 ## Gathering Server Headers
+
+!!! tip "Tip"
+    Response headers often reveal framework and version: `X-Powered-By`, `Server`, `X-Generator`. Also check error pages — frameworks leak version info in stack traces.
+
+!!! warning "Watch out"
+    Don't rely solely on HTTP headers for fingerprinting — they can be spoofed or stripped. Confirm with behavior-based checks (error message format, cookie names, response timing).
 
 Server headers provide insights into the web server, application frameworks, and security mechanisms in place.
 

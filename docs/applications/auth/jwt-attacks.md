@@ -1,6 +1,10 @@
-JSON Web Tokens (JWT) are used for authentication and authorization in web applications. Attackers can exploit weak implementations to forge tokens, manipulate claims, or bypass security mechanisms.
-
 ## Identifying JWT Usage
+
+!!! tip "Tip"
+    Try `alg: none` first — some libraries still accept unsigned tokens. If RS256 is used, check if the public key is exposed (e.g. `/jwks.json`) and try switching to HS256 signed with the public key as the secret.
+
+!!! warning "Watch out"
+    JWT signature validation failures often return a generic 401 — confirm you're actually testing the right field by checking what the app decodes, not just what it rejects.
 
 ### Using Burp Suite
 

@@ -1,6 +1,10 @@
-Finding **subdomains** and **hidden parameters** in a web application can lead to **additional attack surfaces**.
-
 🔗 references: [OWASP Amass](https://github.com/OWASP/Amass)
+
+!!! tip "Tip"
+    For parameter fuzzing, `x8` is faster than ffuf for discovering hidden parameters in existing endpoints. For subdomain fuzzing, filter by response size — wildcard DNS returns 200 for everything.
+
+!!! warning "Watch out"
+    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.target.com"` — changing the URL path won't work.
 
 ## Subdomain Enumeration
 

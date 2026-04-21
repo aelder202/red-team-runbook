@@ -1,19 +1,10 @@
 # Gitea – Self-hosted Git Service
 
-**Gitea** is a lightweight, self-hosted Git service written in Go. It’s an open-source alternative to GitHub, GitLab, and Gogs. Due to its small footprint, it's often deployed insecurely, especially in internal dev environments, CI/CD pipelines, and small business setups.
+!!! tip "Tip"
+    Check for public repos and exposed `.git` directories first. Gitea's explore page (`/explore/repos`) is unauthenticated by default — look for private-looking repos that were accidentally made public.
 
-When Gitea is exposed or compromised, attackers may gain:
-
-- **Source code access** (including hardcoded credentials, secrets, AWS keys).
-    
-- **Password hashes** or plaintext credentials from a `gitea.db` SQLite database.
-    
-- **RCE via misconfigured webhooks or custom actions.**
-    
-- **User takeover** via password reset and email spoofing.
-    
-- **Persistence via backdoored repositories, reverse shells in CI/CD, or malicious hooks.**
-    
+!!! warning "Watch out"
+    Gitea admin credentials are often default (`admin:admin` or `gitea:gitea`) on self-hosted instances spun up quickly for labs or internal tools.
 
 ---
 ## Enumeration

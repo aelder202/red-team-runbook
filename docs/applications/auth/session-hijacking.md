@@ -1,6 +1,10 @@
-Session hijacking involves **stealing active session cookies or tokens** to impersonate a logged-in user.
-
 ## Identifying Session Cookies
+
+!!! tip "Tip"
+    Session tokens in URL parameters (not cookies) are the easiest to steal — look for `?session=`, `?token=`, or `?sid=` in links. Check Referer header leakage too.
+
+!!! warning "Watch out"
+    HttpOnly cookies can't be stolen via XSS. If the cookie has HttpOnly, pivot to CSRF or session fixation instead of cookie theft.
 
 ### Using Burp Suite
 
@@ -33,7 +37,7 @@ If a **Cross-Site Scripting (XSS)** vulnerability is present, use it to steal se
 
 - Redirects the victim's session cookie to an attacker-controlled endpoint.
 
-To capture the stolen cookie, listen on the attacker’s machine:
+To capture the stolen cookie, listen on the attacker's machine:
 
 ```
 nc -lvnp 80
@@ -41,7 +45,7 @@ nc -lvnp 80
 
 ### Session Fixation Attack
 
-If the server allows session IDs in URLs or GET requests, an attacker can **fix** a victim’s session to a known value.
+If the server allows session IDs in URLs or GET requests, an attacker can **fix** a victim's session to a known value.
 
 1. Force the victim to use a known session ID:
 

@@ -1,6 +1,11 @@
-Directory and file enumeration helps find hidden resources, admin panels, backup files, and other exposed directories. This is critical for web application reconnaissance, as these directories can sometimes reveal sensitive information or potential entry points.
-
 ## dirsearch
+
+!!! tip "Wordlist selection"
+    Start with `raft-medium-directories.txt` for general discovery. Use `common.txt` if you need speed over coverage. `directory-list-2.3-big.txt` only when you've confirmed there's something worth finding — it's slow. For API endpoints, use `api/api-endpoints.txt` from SecLists.
+
+!!! warning "Watch out"
+    Always set `--hc 404` (or equivalent) to hide 404s. Also filter by response size if the app returns 200 for everything — `--fs <size>` in ffuf.
+
 ```bash
 dirsearch -u $URL -x 403,404
 ```

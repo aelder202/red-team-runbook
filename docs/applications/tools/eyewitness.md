@@ -1,6 +1,7 @@
-EyeWitness is used to capture screenshots of web applications, RDP services, and VNC services for reconnaissance and reporting. It helps in quickly identifying interesting targets among multiple hosts.
-
 ## Basic Usage
+
+!!! tip "Tip"
+    EyeWitness is most useful after an nmap scan — pipe the XML output directly: `eyewitness --web -x nmap.xml`. The HTML report lets you quickly identify interesting services without opening each one manually.
 
 ```
 eyewitness --web -f targets.txt -d output --timeout 10
