@@ -1,11 +1,7 @@
 # Cadaver – WebDAV Client Tool
 
-`cadaver` is a **command-line WebDAV client** used to interact with remote file systems over HTTP using the **WebDAV (Web Distributed Authoring and Versioning)** protocol. WebDAV is an extension to HTTP that enables clients to perform remote web content authoring operations like uploading, downloading, renaming, and deleting files.
-
-- **Default WebDAV ports:** 80 (HTTP) and 443 (HTTPS).
-    
-- **Cadaver is useful for** testing authenticated or unauthenticated WebDAV endpoints, uploading payloads (e.g., web shells), and interacting with misconfigured file-based web services.
-    
+!!! tip "Tip"
+    `cadaver http://<target>/webdav/` opens an interactive FTP-like session. Use `put shell.php` to upload, `ls` to list. If the server is IIS, upload `.asp` or `.aspx` instead of `.php`.
 
 ---
 ## Connecting to a WebDAV Server

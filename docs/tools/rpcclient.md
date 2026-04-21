@@ -1,23 +1,7 @@
 # RPCClient — NetBIOS and SMB Enumeration Utility
 
-## Overview
-
-`rpcclient` is part of the **Samba suite**, and allows interaction with Windows systems using the SMB/RPC protocol stack. It's commonly used for **enumerating users, groups, domain trusts, and more**—even as a low-priv or unauthenticated user (null session).
-
-It interacts with **MS-RPC (Microsoft Remote Procedure Call)** services, including SAMR (Security Account Manager Remote), LSA, and SRVSVC.
-
-This makes it useful in:
-
-- Pre-auth enumeration
-    
-- Credential brute forcing validation
-    
-- Domain reconnaissance
-    
-- SID/user/group enumeration
-    
-- Post-ex validation of user rights
-    
+!!! tip "Tip"
+    Null session: `rpcclient -U "" -N <target>`. Useful commands: `enumdomusers` (user list), `queryuser <rid>` (user details), `enumdomgroups` (group list). RID cycling: `for i in $(seq 500 1100); do rpcclient -U "" -N <target> -c "queryuser $i" 2>/dev/null | grep "User Name"; done`.
 
 ---
 

@@ -5,6 +5,10 @@
 - [Microsoft Docs: Task Scheduler](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-start-page)
 
 ---
+
+!!! tip "Tip"
+    Registry Run keys (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`) persist across reboots and are user-writable without admin. For admin persistence, scheduled tasks with SYSTEM privileges are more reliable than services.
+
 ## Registry-Based Persistence
 
 Windows registry keys can be modified to execute a payload every time the system starts or a user logs in.

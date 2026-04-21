@@ -1,6 +1,5 @@
-### Secure Transfers for Data Exfiltration
-
-When exfiltrating sensitive data, encryption and stealth are critical to avoid detection and interception. Secure transfer techniques ensure confidentiality and integrity while bypassing network monitoring solutions.
+!!! tip "Tip"
+    Use `scp` or `sftp` when SSH is available — fastest and encrypted by default. For exfiltrating over HTTP without detection, encode files with `base64` and send as POST body parameters rather than binary uploads.
 
 ### Using SCP for Encrypted Transfers
 

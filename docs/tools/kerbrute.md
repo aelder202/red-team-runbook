@@ -5,18 +5,8 @@
 ---
 # Kerbrute — Kerberos User Enumeration & AS-REP Roasting
 
-## Overview
-
-[Kerbrute](https://github.com/ropnop/kerbrute) is a Go-based tool written by `ropnop` that interacts directly with **Kerberos (TCP/UDP 88)** to perform fast, stealthy, and unauthenticated **domain user enumeration** and **AS-REP roasting**.
-
-It supports:
-
-- **User enumeration** via Kerberos pre-auth responses
-    
-- **AS-REP roasting** to find crackable accounts
-    
-- **Password spraying** (using real Kerberos auth)
-    
+!!! tip "Tip"
+    `kerbrute userenum --dc <dc-ip> -d <domain> userlist.txt` validates usernames without lockout (Kerberos pre-auth errors don't trigger lockout by default). Start with `jsmith`, `john.smith`, `jsmith@domain` format variations — AD environments vary in UPN format.
 
 ---
 

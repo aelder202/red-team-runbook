@@ -1,19 +1,7 @@
 # LDAPSearch — Lightweight Directory Access Protocol Enumeration
 
-## Overview
-
-`ldapsearch` is a command-line utility from the **OpenLDAP suite** used to query LDAP directories. It can be used for **enumerating domain users, groups, computers, policies, and attributes** from an Active Directory Domain Controller when TCP port **389 (LDAP)** is open.
-
-It is useful when:
-
-- You have valid domain credentials
-    
-- You want to perform stealthy AD enumeration without using high-noise tools
-    
-- You want structured, attribute-level recon
-    
-- You’re pivoted inside and need to enumerate without GUI tools like RSAT or BloodHound
-    
+!!! tip "Tip"
+    Anonymous bind query: `ldapsearch -x -H ldap://<target> -b "DC=domain,DC=local" "(objectClass=user)" sAMAccountName`. Pipe to `grep sAMAccountName` for a clean user list. Add `-D "user@domain" -w "pass"` for authenticated queries.
 
 ---
 

@@ -1,5 +1,11 @@
 # Mimikatz Cheat Sheet (OSCP+ Focused)
 
+!!! tip "Tip"
+    Always run `privilege::debug` first before any dump commands — without it, most commands fail silently. If you get `ERROR kuhl_m_privilege_simple ; RtlAdjustPrivilege (20) c0000061`, you're not running as admin or token impersonation failed.
+
+!!! warning "Watch out"
+    Mimikatz is heavily detected. Use obfuscated versions (`Invoke-Mimikatz` from PowerSploit, or `mimikatz_trunk` with custom compilation) on systems with AV. The PyPy port `pypykatz` runs without dropping a binary.
+
 ## Setup
 
 Run from an **elevated** prompt on a domain-joined Windows machine (cmd or PowerShell):

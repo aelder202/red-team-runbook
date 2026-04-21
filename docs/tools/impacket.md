@@ -1,4 +1,5 @@
-Impacket is a powerful collection of Python classes and example scripts for interacting with network protocols — especially Microsoft network protocols (SMB, MSRPC, Kerberos, LDAP, TDS, etc.). It’s the swiss-army knife for Windows network enumeration, credential harvesting, lateral movement, and Kerberos attacks in CTFs and penetration tests.
+!!! tip "Tip"
+    Most impacket tools follow `impacket-<toolname> domain/user:password@target` syntax. For pass-the-hash: `impacket-wmiexec -hashes :NTLMhash domain/user@target`. For Kerberos auth: add `-k -no-pass` and ensure your `/etc/hosts` and Kerberos config point to the DC.
 
 ---
 ## Core Syntax (Impacket script pattern)

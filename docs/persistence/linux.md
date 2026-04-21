@@ -1,7 +1,9 @@
 ### References
 
-
 ---
+
+!!! tip "Stealthy vs quick"
+    Cron (`* * * * * /tmp/.x`) is quick but obvious in `crontab -l`. For stealth, add to `/etc/cron.d/` with a blending name (`logrotate-extra`). SSH `authorized_keys` is most reliable — survives reboots and doesn't show in process listings.
 
 ## Persistence via Cron Jobs
 

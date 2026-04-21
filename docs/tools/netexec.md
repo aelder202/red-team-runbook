@@ -1,6 +1,7 @@
-# NetExec (Fork of CrackMapExec) 
+# NetExec (Fork of CrackMapExec)
 
-NetExec is an advanced, modular post-exploitation toolset for automating Active Directory enumeration, credential validation, lateral movement, file transfers, and command execution.
+!!! tip "NetExec replaces CrackMapExec"
+    NetExec (`nxc`) is the actively maintained fork of CrackMapExec (`cme`). Commands are near-identical — just replace `cme` with `nxc`. Use `nxc` on new installs; `cme` still works but is no longer maintained.
 
 ---
 ## Installing NetExec

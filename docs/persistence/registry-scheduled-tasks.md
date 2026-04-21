@@ -1,6 +1,7 @@
-### Registry Manipulation for Persistence
+!!! tip "Tip"
+    Scheduled tasks with `SYSTEM` privileges are powerful but logged. Use `schtasks /create /tn "WindowsUpdate" /tr "cmd.exe /c ..." /sc onlogon /ru SYSTEM` and name the task to blend in with legitimate tasks.
 
-Windows allows attackers to establish persistence by modifying the registry to execute malicious payloads upon reboot or user login. Common registry keys leveraged for persistence include:
+### Registry Manipulation for Persistence
 
 #### Common Persistence Keys
 

@@ -3,19 +3,8 @@
 ## References
 https://m4lwhere.medium.com/the-ultimate-guide-for-bloodhound-community-edition-bhce-80b574595acf
 
-## What Is BloodHound?
-
-[BloodHound](https://github.com/SpecterOps/BloodHound) is a post-exploitation tool that uses graph theory to map relationships and permissions in Active Directory environments. It is used to discover and visualize privilege escalation paths that may not be obvious during traditional enumeration.
-
-BloodHound can answer questions such as:
-
-- Which users have administrative access to which computers?
-    
-- What accounts are Kerberoastable?
-    
-- What permissions exist that could be abused to escalate privileges?
-    
-- Are there session-based paths to Domain Admin?
+!!! tip "Tip"
+    After importing SharpHound data, run these queries immediately: "Shortest Paths to Domain Admins", "Find AS-REP Roastable Users", "Find Kerberoastable Users with Most Privileges". These cover 80% of HTB AD paths.
 
 ---
 ## SharpHound Data Collection

@@ -7,9 +7,19 @@
 - [System Weakness: Pivoting with Ligolo-ng & Chisel](https://systemweakness.com/everything-about-pivoting-oscp-active-directory-lateral-movement-6ed34faa08a2)
 
 ---
-## Ligolo-ng
 
-Ligolo-ng is a user-friendly tunneling tool that creates encrypted tunnels using mutual TLS. It allows for dynamic port forwarding, SOCKS proxying, and full tunneling of traffic over compromised hosts.
+| Tool | Best for | Agent required on target |
+|---|---|---|
+| Ligolo-ng | Full network pivot with routing table | Yes (agent binary) |
+| Chisel | Single port forward, quick setup | Yes (chisel binary) |
+| SSH `-L` / `-R` | When SSH is available | No |
+| `socat` | Simple one-shot relay | Yes (socat binary) |
+| `sshuttle` | Full VPN over SSH from attacker machine | No (attacker-side only) |
+
+!!! tip "Tip"
+    Ligolo-ng is the fastest way to pivot to an internal network — once the agent connects back, add a route on your attacker machine and the entire subnet is accessible. No need for individual port forwards.
+
+## Ligolo-ng
 
 ### Setting Up Ligolo-ng
 

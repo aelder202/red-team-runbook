@@ -1,6 +1,5 @@
-### Nuclei for Web/API Enumeration
-
-Nuclei is a fast, template-based vulnerability scanner used for web application and API enumeration. It allows penetration testers to identify misconfigurations, security vulnerabilities, and API endpoints using customizable templates.
+!!! tip "Tip"
+    For web API enumeration: `nuclei -u <target> -t exposed-panels/ -t exposures/ -t misconfiguration/` covers the most impactful templates. Use `-severity critical,high` to filter noise. Nuclei is much faster than manual checks for known CVEs on large scope.
 
 ---
 

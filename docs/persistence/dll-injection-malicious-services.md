@@ -1,6 +1,7 @@
-## DLL Injection Techniques
+!!! warning "Watch out"
+    Malicious services and DLL injection are heavily signatured by modern EDR. In real engagements, prefer LOLBin-based persistence (scheduled tasks, registry run keys, COM hijacking) over dropping new binaries.
 
-DLL injection is a method of executing malicious code by forcing a legitimate process to load an attacker-controlled DLL. This technique is commonly used for persistence, privilege escalation, and stealthy execution.
+## DLL Injection Techniques
 
 ##### Classic DLL Injection
 

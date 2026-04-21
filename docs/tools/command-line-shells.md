@@ -1,3 +1,6 @@
+!!! tip "Tip"
+    For Windows: PowerShell is more capable but more monitored than cmd.exe. Use `cmd.exe` for quick recon commands, PowerShell for scripting and .NET access. On Linux, check `echo $SHELL` — you may be in a restricted shell and not know it.
+
 ## Setting Global Variables
 
 ### Zshell

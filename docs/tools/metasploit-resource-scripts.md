@@ -1,4 +1,5 @@
-Metasploit resource scripts (`.rc` files) are used to automate tasks within the Metasploit Framework. These scripts allow for repeatable execution of commands, making them useful for automating exploitation, post-exploitation, and data exfiltration.
+!!! tip "Tip"
+    Resource scripts automate repetitive Metasploit workflows. Save a sequence of `set` and `run` commands to a `.rc` file, then: `msfconsole -r script.rc`. Useful for setting up multi/handler listeners that survive session disconnects.
 
 #### Creating and Using Resource Scripts
 

@@ -1,6 +1,5 @@
-## Overview
-
-WMIexec is part of the **Impacket** toolkit and allows remote command execution via **Windows Management Instrumentation (WMI)** using NTLM authentication. Unlike **PsExec**, WMIexec does not drop a file on the target system, making it a stealthier alternative for remote command execution.
+!!! tip "Tip"
+    `impacket-wmiexec domain/user:pass@target` gives a semi-interactive shell. For pass-the-hash: `-hashes :NTLM`. WMI execution leaves fewer traces than PSExec but still generates Event ID 4688 (process creation). Use with caution on monitored networks.
 
 ---
 

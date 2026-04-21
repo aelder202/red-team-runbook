@@ -1,8 +1,7 @@
 # Responder – LLMNR/NBT-NS/MDNS Poisoning & Credential Capture
 
-**Responder** is an active LLMNR/NBT-NS/mDNS poisoning tool that listens for name resolution broadcasts on a local subnet and responds with spoofed replies. This causes clients to **attempt authentication** to the attacker's machine, leaking **NTLMv1/v2 hashes**, or even cleartext credentials in some cases.
-
-Responder is one of the most **important tools for credential harvesting** during internal network assessments, privilege escalation, or initial foothold phases.
+!!! tip "Tip"
+    Run `sudo responder -I tun0 -wrf` as soon as you have internal network access — it passively captures NTLMv2 hashes from any misconfigured name resolution. Crack with `hashcat -m 5600`. If SMB signing is disabled on targets, relay with `ntlmrelayx` instead of cracking.
 
 ---
 

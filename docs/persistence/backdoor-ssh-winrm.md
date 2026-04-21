@@ -1,6 +1,7 @@
-## SSH Backdoor Persistence
+!!! tip "Tip"
+    For SSH backdoor, add your public key to `~/.ssh/authorized_keys` (or `/root/.ssh/authorized_keys`). No password needed and it survives password changes. For WinRM, enable it with `Enable-PSRemoting -Force` and add your user to the Remote Management Users group.
 
-An attacker can backdoor SSH for persistent access by modifying SSH configurations, creating SSH keys, or installing malicious scripts that execute on login.
+## SSH Backdoor Persistence
 
 ### Adding an Attacker's SSH Key
 
