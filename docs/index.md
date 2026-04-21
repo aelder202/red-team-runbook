@@ -39,4 +39,4 @@ Throughout the runbook you'll find three types of annotations:
 
 ---
 
-*Built by [aelder202](https://github.com/aelder202). Contributions and corrections welcome via GitHub issues.*
+*Built by [aelder202](https://github.com/aelder202).*
