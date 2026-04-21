@@ -1,3 +1,6 @@
+!!! tip "Tip"
+    On Linux, `cat /etc/passwd` and `id` tell you who you are and who else exists. On Windows, `whoami /priv` and `net user` are the first two commands to run. In AD environments, `net user /domain` gives domain users without any special tools.
+
 ## User Enumeration
 
 ### local user enumeration on linux

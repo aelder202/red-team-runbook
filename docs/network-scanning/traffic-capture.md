@@ -1,3 +1,6 @@
+!!! tip "Tip"
+    Always specify an interface explicitly (`-i tun0` or `-i eth0`) — defaulting to `any` on a busy network produces unmanageable output. Use `-w capture.pcap` to write to disk and analyze offline with Wireshark or `tshark`.
+
 ## tcpdump
 
 Official Documentation: [tcpdump.1](https://www.tcpdump.org/manpages/tcpdump.1.html) 

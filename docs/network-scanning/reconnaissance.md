@@ -1,8 +1,10 @@
 ```table-of-contents
 ```
-## Passive Recon
 
-Passive reconnaissance involves gathering information about a target without directly interacting with it.
+!!! tip "Tip"
+    Start passive before going active — WHOIS, Shodan, and Google dorking leave no trace on the target. Move to active DNS brute-forcing and port scanning only after passive recon is exhausted.
+
+## Passive Recon
 
 ### WHOIS Enumeration
 

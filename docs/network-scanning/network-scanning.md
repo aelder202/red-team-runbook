@@ -1,7 +1,23 @@
 ```table-of-contents
 ```
+
+| Goal | Command |
+|---|---|
+| Fast host discovery (no port scan) | `nmap -sn <range>` |
+| Quick top-1000 ports | `nmap -sV --open <target>` |
+| Full TCP scan | `nmap -p- -sV --open <target>` |
+| UDP (slow, targeted) | `nmap -sU -p 53,161,500,4500 <target>` |
+| Aggressive (scripts + OS + traceroute) | `nmap -A <target>` |
+| Script scan on open ports | `nmap -sC -sV -p <ports> <target>` |
+| Firewall evasion | `nmap -sS -f --mtu 8 <target>` |
+
+!!! tip "Tip"
+    Run a fast top-port scan first (`nmap -sV --open <target>`), note open ports, then do a targeted full scan (`nmap -p- <target>`) in the background. Don't wait for the full scan before starting enumeration.
+
+!!! warning "Watch out"
+    `-A` and `--script=vuln` are loud — they trigger IDS rules. On real engagements, start with `-sS` SYN scans and escalate. On HTB, noise doesn't matter — scan aggressively to save time.
+
 ## Rustscan
-Rustscan is a fast and efficient port scanner designed to quickly identify open ports before deeper analysis with tools like Nmap.
 
 ```bash
 rustscan -a $IP --ulimit 5000 | tee rustscan.txt
