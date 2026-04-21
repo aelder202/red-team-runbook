@@ -1,35 +1,36 @@
-!!! tip "Tip"
-    For Windows: PowerShell is more capable but more monitored than cmd.exe. Use `cmd.exe` for quick recon commands, PowerShell for scripting and .NET access. On Linux, check `echo $SHELL` — you may be in a restricted shell and not know it.
+# Command Line Shells
 
-## Setting Global Variables
+!!! tip ""
+    For Windows: PowerShell is more capable but more monitored than cmd.exe. Use `cmd.exe` for quick recon, PowerShell for scripting and .NET access. On Linux, check `echo $SHELL` — you may be in a restricted shell.
 
-### Zshell
+---
+
+## Setting Shell Variables
+
 ```bash
-export IP=192.168.1.10
-export URL=http://192.168.1.10
-echo $IP
-echo $URL
-```
+# bash/zsh
+export IP=10.10.10.10
+export URL=http://10.10.10.10
 
-### Fish
-```bash
-set -x IP 192.168.1.10
-set -x URL http://192.168.1.10
-echo $IP
-echo $URL
+# fish
+set -x IP 10.10.10.10
+set -x URL http://10.10.10.10
 ```
 
 ---
+
 ## Searchsploit
 
-* Download exploit: `-m` 
-* Include URL in results: `-u`
+```bash
+searchsploit apache 2.4          # search
+searchsploit -m 12345            # download exploit to current dir
+searchsploit -u                  # update database
+```
 
 ---
-## Terminator (Split Terminal Windows)
 
-Split terminal windows for multitasking:
+## Terminator Shortcuts
 
-- **Split Horizontally**: `Ctrl+Shift+O`
-- **Split Vertically**: `Ctrl+Shift+E`
-- **Close Window**: `exit`
+- Split horizontal: `Ctrl+Shift+O`
+- Split vertical: `Ctrl+Shift+E`
+- Switch pane: `Alt+Arrow`

@@ -1,5 +1,4 @@
-```table-of-contents
-```
+# Reconnaissance
 
 !!! tip "Tip"
     Start passive before going active — WHOIS, Shodan, and Google dorking leave no trace on the target. Move to active DNS brute-forcing and port scanning only after passive recon is exhausted.
@@ -8,162 +7,110 @@
 
 ### WHOIS Enumeration
 
-Retrieve domain registration details:
-
-```
-whois <target-domain>
-```
-
-Reverse lookup an IP address:
-
-```
-whois <target-ip>
+```bash
+whois example.com
+whois 10.10.10.10
 ```
 
 ### DNS Enumeration
 
-Attempt a Zone Transfer:
+Zone transfer attempt:
 
-```
-dnsrecon -d <target-domain> -t axfr
+```bash
+dnsrecon -d example.com -t axfr
 ```
 
-Using nslookup interactively:
+Interactive nslookup:
 
 ```
 nslookup
 > server <target-dns-server>
 > set type=any
-> <target-domain>
+> example.com
 ```
 
 ### Google Dorking
 
-Find indexed PDFs related to a company:
-
 ```
-site:<target-domain> filetype:pdf
+site:example.com filetype:pdf
+ext:xml
+intitle:"index of"
 ```
-
-Other useful dorks:
-
-- `ext:xml` → Find indexed XML files.
-    
-- `intitle:”index of”` → Locate open directory listings.
-    
 
 ### Shodan
 
-Search for exposed assets on Shodan:
-
-```
-shodan search "<query>"
-```
-
-Example:
-
-```
+```bash
 shodan search "Apache country:US"
 ```
 
 ### Netcraft
 
-Retrieve server information:
-
-```
-curl -s https://www.netcraft.com | grep "<target-domain>"
+```bash
+curl -s https://www.netcraft.com | grep "example.com"
 ```
 
 ---
-## Active Recon
 
-Active reconnaissance involves interacting directly with the target to gather information.
+## Active Recon
 
 ### DNS Brute Forcing
 
-Find subdomains using a wordlist:
-
-```
-dnsrecon -d <target-domain> -D /path/to/wordlist.txt -t brt
+```bash
+dnsrecon -d example.com -D /path/to/wordlist.txt -t brt
 ```
 
 ### Port Scanning
 
-Fast TCP scan with live host detection:
-
-```
-nmap -sn -PE -PA21,23,80,3389 <target-subnet>
+```bash
+nmap -sn -PE -PA21,23,80,3389 10.10.10.0/24
 ```
 
 ### OS Detection
 
-Aggressive OS guessing:
-
-```
-nmap -O --osscan-guess --max-retries 1 <target-ip>
+```bash
+nmap -O --osscan-guess --max-retries 1 10.10.10.10
 ```
 
 ### SMB Enumeration
 
-List shared folders:
-
-```
-smbclient -L //<target-ip> -N
-```
-
-Enumerate user accounts:
-
-```
-enum4linux -a <target-ip>
+```bash
+smbclient -L //10.10.10.10 -N
+enum4linux -a 10.10.10.10
 ```
 
-#### SMTP User Enumeration
+### SMTP User Enumeration
 
-Check for valid user accounts:
-
-```
-nc -nv <target-ip> 25
+```bash
+nc -nv 10.10.10.10 25
 HELO attacker.com
 VRFY admin
 ```
 
 ### SNMP Information Gathering
 
-Retrieve system details via SNMP:
-
-```
-snmpwalk -c public -v2c <target-ip>
+```bash
+snmpwalk -c public -v2c 10.10.10.10
 ```
 
 ---
+
 ## Additional Recon Methods
 
 ### Banner Grabbing
 
-Using Netcat:
-
-```
-nc -nv <target-ip> 80
-```
-
-Using cURL:
-
-```
-curl -I http://<target-ip>
+```bash
+nc -nv 10.10.10.10 80
+curl -I http://10.10.10.10
 ```
 
-### Checking for Open Proxies
+### Subdomain Brute-Force
 
-Identify proxy servers:
-
-```
-proxychains nmap -sT -p 80,443 <target-ip>
+```bash
+wfuzz -c -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -H "Host: FUZZ.example.com" http://10.10.10.10
 ```
 
-### Brute-Force Subdomain Discovery
+### Proxy Detection
 
-Using wfuzz:
-
-```
-wfuzz -c -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -H "Host: FUZZ.<target-domain>" http://<target-ip>
+```bash
+proxychains nmap -sT -p 80,443 10.10.10.10
 ```

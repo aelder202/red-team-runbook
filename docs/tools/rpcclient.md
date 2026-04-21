@@ -1,7 +1,7 @@
-# RPCClient — NetBIOS and SMB Enumeration Utility
+# RPCClient — SMB/RPC Enumeration
 
 !!! tip "Tip"
-    Null session: `rpcclient -U "" -N <target>`. Useful commands: `enumdomusers` (user list), `queryuser <rid>` (user details), `enumdomgroups` (group list). RID cycling: `for i in $(seq 500 1100); do rpcclient -U "" -N <target> -c "queryuser $i" 2>/dev/null | grep "User Name"; done`.
+    Null session: `rpcclient -U "" -N 10.10.10.10`. Useful commands: `enumdomusers` (user list), `queryuser <rid>` (user details), `enumdomgroups` (group list). RID cycling: `for i in $(seq 500 1100); do rpcclient -U "" -N 10.10.10.10 -c "queryuser $i" 2>/dev/null | grep "User Name"; done`.
 
 ---
 
@@ -19,7 +19,7 @@ rpcclient -U "john%Winter2023!" 10.10.10.10
 rpcclient -N 10.10.10.10             # Null session
 ```
 
-Once connected, you'll drop into an interactive shell where you can run `rpcclient` commands.
+Once connected, you'll drop into an interactive shell.
 
 ---
 
@@ -62,17 +62,17 @@ querygroup <RID>
 
 ### 3. SID Enumeration
 
-You can enumerate known SIDs to resolve users:
+Resolve a known SID:
 
 ```bash
 lookupsids S-1-5-21-...-500
 ```
 
-Or bruteforce SIDs for RID cycling:
+Brute-force SIDs for RID cycling:
 
 ```bash
 for i in $(seq 500 550); do echo "S-1-5-21-XXXXXXX-XXXXXXX-XXXXXXX-$i" >> sids.txt; done
-rpcclient -U "" <ip> -c "lookupsids $(cat sids.txt)"
+rpcclient -U "" 10.10.10.10 -c "lookupsids $(cat sids.txt)"
 ```
 
 ---
@@ -83,11 +83,9 @@ rpcclient -U "" <ip> -c "lookupsids $(cat sids.txt)"
 netshareenum
 ```
 
-List available shares, similar to `smbclient -L`.
-
 ---
 
-### 5. Get Machine Info 
+### 5. Get Machine Info
 
 ```bash
 getdompwinfo       # Domain password policy
@@ -112,13 +110,16 @@ password properties: 0x00000000
 ```
 
 ---
+
 ### 7. Password Update
-With the appropriate credentials, it may be possible to update another user's password:
+
+With appropriate credentials, update another user's password:
 
 ```bash
 setuserinfo2 MOLLY.SMITH 23 'Password1!'
 ```
-**Note:** The `23` is the important tag. Reference [this](https://www.thehacker.recipes/ad/movement/dacl/forcechangepassword) article.
+
+The `23` value is the info level for password change (maps to `USER_INFO_23`).
 
 ---
 
@@ -140,28 +141,3 @@ If null sessions are disabled, test with valid credentials:
 rpcclient -U "lowpriv%Winter2023!" 10.10.10.10
 ```
 
----
-
-## Integration with Other Tools
-
-- Pair with `smbclient`, `enum4linux`, or `nmap` scripts
-    
-- Good alternative when `smbclient` fails or returns access denied
-    
-- Use `rpcclient` + `RID cycling` to discover hidden users even if no enumeration is allowed
-    
-
----
-
-## Summary: `rpcclient` Enumeration
-
-| Task                | Command                       |
-| ------------------- | ----------------------------- |
-| Connect anonymously | `rpcclient -N <ip>`           |
-| Connect with creds  | `rpcclient -U user%pass <ip>` |
-| Enumerate users     | `enumdomusers`                |
-| Enumerate groups    | `enumdomgroups`               |
-| Get password policy | `getdompwinfo`                |
-| Lookup SIDs         | `lookupsids <sid>`            |
-| Enumerate shares    | `netshareenum`                |
-| Get DC hostname     | `getdcname .`                 |

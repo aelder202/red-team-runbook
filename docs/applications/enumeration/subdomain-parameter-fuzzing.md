@@ -1,52 +1,58 @@
-🔗 references: [OWASP Amass](https://github.com/OWASP/Amass)
+# Subdomain & Parameter Fuzzing
 
 !!! tip "Tip"
     For parameter fuzzing, `x8` is faster than ffuf for discovering hidden parameters in existing endpoints. For subdomain fuzzing, filter by response size — wildcard DNS returns 200 for everything.
 
 !!! warning "Watch out"
-    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.target.com"` — changing the URL path won't work.
+    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.example.com"` — changing the URL path won't work.
+
+---
 
 ## Subdomain Enumeration
 
 ### subfinder
 
 ```sh
-subfinder -d $URL
+subfinder -d example.com
 ```
 
 ### amass
 
 ```sh
-amass enum -passive -d $URL
+amass enum -passive -d example.com
 ```
 
 - `-passive` → Runs passive enumeration to avoid triggering alerts.
+
 ### gobuster
 
 ```sh
-gobuster dns --do $URL -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
 ```
 
 ### ffuf
 
 ```sh
-ffuf -u 'http://target.com' -H 'Host: FUZZ.target.com' -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+ffuf -u 'http://example.com' -H 'Host: FUZZ.example.com' -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt
 ```
 
 - `-fc 301` → Filters out HTTP 301 responses.
 - `-fs` → Filters responses by size.
-## parameter fuzzing
+
+---
+
+## Parameter Fuzzing
 
 ### ffuf
 
-```
-ffuf -u "http://<target-ip>/page.php?FUZZ=value" -w /usr/share/seclists/Fuzzing/special-chars.txt
+```bash
+ffuf -u "http://10.10.10.10/page.php?FUZZ=value" -w /usr/share/seclists/Fuzzing/special-chars.txt
 ```
 
 ### arjun
 
-```
-arjun -u http://<target-ip>/page.php -w /usr/share/seclists/Fuzzing/special-chars.txt
+```bash
+arjun -u http://10.10.10.10/page.php -w /usr/share/seclists/Fuzzing/special-chars.txt
 ```
 
 - Automates parameter fuzzing for GET and POST requests.

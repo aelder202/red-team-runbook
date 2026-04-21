@@ -1,35 +1,17 @@
+# Nuclei — Vulnerability Scanner
+
 !!! tip "Tip"
-    For web API enumeration: `nuclei -u <target> -t exposed-panels/ -t exposures/ -t misconfiguration/` covers the most impactful templates. Use `-severity critical,high` to filter noise. Nuclei is much faster than manual checks for known CVEs on large scope.
+    For web API enumeration: `nuclei -u https://10.10.10.10 -t exposed-panels/ -t exposures/ -t misconfiguration/` covers the most impactful templates. Use `-severity critical,high` to filter noise. Nuclei is much faster than manual checks for known CVEs on large scope.
 
 ---
 
-### Installing Nuclei
-
-If not already installed, Nuclei can be installed via:
-
-```bash
-curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | grep "browser_download_url.*nuclei-linux-amd64" | cut -d : -f 2,3 | tr -d \" | wget -qi -
-chmod +x nuclei-linux-amd64
-mv nuclei-linux-amd64 /usr/local/bin/nuclei
-```
-
-Verify installation:
-
-```bash
-nuclei -version
-```
-
----
-
-### Updating Nuclei Templates
-
-Nuclei uses templates for scanning various vulnerabilities, API endpoints, and web assets. Update them before running a scan:
+## Updating Nuclei Templates
 
 ```bash
 nuclei -update
 ```
 
-To view available templates:
+View available templates:
 
 ```bash
 ls ~/.nuclei-templates/
@@ -37,12 +19,12 @@ ls ~/.nuclei-templates/
 
 ---
 
-### Basic Web Enumeration
+## Basic Web Enumeration
 
 Scanning a single URL:
 
 ```bash
-nuclei -u https://target.com
+nuclei -u https://10.10.10.10
 ```
 
 Scanning multiple URLs:
@@ -53,92 +35,88 @@ cat urls.txt | nuclei -l -
 
 ---
 
-### API Enumeration with Nuclei
+## API Enumeration with Nuclei
 
-Nuclei has built-in templates for detecting API misconfigurations and sensitive endpoints.
-
-##### Identifying API Endpoints
+### Identifying API Endpoints
 
 ```bash
-nuclei -u https://target.com -t http/api/api-endpoints.yaml
+nuclei -u https://10.10.10.10 -t http/api/api-endpoints.yaml
 ```
 
-##### Scanning for API Keys and Sensitive Data
+### Scanning for API Keys and Sensitive Data
 
 ```bash
-nuclei -u https://target.com -t http/exposures/api-tokens.yaml
+nuclei -u https://10.10.10.10 -t http/exposures/api-tokens.yaml
 ```
 
-##### Checking for Open API (Swagger) Exposure
+### Checking for Open API (Swagger) Exposure
 
 ```bash
-nuclei -u https://target.com -t http/api/openapi.yaml
+nuclei -u https://10.10.10.10 -t http/api/openapi.yaml
 ```
 
-##### Detecting GraphQL Misconfigurations
+### Detecting GraphQL Misconfigurations
 
 ```bash
-nuclei -u https://target.com -t http/api/graphql.yaml
-```
-
----
-
-### Advanced Usage for Web Enumeration
-
-##### Running a Full Web Security Scan
-
-```bash
-nuclei -u https://target.com -t http/
-```
-
-This will run all HTTP-based templates against the target.
-
-##### Scanning for CVEs in Web Applications
-
-```bash
-nuclei -u https://target.com -t cves/
-```
-
-##### Finding Subdomains and Associated Services
-
-```bash
-nuclei -u https://target.com -t dns/
+nuclei -u https://10.10.10.10 -t http/api/graphql.yaml
 ```
 
 ---
 
-### Customizing Nuclei Scans
+## Advanced Usage
 
-##### Excluding False Positives
+### Running a Full Web Security Scan
 
 ```bash
-nuclei -u https://target.com -t http/ -exclude-severity info
+nuclei -u https://10.10.10.10 -t http/
 ```
 
-##### Saving Output to a File
+### Scanning for CVEs in Web Applications
 
 ```bash
-nuclei -u https://target.com -t http/ -o results.txt
+nuclei -u https://10.10.10.10 -t cves/
 ```
 
-##### Running Nuclei with Proxy for Stealth
+### Finding Subdomains and Associated Services
 
 ```bash
-nuclei -u https://target.com -proxy http://127.0.0.1:8080
+nuclei -u https://10.10.10.10 -t dns/
 ```
 
 ---
 
-### Combining Nuclei with Other Tools
+## Customizing Nuclei Scans
 
-##### Running Nuclei on Subdomain Enumeration Results
+### Excluding False Positives
 
 ```bash
-subfinder -d target.com -silent | nuclei -t http/
+nuclei -u https://10.10.10.10 -t http/ -exclude-severity info
 ```
 
-##### Using Nuclei with FFuF for Parameter Fuzzing
+### Saving Output to a File
 
 ```bash
-ffuf -w wordlist.txt -u https://target.com/FUZZ | nuclei -t http/
+nuclei -u https://10.10.10.10 -t http/ -o results.txt
+```
+
+### Running Nuclei with Proxy for Stealth
+
+```bash
+nuclei -u https://10.10.10.10 -proxy http://127.0.0.1:8080
+```
+
+---
+
+## Combining Nuclei with Other Tools
+
+### Running Nuclei on Subdomain Enumeration Results
+
+```bash
+subfinder -d example.com -silent | nuclei -t http/
+```
+
+### Using Nuclei with FFuF for Parameter Fuzzing
+
+```bash
+ffuf -w wordlist.txt -u https://10.10.10.10/FUZZ | nuclei -t http/
 ```

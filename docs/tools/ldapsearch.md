@@ -1,36 +1,27 @@
-# LDAPSearch — Lightweight Directory Access Protocol Enumeration
+# LDAPSearch — LDAP Enumeration
 
 !!! tip "Tip"
-    Anonymous bind query: `ldapsearch -x -H ldap://<target> -b "DC=domain,DC=local" "(objectClass=user)" sAMAccountName`. Pipe to `grep sAMAccountName` for a clean user list. Add `-D "user@domain" -w "pass"` for authenticated queries.
+    Anonymous bind query: `ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local" "(objectClass=user)" sAMAccountName`. Pipe to `grep sAMAccountName` for a clean user list. Add `-D "user@domain" -w "pass"` for authenticated queries.
 
 ---
 
 ## Syntax
 
 ```bash
-ldapsearch -x -H ldap://<ip> -D "<user>@<domain>" -w <password> -b "<baseDN>" <filter> [attributes]
+ldapsearch -x -H ldap://10.10.10.10 -D "<user>@<domain>" -w <pass> -b "<baseDN>" <filter> [attributes]
 ```
 
 - `-x`: Use simple authentication (not SASL)
-    
 - `-H`: URI of the LDAP server (e.g., `ldap://10.10.10.10`)
-    
 - `-D`: Bind DN (user principal name)
-    
 - `-w`: Password
-    
 - `-b`: Base DN (Distinguished Name root)
-    
 - `<filter>`: LDAP filter (e.g., `(objectClass=user)`)
-    
 - `[attributes]`: Specific fields to return
-    
 
 ---
 
-## Determine the Base DN (Optional)
-
-Use this if you’re unsure of the BaseDN:
+## Determine the Base DN
 
 ```bash
 ldapsearch -x -H ldap://10.10.10.10 -s base namingcontexts
@@ -73,13 +64,13 @@ ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=
 ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(objectClass=computer)" dNSHostName
 ```
 
-### 5. Get Password Policy (If Exposed)
+### 5. Get Password Policy
 
 ```bash
 ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(objectClass=domain)" maxPwdAge minPwdLength lockoutThreshold
 ```
 
-Note: `maxPwdAge` is in 100-nanosecond intervals. To convert to days:
+`maxPwdAge` is in 100-nanosecond intervals. To convert to days:
 
 ```bash
 echo "$(( (-1 * <value>) / 10000000 / 60 / 60 / 24 )) days"
@@ -87,15 +78,15 @@ echo "$(( (-1 * <value>) / 10000000 / 60 / 60 / 24 )) days"
 
 ---
 
-## Output Parsing Tips
+## Output Parsing
 
-You can save results for later parsing:
+Save results for later parsing:
 
 ```bash
 ldapsearch ... > ldap_output.txt
 ```
 
-Then extract users quickly:
+Extract users quickly:
 
 ```bash
 grep sAMAccountName ldap_output.txt | cut -d' ' -f2
@@ -103,39 +94,13 @@ grep sAMAccountName ldap_output.txt | cut -d' ' -f2
 
 ---
 
-## Example: Full Command in Practice
+## Full Example
 
 ```bash
 ldapsearch -x -H ldap://10.10.10.10 -D "svc_reader@corp.local" -w 'Summer2023!' -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName memberOf
 ```
 
-This dumps all usernames and group memberships the account can see.
-
----
-
-## Summary: ldapsearch Usage
-
-|Task|Command (example)|
-|---|---|
-|Find Base DN|`ldapsearch -x -H ldap://<ip> -s base namingcontexts`|
-|List domain users|`ldapsearch ... "(objectClass=user)" sAMAccountName`|
-|List domain groups|`ldapsearch ... "(objectClass=group)" sAMAccountName`|
-|Group membership of user|`ldapsearch ... "(sAMAccountName=username)" memberOf`|
-|List domain computers|`ldapsearch ... "(objectClass=computer)" dNSHostName`|
-|Dump password policy|`ldapsearch ... "(objectClass=domain)" maxPwdAge ...`|
-
----
-
-## Notes
-
-- You must have **bind credentials** (username/password) unless anonymous LDAP binds are allowed (rare in modern AD)
-    
-- `ldapsearch` is very **OPSEC-safe** compared to executing RPC or SMB scans
-    
-- Use `-LLL` for cleaner output formatting
-    
-- Combine with `cut`, `grep`, `awk` for automation/scripting
-    
+Dumps all usernames and group memberships the account can see.
 
 ---
 
