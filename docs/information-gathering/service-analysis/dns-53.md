@@ -1,61 +1,61 @@
-```table-of-contents
-```
+# DNS (53)
 
 !!! tip "Start here"
-    Try zone transfer first: `dig axfr @<target> <domain>`. If successful, you get the full DNS record set. Most production DNS servers block this, but internal DNS servers often don't.
+    Try zone transfer first: `dig axfr @10.10.10.10 example.com`. Internal DNS servers are commonly misconfigured and will hand you the full record set — subdomains, internal IPs, mail servers, everything.
 
-## Enumeration
-### Banner Grabbing
-```bash
-nmap -sU -p 53 --script dns-nsid,dns-version <target-ip>
-```
+---
 
-Dig (Query DNS Version):
-```bash
-dig CH TXT version.bind @<target-ip>
-```
-## DNS Zone Transfer (AXFR)
-A zone transfer allows a secondary DNS server to replicate all DNS records from the primary server. If misconfigured, an attacker can retrieve subdomains, IP addresses, internal networks, and mail servers.
+## Banner Grabbing
 
 ```bash
-host -t axfr <target-domain> <dns-server>
+nmap -sU -p 53 --script dns-nsid,dns-version 10.10.10.10
+dig CH TXT version.bind @10.10.10.10
 ```
-If successful, the response will contain **entire domain records**, exposing internal infrastructure.
 
-### Using Nmap
+---
+
+## Zone Transfer
+
 ```bash
-nmap --script=dns-zone-transfer -p53 <target-ip>
+dig axfr @10.10.10.10 example.com
+host -t axfr example.com 10.10.10.10
+nmap --script=dns-zone-transfer -p 53 10.10.10.10
 ```
+
+---
 
 ## Subdomain Enumeration
-Gobuster:
-```bash
-gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50
-```
 
-Subfinder:
 ```bash
+# Passive — no direct contact with target
 subfinder -d example.com
+amass enum -passive -d example.com
+
+# Active brute force
+gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50
+dnsenum --dnsserver 10.10.10.10 -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt example.com
 ```
 
-Nmap:
-```bash
-nmap --script dns-brute -p 53 <target-ip>
-```
+!!! tip "Real-world"
+    Start with passive enumeration (`subfinder`, `amass -passive`) before touching the target's DNS server — passive techniques are invisible to the client's logging. Save active brute force for later or when passive results are thin.
 
-Amass:
-```bash
-amass enum -d example.com
-```
+---
 
-## Reverse DNS Lookup (Hostname)
-```bash
-dig -x <target-ip>
-```
-
-or
+## Reverse DNS Lookup
 
 ```bash
-nslookup <target-ip>
+dig -x 10.10.10.10
+nslookup 10.10.10.10
 ```
 
+---
+
+## Basic Record Queries
+
+```bash
+dig A example.com @10.10.10.10       # IPv4 address
+dig MX example.com @10.10.10.10      # Mail servers
+dig NS example.com @10.10.10.10      # Name servers
+dig TXT example.com @10.10.10.10     # SPF, DKIM, verification records
+dig ANY example.com @10.10.10.10     # All records
+```
