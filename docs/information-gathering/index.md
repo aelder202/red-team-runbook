@@ -52,7 +52,8 @@ Work through open ports methodically. Prioritise based on what's most likely to 
 |---|---|
 | High | SMB, WinRM, MSSQL, LDAP, RDP |
 | High | SSH, FTP, HTTP/HTTPS |
-| Medium | DNS, SMTP, SNMP, NFS, Rsync |
-| Low | IMAP, POP3, R-Services, TFTP |
+| Medium | DNS, SMTP, SNMP, NFS, Rsync, Kerberos |
+| Medium | Redis, Docker API, PostgreSQL, MySQL |
+| Low | IMAP, POP3, VNC, Telnet, R-Services, TFTP |
 
 See the Service Analysis pages for per-protocol enumeration commands.
