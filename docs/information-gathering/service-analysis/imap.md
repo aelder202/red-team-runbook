@@ -1,85 +1,67 @@
-```table-of-contents
-```
+# IMAP (143, 993)
 
 !!! tip "Start here"
-    Connect with netcat and check capabilities: `nc <target> 143` then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` — if present and port 143 (not IMAPS), credentials travel in cleartext. Try `hydra -L users.txt -P passwords.txt imap://<target>` with a short wordlist before committing to a full bruteforce.
+    Connect directly and check capabilities: `nc 10.10.10.10 143`, then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` on port 143 — if present, credentials are in cleartext. Worth a quick brute force with a default credentials list before going to rockyou.
+
+---
 
 ## Enumeration
-### Banner Grabbing
+
 ```bash
-nmap -p 143,993 --script imap-capabilities,imap-ntlm-info <target-ip>
+nmap -p 143,993 --script imap-capabilities,imap-ntlm-info 10.10.10.10
 ```
 
-## User Enumeration
+---
+
+## Manual Interaction
+
 ```bash
-nmap --script imap-brute -p 143 <target-ip>
+nc 10.10.10.10 143
+
+# Once connected:
+a1 CAPABILITY              # check supported auth methods
+a1 LOGIN <user> <pass>     # authenticate
+a1 LIST "" "*"             # list all mailboxes
+a1 SELECT INBOX            # select a mailbox
+a1 FETCH 1 BODY[]          # read first email
+a1 FETCH 1:* FLAGS         # list all messages with flags
 ```
 
-## Authentication Attacks
-### Brute-Forcing Creds
+For IMAPS (port 993):
 ```bash
-hydra -L users.txt -P passwords.txt imap://<target-ip> -V
+openssl s_client -connect 10.10.10.10:993
+openssl s_client -connect 10.10.10.10:143 -starttls imap
 ```
 
-Metasploit:
+---
+
+## Brute Force
+
 ```bash
-msfconsole
-use auxiliary/scanner/imap/imap_login
-set RHOSTS <target-ip>
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
+hydra -L users.txt -P /usr/share/seclists/Passwords/Default-Credentials/default-userpasscombo.txt imap://10.10.10.10
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt imap://10.10.10.10
 ```
-## Insecure Authentication
-IMAP servers may allow **plaintext authentication**, making them vulnerable to **Man-in-the-Middle (MITM) attacks**.
+
+---
+
+## NTLM Info (Windows environments)
+
 ```bash
-openssl s_client -connect <target-ip>:143 -starttls imap
+nmap --script imap-ntlm-info -p 143,993 10.10.10.10
 ```
 
-If `AUTH PLAIN` or `AUTH LOGIN` is returned, **plaintext authentication is enabled**, making it possible to intercept credentials.
-## Exploiting IMAP Misconfigurations
-### Weak or Default Credentials
-Login using known/weak credentials to access sensitive email data, including potentially sensitive information (password resets, confidential data, etc.).
-```bash
-nc -nv <target-ip> 143
-```
+If NTLM authentication is in use, the response leaks internal hostname, domain, and OS version without any credentials.
 
-#### Check available mailboxes:
-```nginx
-a LIST "" "*"
-```
+---
 
-#### Select mailbox
-```css
-a SELECT INBOX
-```
+## What to Look For
 
-#### Read email messages
-```css
-a FETCH 1 BODY[]
-```
+Once authenticated, search emails for:
 
-### Email Data Leakage
-Review retrieved emails for sensitive data, credentials, internal information, or information useful for privilege escalation and lateral movement.
+- Plaintext credentials or API keys
+- Password reset links for internal services
+- Internal hostnames, IP ranges, or infrastructure details
+- Attachments containing configuration files
 
-### NTLM Authentication (Windows environments)
-If NTLM authentication is used, it may allow NTLM relay or Pass-the-Hash attacks.
-
-Enumerate NTLM information:
-```bash
-nmap --script imap-ntlm-info -p 143,993 <target-ip>
-```
-
-Relay NTLM authentication using `responder` and `ntlmrelayx` (advanced technique if IMAP clients attempt NTLM auth):
-```bash
-responder -I eth0 -rdwv
-```
-
-## Post-Exploitation & Lateral Movement
-
-Once IMAP credentials are compromised:
-
-1. **Attempt SMTP Authentication (Port 25/465/587)** – If SMTP authentication is allowed, send **emails as the victim**.
-2. **Use IMAP Access to Hijack Accounts** – If MFA is disabled, **reset passwords for internal services**.
-3. **Check for Stored Credentials in Emails** – Extract login details, API keys, or private information.
-4. **Pivot to Internal Services** – If the compromised user has **IT privileges**, leverage email access for internal enumeration.
+!!! tip "Real-world"
+    IMAP access on a compromised account is often more valuable than it looks. IT staff and developers frequently have credentials, VPN configs, or MFA backup codes sitting in their inbox. Always check sent items and drafts too — not just the inbox.
