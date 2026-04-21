@@ -1,54 +1,57 @@
-```table-of-contents
-```
+# POP3 (110, 995)
 
 !!! tip "Start here"
-    Connect directly: `nc <target> 110` then `USER <username>` / `PASS <password>`. Once authenticated, `LIST` shows available messages and `RETR 1` downloads the first one. Emails often contain credentials, password resets, or internal info worth reading before moving on.
+    Connect directly and authenticate: `nc 10.10.10.10 110`, then `USER <username>` / `PASS <password>`. Once in, `LIST` shows available messages and `RETR 1` downloads the first one. Same credentials often work on IMAP, SMTP, and other internal services.
+
+---
 
 ## Enumeration
-### Banner Grabbing
+
 ```bash
-nmap -p 110,995 -sV --script=pop3-capabilities <target-ip>
+nmap -p 110,995 --script pop3-capabilities 10.10.10.10
 ```
 
-## User Enumeration
+---
+
+## Manual Interaction
+
 ```bash
-nmap --script pop3-brute -p 110 <target-ip>
+nc 10.10.10.10 110
+
+USER admin
+PASS password
+LIST            # list messages
+RETR 1          # read message 1
+QUIT
 ```
 
-## Authentication Attacks
-### Brute Force Credentials
+For POP3S (port 995):
+
 ```bash
-hydra -L users.txt -P passwords.txt -s 995 <target-ip> pop3s -V
+openssl s_client -connect 10.10.10.10:995
+openssl s_client -connect 10.10.10.10:110 -starttls pop3
 ```
 
-Metasploit:
+---
+
+## Brute Force
+
 ```bash
-msfconsole
-use auxiliary/scanner/pop3/pop3_login
-set RHOSTS <target-ip>
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt pop3://10.10.10.10
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt -s 995 pop3s://10.10.10.10
 ```
 
-## Misconfigurations
-## Insecure Authentication
-If authentication is in cleartext (port 110) and TLS is not enforced, credentials may be sniffed using tcpdump or wireshark.
+---
+
+## Cleartext Auth Check
+
+If port 110 is open without TLS, credentials are sent in cleartext. Check what auth methods are advertised:
+
 ```bash
-tcpdump -i eth0 port 110 -A
+openssl s_client -connect 10.10.10.10:110 -starttls pop3
 ```
 
-Some POP3 servers allow plaintext authentication (`PLAIN` or `LOGIN` methods), which can be intercepted over **unencrypted connections**.
-```bash
-openssl s_client -connect <target-ip>:110 -starttls pop3
-```
+Look for `AUTH PLAIN` or `AUTH LOGIN` in the capability response — if present on an unencrypted connection, credentials are interceptable.
 
-Check for `AUTH PLAIN` or `AUTH LOGIN` in the response:
-### Post-Exploitation & Lateral Movement
-
-If POP3 credentials are compromised:
-
-1. **Check for IMAP Access (Port 143/993)** – The same credentials might work for **IMAP**, allowing deeper email access.
-2. **Try SMTP Authentication (Port 25/465/587)** – If SMTP allows authentication, **send emails as the victim**.
-3. **Re-use Credentials for Other Services** – Many users **reuse passwords**, allowing privilege escalation across different services.
-4. **Pivot to Internal Systems** – If the compromised user is an **IT administrator**, access **internal infrastructure**.
+!!! tip "Real-world"
+    POP3 is low priority compared to IMAP — it downloads and deletes messages rather than leaving them server-side, so you get less visibility. That said, compromised POP3 credentials are worth testing across SMB, WinRM, and VPN immediately. IT staff email is often a goldmine for internal hostnames and credentials in forwarded threads.

