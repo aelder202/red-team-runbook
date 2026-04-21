@@ -11,6 +11,9 @@
 
 ---
 
+!!! warning "Watch out"
+    Golden tickets and shadow copies are high-noise persistence mechanisms. In a real engagement, document and demonstrate rather than leaving active backdoors — clean up after yourself.
+
 ## Golden Ticket Persistence
 
 Golden Tickets allow an attacker to persist indefinitely within an Active Directory environment by forging Ticket Granting Tickets (TGTs).

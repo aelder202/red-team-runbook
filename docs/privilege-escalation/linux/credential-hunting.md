@@ -5,6 +5,10 @@
 - [Linux Privilege Escalation](https://github.com/sleventyeleven/linuxprivchecker)
 
 ---
+
+!!! tip "Tip"
+    `grep -r "password" /etc /home /var/www 2>/dev/null` catches a surprising number of credentials in config files. Also check `.bash_history`, `.bashrc`, `.profile`, and `/var/log/` for command history with embedded credentials.
+
 ## Extracting User Information from `/etc/passwd`
 
 The `/etc/passwd` file contains information about system users, including their home directories and assigned shells. It is world-readable, allowing attackers to enumerate local users.

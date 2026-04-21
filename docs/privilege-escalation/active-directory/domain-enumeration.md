@@ -4,9 +4,13 @@
     
 - [BloodHound: Visualizing Active Directory](https://bloodhound.readthedocs.io/en/latest/)
 
-    
-
 ---
+
+!!! tip "Tip"
+    BloodHound + SharpHound is the fastest way to map AD attack paths. Import the ZIP and immediately check "Shortest Paths to Domain Admins" — most HTB AD boxes have a 2-3 hop path obvious in the graph.
+
+!!! note "From the lab"
+    BloodHound is the fastest way to find privesc paths in AD but requires data collection first. Run SharpHound on a domain-joined machine and import the ZIP. Look for "Shortest Path to Domain Admins" immediately — most HTB AD boxes have a 2-3 hop path that's obvious in the graph.
 
 ## Enumerating Domain Users and Groups
 

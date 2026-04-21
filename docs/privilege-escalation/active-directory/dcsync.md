@@ -1,10 +1,10 @@
 # DCSync Attack
 
-## Overview
+!!! tip "Tip"
+    DCSync requires `DS-Replication-Get-Changes` and `DS-Replication-Get-Changes-All` rights — typically Domain Admins, Enterprise Admins, or explicitly delegated accounts. Use `mimikatz lsadump::dcsync /user:krbtgt` to dump the krbtgt hash for golden tickets.
 
-**DCSync** is an attack where an adversary impersonates a Domain Controller to request **replication data from Active Directory**. This data includes **NTLM password hashes**, Kerberos keys, and other secrets of domain users — including **`krbtgt`**, **`Administrator`**, and service accounts.
-
-The attack abuses the **Directory Replication Service (DRS)** API via the `DRSUAPI` RPC interface.
+!!! warning "Watch out"
+    DCSync generates Event ID 4662 on the DC. On monitored environments, this will alert. Do it once, get what you need, stop.
 
 ---
 

@@ -6,6 +6,10 @@
 - [LOLBAS Project](https://lolbas-project.github.io/#)
 
 ---
+
+!!! tip "Tip"
+    SeImpersonatePrivilege is the most common Windows privesc in HTB and real engagements. Use `PrintSpoofer`, `RoguePotato`, or `GodPotato` depending on Windows version. `whoami /priv` is always the first check.
+
 ## SeImpersonatePrivilege Exploitation
 
 ### Overview

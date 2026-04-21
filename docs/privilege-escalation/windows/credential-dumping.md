@@ -4,6 +4,13 @@
 - [Impacket - secretsdump.py](https://github.com/SecureAuthCorp/impacket)
 
 ---
+
+!!! tip "Tip"
+    If you have local admin but LSASS is protected, dump SAM/SYSTEM offline: `reg save HKLM\SAM sam.bak && reg save HKLM\SYSTEM system.bak` then `impacket-secretsdump -sam sam.bak -system system.bak LOCAL`.
+
+!!! warning "Watch out"
+    LSASS dumps trigger EDR on most enterprise endpoints. Check for AV/EDR first with `tasklist` — look for CrowdStrike, SentinelOne, Defender, Carbon Black processes.
+
 ## Dumping Credentials from the Security Account Manager (SAM)
 
 The Security Account Manager (SAM) database contains NTLM password hashes for local user accounts. However, direct access is restricted while the system is running.

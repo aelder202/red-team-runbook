@@ -1,19 +1,13 @@
 # Kerberoasting
 
-## Overview
+| Tool | When to use |
+|---|---|
+| `Rubeus.exe kerberoast` | On a domain-joined Windows machine with a shell |
+| `impacket-GetUserSPNs` | From Linux with valid domain credentials |
+| `nxc ldap` with `--kerberoasting` | When you want CrackMapExec/NetExec format output |
 
-**Kerberoasting** is an attack that allows an authenticated domain user to extract **service account credentials** from Active Directory by abusing how **Service Principal Names (SPNs)** are tied to Kerberos service tickets.
-
-The attack is possible when:
-
-- A user account in AD is mapped to an SPN (e.g., MSSQLSvc/host.domain)
-    
-- The user requests a Kerberos service ticket (TGS) for that SPN
-    
-- The TGS is **encrypted with the service account’s NTLM hash**
-    
-- The ticket can be **cracked offline** to recover the password
-    
+!!! tip "Tip"
+    Target high-privilege service accounts first (those in Domain Admins, IT groups, etc.). Use BloodHound to identify which SPN accounts have paths to DA before cracking all hashes blindly.
 
 ---
 

@@ -4,6 +4,13 @@
 - [Exploit-DB: Linux Privilege Escalation](https://www.exploit-db.com/papers/42280)
 
 ---
+
+!!! tip "Tip"
+    For SUID binaries, check GTFOBins first before writing custom exploits — most common binaries have documented privesc paths. For cron, check if the script is writable OR if any directory in its path is writable (path injection).
+
+!!! warning "Watch out"
+    SUID on custom binaries (not standard Linux utils) is a red flag — these are often intentional CTF vectors. In real engagements, SUID on non-standard binaries can indicate misconfiguration worth investigating.
+
 ## Exploiting Vulnerable Cron Jobs
 
 Cron jobs run scheduled tasks and, if misconfigured, can allow privilege escalation.

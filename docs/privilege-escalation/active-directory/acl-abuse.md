@@ -11,6 +11,9 @@
 
 ---
 
+!!! tip "Tip"
+    BloodHound highlights ACL abuse paths (WriteDACL, GenericAll, GenericWrite, ForceChangePassword). Use `PowerView` to enumerate and exploit: `Add-DomainObjectAcl`, `Set-DomainUserPassword`, etc.
+
 ## Understanding ACL Abuse in Active Directory
 
 Access Control Lists (ACLs) define permissions on AD objects such as users, groups, and computers. Misconfigurations in ACLs can allow privilege escalation by granting excessive rights to unprivileged users.

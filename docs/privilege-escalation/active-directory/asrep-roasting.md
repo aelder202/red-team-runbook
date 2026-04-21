@@ -1,10 +1,10 @@
 # AS-REP Roasting
 
-## Overview
+!!! tip "Tip"
+    Always check for AS-REP roastable accounts early — it requires no credentials. `impacket-GetNPUsers <domain>/ -dc-ip <dc> -request` enumerates from Linux with no auth if null sessions work.
 
-**AS-REP Roasting** is a Kerberos attack that targets **user accounts with "Do not require Kerberos preauthentication" enabled** (an insecure configuration). Unlike Kerberoasting, this attack **does not require valid credentials** — it can be performed **unauthenticated** if usernames are known.
-
-When an AS-REQ is sent to the KDC for a user without preauthentication, the KDC replies with an AS-REP that contains an **encrypted portion** using the user's password-derived key. That encrypted portion can be cracked offline to recover the plaintext password.
+!!! note "From the lab"
+    AS-REP roasting often finds accounts misconfigured during provisioning scripts. Check service accounts and CI/CD runner accounts first — pre-auth is commonly disabled for convenience.
 
 ---
 

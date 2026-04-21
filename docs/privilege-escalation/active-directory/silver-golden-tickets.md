@@ -1,8 +1,7 @@
-z# Silver & Golden Ticket Attacks (Kerberos Forgery)
+# Silver & Golden Ticket Attacks (Kerberos Forgery)
 
-## Overview
-
-Kerberos relies heavily on trust in ticket-granting mechanisms. If an attacker obtains the right key material (NTLM hash of service accounts or `krbtgt`), they can forge Kerberos tickets to impersonate users or services.
+!!! tip "Tip"
+    Golden tickets require the krbtgt NTLM hash (get via DCSync or NTDS.dit dump). Silver tickets only require the service account hash — lower privilege to obtain but scoped to a single service. Use golden for persistence, silver for targeted lateral movement.
 
 ---
 
