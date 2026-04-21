@@ -1,4 +1,5 @@
-**What it is:** ISAKMP (Internet Security Association and Key Management Protocol) underpins IKE (Internet Key Exchange) for setting up IPsec VPNs. IKEv1 uses **Main** and **Aggressive** modes in Phase 1; IKEv2 streamlines the exchange and removes Aggressive Mode. NAT traversal shifts IKE/IPsec to **UDP 4500**. ([IETF Datatracker](https://datatracker.ietf.org/doc/html/rfc7296?utm_source=chatgpt.com "RFC 7296 - Internet Key Exchange Protocol Version 2 ..."))
+!!! tip "Start here"
+    Probe Aggressive Mode for PSK capture: `ike-scan -A $IP` — if it responds, capture the PSK hash with `ike-scan -A -P ike_psk_params.txt $IP` and crack offline with `psk-crack -d wordlist.txt ike_psk_params.txt` or hashcat mode 5300/5400. Aggressive Mode + PSK is the most common IKEv1 weakness.
 
 References: [Expressway](Expressway.md#Foothold%20—%20IKE%20PSK%20recovery)
 

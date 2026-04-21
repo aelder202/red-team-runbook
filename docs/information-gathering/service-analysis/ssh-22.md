@@ -1,13 +1,9 @@
 ```table-of-contents
 ```
-**Secure Shell (SSH)** is a cryptographic network protocol used for secure remote login and command execution. Running on **TCP port 22**, SSH is a common target due to **weak credentials, misconfigurations, outdated versions, and vulnerable authentication mechanisms**. 
-## Common Attack Vectors:
 
-- **Weak or Default Credentials:** Many SSH servers use common usernames/passwords or default keys.
-- **Misconfigured Key-Based Authentication:** Weak, exposed, or reused private keys can allow unauthorized access.
-- **Vulnerable SSH Versions:** Older versions may be vulnerable to authentication bypass, cipher weaknesses, or privilege escalation.
-- **Brute-force Attacks & Credential Stuffing:** Attackers attempt large password lists to gain access.
-- **SSH Agent Hijacking & Key Forwarding Exploits:** Compromising agent-socket-based authentication.
+!!! tip "Start here"
+    Enumerate supported auth methods: `ssh -v user@<target>` — look for `publickey,password` vs `publickey` only. If password auth is enabled and you have a username, it's bruteforceable. Check for weak keys: `ssh-audit <target>`.
+
 ## Enumeration
 ### Banner Grabbing
 ```bash

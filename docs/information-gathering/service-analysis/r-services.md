@@ -1,17 +1,6 @@
-**R-Services** (Rlogin, Rsh, and Rexec) are legacy Unix remote management services that operate on:
+!!! tip "Start here"
+    Try passwordless rlogin immediately: `rlogin -l root <target>` — if `.rhosts` contains `+ +` or the target trusts your source IP, you get a shell with no credentials. Also try `rsh -l root <target> id` to test rsh trust. These services are rare but almost always misconfigured when present.
 
-- **TCP port 512** – Rexec (Remote Execution Service)
-- **TCP port 513** – Rlogin (Remote Login)
-- **TCP port 514** – Rsh (Remote Shell)
-
-These services allow **remote command execution without encryption**, making them vulnerable to **credential theft, unauthorized remote access, and privilege escalation**.
-
-## Common Attack Vectors
-
-- **Weak or No Authentication:** Many R-Services implementations rely on `.rhosts` or `hosts.equiv` files, which may allow unauthenticated access.
-- **Cleartext Credentials:** Unlike SSH, R-Services transmit data in plaintext, allowing **MITM attacks**.
-- **Trust-Based Authentication Abuse:** Attackers can exploit **trusted relationships** between hosts to escalate privileges.
-- **Command Injection:** If user input is not sanitized, Rexec may be exploited for **remote code execution**.
 ## Enumeration 
 ### Checking for Open R-Service Ports
 ```bash

@@ -1,13 +1,6 @@
-**Oracle Transparent Network Substrate (TNS)** is a protocol used by **Oracle Database servers** for client-server communication. It operates over **TCP port 1521** and can be vulnerable to **SID enumeration, weak authentication, SQL injection, and remote code execution**.
-## Common Attack Vectors
+!!! tip "Start here"
+    Enumerate SIDs first — you can't connect without one: `odat.py sidguesser -s <target>`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@<target>:1521/<SID>`.
 
-- **SID Enumeration** – Identifying valid Oracle database instances.
-- **Brute-Force Authentication** – Exploiting weak Oracle accounts (`SYS, SYSTEM, SCOTT`).
-- **Exploiting Oracle TNS Listener** – Performing **Denial-of-Service (DoS) attacks** or **MITM traffic manipulation**.
-- **SQL Injection for Privilege Escalation** – Exploiting **vulnerable PL/SQL functions**.
-
-**Bookmarks:**
-[https://github.com/quentinhardy/odat](https://github.com/quentinhardy/odat)  
 ## Enumeration
 ### Check for Open Oracle TNS Port
 ```bash

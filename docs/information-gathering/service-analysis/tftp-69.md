@@ -1,17 +1,9 @@
 ```table-of-contents
 ```
-**Trivial File Transfer Protocol (TFTP)** is a simplified, unsecured file transfer protocol that operates over **UDP port 69**. Unlike FTP, TFTP lacks authentication and encryption, making it **vulnerable to unauthorized file retrieval, modification, and code execution**. TFTP is commonly used in network booting (PXE), firmware updates, and device configurations.
 
-## Common Attack Vectors
+!!! tip "Start here"
+    TFTP has no authentication — try fetching common config files immediately: `atftp --get --remote-file running-config --local-file running-config <target>` and `atftp --get --remote-file startup-config --local-file startup-config <target>`. Network device configs often contain SNMP community strings and credentials.
 
-- **Anonymous File Retrieval:** TFTP often allows unrestricted file access, exposing configuration files.
-- **Insecure File Uploads:** If write access is enabled, an attacker can **upload malicious firmware or scripts**.
-- **Lack of Authentication:** No built-in authentication means **anyone** can interact with the server.
-- **Network Device Exploitation:** Used in **PXE booting**, making **MITM attacks** feasible.
-
-**Bookmarks:**
-https://tools.kali.org/information-gathering/atftp  
-https://tools.kali.org/information-gathering/tftp
 ## Enumeration
 ### Banner Grabbing
 #### Automatic Enumeration

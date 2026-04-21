@@ -1,17 +1,9 @@
 ```table-of-contents
 ```
-**Server Message Block (SMB)** is a network protocol used for **file sharing, printer access, and interprocess communication** on Windows networks. SMB runs over **TCP port 445** (modern versions) and **TCP port 139** (legacy NetBIOS). Misconfigured SMB servers can expose **sensitive files, allow unauthenticated access, and enable credential harvesting**.
 
-## Common Attack Vectors
+!!! tip "Start here"
+    First check: `netexec smb <target> -u '' -p ''` (null session). If that fails, try `guest:guest`. Null sessions still work on older or misconfigured Windows hosts and give you share listings and sometimes user enumeration.
 
-- **Anonymous Access & Null Sessions** – Some SMB servers allow unauthenticated access to shared files.
-- **Brute-Force & Pass-the-Hash Attacks** – Weak credentials can be cracked or reused.
-- **Exploiting SMB Vulnerabilities** – EternalBlue (MS17-010), SMBGhost (CVE-2020-0796), and other RCE exploits.
-- **Lateral Movement & Privilege Escalation** – SMB can be used for **remote execution** with compromised credentials.
-
-**Bookmarks:**
-https://www.rapid7.com/db/modules/auxiliary/scanner/smb/smb_login  
-[https://github.com/fortra/impacket](https://github.com/fortra/impacket)
 ## Enumeration
 ### Check for Availability
 ```bash

@@ -1,16 +1,9 @@
 ```table-of-contents
 ```
-**Post Office Protocol v3 (POP3)** is an email retrieval protocol that allows clients to download emails from a mail server. It operates on **TCP port 110** for plaintext communication and **TCP port 995 (POP3S)** for encrypted SSL/TLS communication.
 
-POP3 is vulnerable to **brute-force attacks, credential harvesting, insecure authentication mechanisms, and email data exposure** if misconfigured. Attackers who gain access to a POP3 server can read stored emails, extract credentials, or escalate privileges.
+!!! tip "Start here"
+    Connect directly: `nc <target> 110` then `USER <username>` / `PASS <password>`. Once authenticated, `LIST` shows available messages and `RETR 1` downloads the first one. Emails often contain credentials, password resets, or internal info worth reading before moving on.
 
-## Common Attack Vectors
-
-- **Banner Grabbing & Version Identification** – Determining the mail server type and vulnerabilities.
-- **Brute-Forcing POP3 Credentials** – Weak or default credentials can allow unauthorized access.
-- **Insecure Authentication Methods** – Some servers still support plaintext authentication.
-- **Email Data Extraction** – Downloading emails for intelligence gathering or credential theft.
-- **Man-in-the-Middle Attacks** – If encryption is not enforced, credentials can be intercepted.
 ## Enumeration
 ### Banner Grabbing
 ```bash

@@ -1,15 +1,5 @@
-**Windows Remote Management (WinRM)** is a Microsoft protocol used for remote system administration over **HTTP (5985)** or **HTTPS (5986)**. It allows **remote command execution, configuration management, and automation**. If misconfigured or using weak credentials, attackers can exploit **WinRM for unauthorized access, lateral movement, and privilege escalation**.
-
-## Common Attack Vectors
-
-- **Brute-Forcing & Credential Attacks** – Exploiting weak passwords or NTLM hashes.
-- **Pass-the-Hash (PTH) Attacks** – Using stolen credentials for remote authentication.
-- **Exploiting Misconfigured WinRM Access** – Identifying users with WinRM privileges.
-- **Remote Code Execution via PowerShell** – Running commands remotely on the target.
-
-**Bookmarks:**
-[https://learn.microsoft.com/en-us/windows/win32/winrm/portal](https://learn.microsoft.com/en-us/windows/win32/winrm/portal)  
-[https://github.com/ropnop/windapsearch](https://github.com/ropnop/windapsearch)
+!!! tip "Start here"
+    `evil-winrm -i <target> -u <user> -p <pass>` is the fastest path to a shell with valid credentials. WinRM runs on port 5985 (HTTP) or 5986 (HTTPS) — check both. Pass-the-hash also works: `evil-winrm -i <target> -u <user> -H <ntlm_hash>`.
 
 ## Enumeration
 ### Check for Open WinRM Ports

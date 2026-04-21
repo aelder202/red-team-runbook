@@ -1,12 +1,6 @@
-**MySQL** is an open-source relational database management system (RDBMS) commonly used for web applications and backend data storage. It operates over **TCP port 3306** and is frequently targeted due to **weak credentials, SQL injection vulnerabilities, and misconfigurations** that allow attackers to escalate privileges, execute system commands, or exfiltrate sensitive data.
+!!! tip "Start here"
+    Try root with no password first: `mysql -h <target> -u root` (no `-p` flag). Many dev/staging instances have no root password set. If that fails, try `root:root`, `root:mysql`, `root:toor`. Remote MySQL exposure is almost always a misconfiguration — check if `FILE` privilege is available to write a web shell.
 
-## Common Attack Vectors
-
-- **Weak or Default Credentials** – Many MySQL instances use weak passwords (`root:root`, `admin:admin`).
-- **Privilege Escalation via User Grants** – Low-privileged accounts may have unintended administrative privileges.
-- **Remote Access Misconfiguration** – MySQL should typically only allow **local connections**.
-- **SQL Injection (SQLi) for Authentication Bypass** – Exploiting web applications that interact with MySQL.
-- **Command Execution via `sys_exec()` or User-Defined Functions (UDFs)** – Enables **OS command execution**.
 ## Enumeration
 ### Check for Open MySQL Ports
 ```bash

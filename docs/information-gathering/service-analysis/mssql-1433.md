@@ -1,15 +1,12 @@
 ```table-of-contents
 ```
-**Microsoft SQL Server (MSSQL)** is a **relational database management system** (RDBMS) commonly used in enterprise environments. It operates over **TCP port 1433** and is frequently targeted due to **misconfigurations, weak credentials, and privilege escalation opportunities**. Compromising MSSQL can lead to **data exfiltration, lateral movement, and remote code execution**.
-## Common Attack Vectors
 
-- **Weak or Default Credentials** – Many MSSQL instances use weak or default credentials (`sa:password`).
-- **XP_CmdShell Execution** – Enables **remote OS command execution**.
-- **SQL Injection (SQLi) for Privilege Escalation** – Exploiting web applications that interact with MSSQL.
-- **Linked Server Enumeration & Exploitation** – Lateral movement through **trusted MSSQL instances**.
+!!! tip "Start here"
+    Check for SA with blank password: `impacket-mssqlclient sa:@<target>`. If you get in, try `xp_cmdshell` immediately — it's often enabled on unmanaged instances. Enable it if not: `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
 
-https://www.offensive-security.com/metasploit-unleashed/admin-mssql-auxiliary-modules  
-[https://github.com/fortra/impacket](https://github.com/fortra/impacket)
+!!! warning "Watch out"
+    `xp_cmdshell` execution is logged. Use it to establish a shell quickly, then switch to a less monitored persistence method.
+
 ## Enumeration
 ### Check for Open MSSQL Ports
 ```bash

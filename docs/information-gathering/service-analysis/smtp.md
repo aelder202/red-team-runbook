@@ -1,14 +1,9 @@
 ```table-of-contents
 ```
 
-**Simple Mail Transfer Protocol (SMTP)** is used for sending emails between mail servers. Running on **TCP port 25 (plaintext)**, **port 465 (SMTPS - SSL encrypted)**, and **port 587 (STARTTLS encrypted)**, SMTP can be vulnerable to **user enumeration, open relay abuse, credential brute-forcing, and sensitive data leakage**.
+!!! tip "Start here"
+    Enumerate users via VRFY: `smtp-user-enum -M VRFY -U users.txt -t <target>`. If VRFY is disabled, try EXPN or RCPT TO. User enumeration gives you a valid username list for password spraying against other services (SMB, WinRM, RDP).
 
-## Common Attack Vectors
-
-- **User Enumeration:** Some SMTP servers respond differently when verifying valid and invalid users.
-- **Open Mail Relays:** Misconfigured servers allow sending emails without authentication (useful for spamming and phishing).
-- **Weak Authentication:** Some servers use **plaintext authentication**, making them vulnerable to brute-force attacks.
-- **Exposed Email Data:** SMTP servers often leak internal email addresses, system information, and headers.
 ## Enumeration
 ### Banner Grabbing
 ```bash

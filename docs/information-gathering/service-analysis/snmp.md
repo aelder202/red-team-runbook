@@ -1,23 +1,9 @@
-**Simple Network Management Protocol (SNMP)** is a network protocol used for managing and monitoring network devices such as **routers, switches, printers, and servers**. SNMP operates on **UDP port 161** (queries) and **UDP port 162** (traps/alerts).
+!!! tip "Start here"
+    Default community string is `public`. Try: `snmpwalk -v2c -c public <target>`. If it returns data, enumerate further with `snmp-check <target>` for users, processes, and network interfaces.
 
-Attackers target **SNMP misconfigurations** to extract **network information, user credentials, and device configurations**. If write access is enabled, **remote code execution** or **network disruption** is possible.
+!!! warning "Watch out"
+    SNMPv1/v2c sends community strings in plaintext. If you capture the community string, you can query the full MIB. SNMPv3 requires credentials — brute force is slow.
 
-## Common Attack Vectors
-
-- **SNMP Community String Enumeration** – Many SNMP services use **default or weak community strings** (`public`, `private`).
-- **Extracting Device & User Information** – Attackers can retrieve **system details, network configurations, and running services**.
-- **SNMP Write Access Exploitation** – If `SET` requests are allowed, an attacker can modify configurations or execute commands.
-- **Network Reconnaissance & Lateral Movement** – SNMP can reveal **network topology, users, and access control lists (ACLs)**.
-
-**Bookmarks:**
-SNMPwalk Documentation: https://linux.die.net/man/1/snmpwalk
-SNMP Enumeration Guide: https://book.hacktricks.xyz/network-services-pentesting/pentesting-snmp
-onesixtyone GitHub: [https://github.com/trailofbits/onesixtyone](https://github.com/trailofbits/onesixtyone)
-snmp-check GitHub: [https://github.com/hatlord/snmp-check](https://github.com/hatlord/snmp-check)
-
-SambaCry (CVE-2017-7494):
-https://github.com/00mjk/exploit-CVE-2017-7494
-https://github.com/opsxcq/exploit-CVE-2017-7494
 ## Enumeration
 ### Check for Open SNMP Ports
 ```bash

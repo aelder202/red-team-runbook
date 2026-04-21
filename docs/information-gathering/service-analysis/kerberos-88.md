@@ -1,16 +1,9 @@
 ```table-of-contents
 ```
-**Kerberos** is an authentication protocol widely used in **Active Directory (AD) environments** to provide secure authentication between users and services. It operates over **TCP/UDP port 88** and relies on **tickets** to grant access without sending passwords across the network.
 
-## Common Attack Vectors
+!!! tip "Start here"
+    Enumerate valid usernames without credentials: `kerbrute userenum -d <domain> --dc <target> userlist.txt`. Then immediately try ASREPRoasting against those users: `GetNPUsers.py <domain>/ -usersfile users.txt -dc-ip <target>` — accounts without pre-auth required hand you crackable hashes with no password needed.
 
-- **User Enumeration** – Identifying valid usernames via Kerberos requests.
-- **Credential Attacks** – Exploiting **Kerberoasting** and **ASREPRoasting** to extract password hashes.
-- **Pass-the-Ticket (PTT)** – Using stolen **TGT** (Ticket Granting Ticket) or **TGS** (Ticket Granting Service) to impersonate users.
-- **Golden & Silver Tickets** – Creating **persistent backdoor access** in AD by forging Kerberos tickets.
-
-**Bookmarks:**
-[https://github.com/fortra/impacket](https://github.com/fortra/impacket)
 ## Enumeration
 ### Banner Grabbing
 ```bash

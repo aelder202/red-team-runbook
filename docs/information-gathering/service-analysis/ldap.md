@@ -1,13 +1,11 @@
 # Lightweight Directory Access Protocol (LDAP) – Ports 389/636
 
-**LDAP** is a **hierarchical, directory-based protocol** typically used to query and modify objects (users, computers, groups, policies) in **Microsoft Active Directory (AD)** or **OpenLDAP environments**. It is a critical protocol in enterprise environments and often facilitates authentication and authorization.
+!!! tip "Start here"
+    `ldapsearch -x -H ldap://<target> -b "DC=domain,DC=local"` with anonymous bind — if it returns data, you have unauthenticated enumeration. Common on misconfigured internal AD environments.
 
-- **Port 389 (TCP/UDP):** Standard, unencrypted LDAP.
-    
-- **Port 636 (TCP):** LDAP over SSL (LDAPS).
-    
+!!! warning "Watch out"
+    LDAP port 389 vs LDAPS 636 — if 389 is filtered, try 636. Some environments only expose the encrypted port externally.
 
----
 ## Port Scanning and Enumeration
 
 ### Basic Nmap Scan

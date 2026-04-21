@@ -1,11 +1,6 @@
-**Rsync** is a remote file synchronization protocol used for **efficient data transfer** between systems. It operates over **TCP port 873** and can be configured for **anonymous or authenticated access**. If misconfigured, **Rsync may expose sensitive files, allow unauthorized uploads, or enable data exfiltration**.
+!!! tip "Start here"
+    List modules (shares) anonymously: `rsync -av --list-only rsync://<target>`. If modules appear, try downloading without credentials: `rsync -av rsync://<target>/<module> ./`. Look for SSH keys, config backups, and database dumps in the pulled files.
 
-## Common Attack Vectors
-
-- **Anonymous File Listing & Download** – Some servers allow **unauthenticated access** to shared directories.
-- **Writable Rsync Shares** – Attackers can **upload malicious payloads** to public shares.
-- **Exposed Configuration Files** – Rsync servers often store **backup files, database dumps, and SSH keys**.
-- **Privilege Escalation via Misconfigured Rsync Modules** – Weak permissions may allow **command execution or lateral movement**.
 ## Enumeration
 ### Check for Open Rsync Port
 ```bash

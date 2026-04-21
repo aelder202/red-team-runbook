@@ -1,19 +1,9 @@
 ```table-of-contents
 ```
-**Internet Message Access Protocol (IMAP)** is an email retrieval protocol that allows users to manage emails on a remote mail server. IMAP operates on **TCP port 143 (plaintext)** and **TCP port 993 (IMAPS - SSL encrypted)**.
 
-Attackers target IMAP for **credential brute-forcing, email data extraction, authentication bypass, and lateral movement**. If a user reuses passwords, compromising an IMAP account may grant access to **corporate infrastructure** or **other services**.
+!!! tip "Start here"
+    Connect with netcat and check capabilities: `nc <target> 143` then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` — if present and port 143 (not IMAPS), credentials travel in cleartext. Try `hydra -L users.txt -P passwords.txt imap://<target>` with a short wordlist before committing to a full bruteforce.
 
-### **Common Attack Vectors:**
-
-- **Banner Grabbing & Version Identification** – Identifies IMAP server versions and vulnerabilities.
-- **Brute-Forcing IMAP Credentials** – Exploiting weak or reused passwords.
-- **Plaintext Authentication Exposure** – Some IMAP servers allow **insecure authentication**, enabling credential interception.
-- **Email Data Extraction** – Gaining access to stored emails, potentially revealing sensitive information.
-- **Lateral Movement** – Using email accounts to **reset passwords, hijack communications, or escalate privileges**.
-
-**Bookmarks:**
-NTLM Relay Attacks: [Impacket NTLMRelayX](https://github.com/fortra/impacket/blob/master/examples/ntlmrelayx.py)
 ## Enumeration
 ### Banner Grabbing
 ```bash

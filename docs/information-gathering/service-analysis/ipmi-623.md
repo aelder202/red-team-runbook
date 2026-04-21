@@ -1,14 +1,5 @@
-**Intelligent Platform Management Interface (IPMI)** is a remote management protocol used for **out-of-band server administration**. It allows administrators to control **power states, retrieve system information, and manage firmware remotely**. Running on **UDP port 623**, **IPMI is often misconfigured**, making it an attractive target for attackers who can **extract credentials, execute remote commands, and persist in enterprise environments**.
-
-## Common Attack Vectors
-
-- **Default or Weak Credentials** – Many devices ship with **default IPMI passwords** that are often left unchanged.
-- **IPMI Cipher 0 Authentication Bypass** – Some IPMI implementations allow authentication bypass using a null cipher.
-- **Hash Retrieval for Offline Cracking** – IPMI allows extracting **password hashes** for offline brute-force attacks.
-- **Remote Code Execution** – If IPMI grants **system-level access**, attackers can remotely execute OS commands.
-
-[https://github.com/rapid7/metasploit-framework/blob/master/modules/auxiliary/scanner/ipmi/ipmi_version.rb](https://github.com/rapid7/metasploit-framework/blob/master/modules/auxiliary/scanner/ipmi/ipmi_version.rb)  
-[https://github.com/lanjelot/patator](https://github.com/lanjelot/patator)
+!!! tip "Start here"
+    Dump IPMI hashes unauthenticated with MSF: `use auxiliary/scanner/ipmi/ipmi_dumphashes` — this works against IPMI 2.0 without needing credentials. Crack the resulting hashes offline with hashcat mode 7300. Default creds (`admin:admin`, `ADMIN:ADMIN`, `root:calvin`) are also worth trying immediately.
 
 ## Enumeration
 ### Checking for Open IMPI Port

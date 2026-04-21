@@ -1,17 +1,9 @@
 ```table-of-contents
 ```
-**Domain Name System (DNS)** is responsible for translating domain names into IP addresses. It operates over **UDP/TCP port 53**. Attackers exploit **misconfigured DNS servers** to perform **subdomain enumeration, zone transfers, cache poisoning, and exfiltration via DNS tunneling**.
-## Common Attack Vectors
 
-- **DNS Zone Transfer Misconfiguration** – Exposes internal domain records.
-- **Subdomain Enumeration** – Identifies attack surfaces by discovering hidden services.
-- **DNS Cache Poisoning** – Redirects users to malicious servers.
-- **DNS Rebinding Attacks** – Bypasses same-origin policy in web applications.
-- **Data Exfiltration via DNS Tunneling** – Bypasses security controls to exfiltrate data.
+!!! tip "Start here"
+    Try zone transfer first: `dig axfr @<target> <domain>`. If successful, you get the full DNS record set. Most production DNS servers block this, but internal DNS servers often don't.
 
-**Bookmarks:**
-[https://github.com/OWASP/Amass](https://github.com/OWASP/Amass)  
-[https://github.com/projectdiscovery/subfinder](https://github.com/projectdiscovery/subfinder)
 ## Enumeration
 ### Banner Grabbing
 ```bash

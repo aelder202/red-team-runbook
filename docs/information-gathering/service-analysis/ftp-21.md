@@ -1,15 +1,9 @@
 ```table-of-contents
 ```
-**File Transfer Protocol (FTP)** is a network protocol used for transferring files between a client and a server over **TCP port 21**. FTP is widely used for file sharing but is often misconfigured, leading to **anonymous access, weak credentials, sensitive file exposure, and potential privilege escalation**.
 
-HTB Academy: [FTP](FTP.md#^lfkebi)
-## Common Attack Vectors:
+!!! tip "Start here"
+    Always try anonymous login first: `ftp <target>` then `anonymous:anonymous`. Check for write access — if you can write to a web-accessible directory, it's a file upload path.
 
-- **Anonymous Login:** Some FTP servers allow unrestricted guest access.
-- **Weak Authentication:** FTP often uses plaintext authentication, making it susceptible to brute-force attacks.
-- **Misconfigured File Permissions:** Sensitive files and directories may be accessible or writable.
-- **Passive & Active Mode Manipulation:** FTP connections can be exploited to bypass firewalls or sniff data.
-- **Vulnerable Versions:** Older FTP software may contain **buffer overflow** vulnerabilities (e.g., `vsftpd 2.3.4` backdoor).
 ## Enumeration
 ### Banner Grabbing
 ```bash
