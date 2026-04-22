@@ -12,9 +12,7 @@ theme:
     primary: red
     accent: deep orange
   features:
-    - navigation.tabs
     - navigation.sections
-    - navigation.expand
     - navigation.top
     - search.suggest
     - search.highlight
