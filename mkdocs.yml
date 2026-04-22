@@ -36,61 +36,45 @@ plugins:
 
 nav:
   - Home: index.md
-  - Information Gathering:
-    - Overview: information-gathering/index.md
-    - Service Analysis:
-      - DNS (53): information-gathering/service-analysis/dns-53.md
-      - Docker API (2375): information-gathering/service-analysis/docker-2375.md
-      - FTP (21): information-gathering/service-analysis/ftp-21.md
-      - IMAP (143, 993): information-gathering/service-analysis/imap.md
-      - IPMI (623): information-gathering/service-analysis/ipmi-623.md
-      - IKE/ISAKMP (500, 4500): information-gathering/service-analysis/isakmp-ike.md
-      - Kerberos (88): information-gathering/service-analysis/kerberos-88.md
-      - LDAP (389, 636): information-gathering/service-analysis/ldap.md
-      - MSSQL (1433): information-gathering/service-analysis/mssql-1433.md
-      - MySQL (3306): information-gathering/service-analysis/mysql-3306.md
-      - NFS (2049): information-gathering/service-analysis/nfs-2049.md
-      - Oracle TNS (1521): information-gathering/service-analysis/oracle-tns-1521.md
-      - POP3 (110, 995): information-gathering/service-analysis/pop3.md
-      - PostgreSQL (5432): information-gathering/service-analysis/postgresql-5432.md
-      - R-Services (512-514): information-gathering/service-analysis/r-services.md
-      - RDP (3389): information-gathering/service-analysis/rdp-3389.md
-      - Redis (6379): information-gathering/service-analysis/redis-6379.md
-      - Rsync (873): information-gathering/service-analysis/rsync-873.md
-      - SMB (139, 445): information-gathering/service-analysis/smb.md
-      - SMTP (25, 465, 587): information-gathering/service-analysis/smtp.md
-      - SNMP (161, 162): information-gathering/service-analysis/snmp.md
-      - SNMP Multiplexer (199): information-gathering/service-analysis/snmp-multiplexer.md
-      - Telnet (23): information-gathering/service-analysis/telnet-23.md
-      - VNC (5900): information-gathering/service-analysis/vnc-5900.md
-      - SSH (22): information-gathering/service-analysis/ssh-22.md
-      - TFTP (69): information-gathering/service-analysis/tftp-69.md
-      - WinRM (5985, 5986): information-gathering/service-analysis/winrm.md
   - Network Scanning & Recon:
     - Overview: network-scanning/index.md
     - Network Scanning: network-scanning/network-scanning.md
     - Reconnaissance: network-scanning/reconnaissance.md
     - Traffic Capture: network-scanning/traffic-capture.md
     - User & Host Enumeration: network-scanning/user-host-enumeration.md
-  - Exploitation:
-    - Overview: exploitation/index.md
-    - Binary Exploitation:
-      - Buffer Overflows: exploitation/binary/buffer-overflows.md
-      - ELF & DLL Analysis: exploitation/binary/elf-dll-analysis.md
-    - Credential Attacks:
-      - Brute-Force Cracking: exploitation/credentials/brute-force-cracking.md
-      - Kerberos Attacks: exploitation/credentials/kerberos-attacks.md
-      - Windows Credential Dumping: exploitation/credentials/windows-credential-dumping.md
-    - Exploitation Frameworks:
-      - Metasploit: exploitation/frameworks/metasploit.md
-      - MSFVenom: exploitation/frameworks/msfvenom.md
-    - Shells:
-      - Bind & Reverse Shells: exploitation/shells/bind-reverse-shells.md
-      - Escaping Restricted Shells: exploitation/shells/escaping-restricted-shells.md
-      - Web Shells: exploitation/shells/web-shells.md
+    - EyeWitness: applications/tools/eyewitness.md
+  - Service Enumeration:
+    - Overview: information-gathering/index.md
+    - DNS (53): information-gathering/service-analysis/dns-53.md
+    - Docker API (2375): information-gathering/service-analysis/docker-2375.md
+    - FTP (21): information-gathering/service-analysis/ftp-21.md
+    - IMAP (143, 993): information-gathering/service-analysis/imap.md
+    - IPMI (623): information-gathering/service-analysis/ipmi-623.md
+    - IKE/ISAKMP (500, 4500): information-gathering/service-analysis/isakmp-ike.md
+    - Kerberos (88): information-gathering/service-analysis/kerberos-88.md
+    - LDAP (389, 636): information-gathering/service-analysis/ldap.md
+    - MSSQL (1433): information-gathering/service-analysis/mssql-1433.md
+    - MySQL (3306): information-gathering/service-analysis/mysql-3306.md
+    - NFS (2049): information-gathering/service-analysis/nfs-2049.md
+    - Oracle TNS (1521): information-gathering/service-analysis/oracle-tns-1521.md
+    - POP3 (110, 995): information-gathering/service-analysis/pop3.md
+    - PostgreSQL (5432): information-gathering/service-analysis/postgresql-5432.md
+    - R-Services (512-514): information-gathering/service-analysis/r-services.md
+    - RDP (3389): information-gathering/service-analysis/rdp-3389.md
+    - Redis (6379): information-gathering/service-analysis/redis-6379.md
+    - Rsync (873): information-gathering/service-analysis/rsync-873.md
+    - SMB (139, 445): information-gathering/service-analysis/smb.md
+    - SMTP (25, 465, 587): information-gathering/service-analysis/smtp.md
+    - SNMP (161, 162): information-gathering/service-analysis/snmp.md
+    - SNMP Multiplexer (199): information-gathering/service-analysis/snmp-multiplexer.md
+    - SSH (22): information-gathering/service-analysis/ssh-22.md
+    - Telnet (23): information-gathering/service-analysis/telnet-23.md
+    - TFTP (69): information-gathering/service-analysis/tftp-69.md
+    - VNC (5900): information-gathering/service-analysis/vnc-5900.md
+    - WinRM (5985, 5986): information-gathering/service-analysis/winrm.md
   - Applications:
     - Overview: applications/index.md
-    - Enumeration & Analysis:
+    - Enumeration:
       - Directory & Page Fuzzing: applications/enumeration/directory-page-fuzzing.md
       - Service Identification: applications/enumeration/service-identification.md
       - Subdomain & Parameter Fuzzing: applications/enumeration/subdomain-parameter-fuzzing.md
@@ -110,19 +94,27 @@ nav:
       - OAuth Exploitation: applications/exploits/oauth-exploitation.md
       - SQLMap: applications/exploits/sqlmap.md
       - SSRF: applications/exploits/ssrf.md
+      - SSTI: applications/exploits/ssti.md
       - XSS: applications/exploits/xss.md
       - XXE: applications/exploits/xxe.md
-    - Tools:
-      - Burp Suite: applications/tools/burp-suite.md
-      - EyeWitness: applications/tools/eyewitness.md
-      - Nikto: applications/tools/nikto.md
-      - Responder: applications/tools/responder.md
+  - Exploitation:
+    - Overview: exploitation/index.md
+    - Binary Exploitation:
+      - Buffer Overflows: exploitation/binary/buffer-overflows.md
+      - ELF & DLL Analysis: exploitation/binary/elf-dll-analysis.md
+    - Credential Attacks:
+      - Brute-Force Cracking: exploitation/credentials/brute-force-cracking.md
+    - Shells:
+      - Bind & Reverse Shells: exploitation/shells/bind-reverse-shells.md
+      - Escaping Restricted Shells: exploitation/shells/escaping-restricted-shells.md
+      - Web Shells: exploitation/shells/web-shells.md
   - Privilege Escalation:
     - Overview: privilege-escalation/index.md
     - Linux:
       - Local Enumeration: privilege-escalation/linux/local-enumeration.md
       - Credential Hunting: privilege-escalation/linux/credential-hunting.md
       - Cron Job & SUID/GUID: privilege-escalation/linux/cron-suid-guid.md
+      - Capabilities, LD_PRELOAD & PATH: privilege-escalation/linux/capabilities-ldpreload.md
       - Kernel Exploitation: privilege-escalation/linux/kernel-exploitation.md
     - Windows:
       - Local Enumeration: privilege-escalation/windows/local-enumeration.md
@@ -136,11 +128,15 @@ nav:
       - ACL Abuse: privilege-escalation/active-directory/acl-abuse.md
       - DCSync: privilege-escalation/active-directory/dcsync.md
       - Silver & Golden Tickets: privilege-escalation/active-directory/silver-golden-tickets.md
-      - Persistence: privilege-escalation/active-directory/persistence.md
+  - Lateral Movement:
+    - Overview: lateral-movement/index.md
+    - Windows: lateral-movement/windows.md
+    - Active Directory: lateral-movement/active-directory.md
   - Persistence:
     - Overview: persistence/index.md
     - Linux: persistence/linux.md
     - Windows: persistence/windows.md
+    - Active Directory: privilege-escalation/active-directory/persistence.md
     - Backdoor SSH & WinRM: persistence/backdoor-ssh-winrm.md
     - DLL Injection & Services: persistence/dll-injection-malicious-services.md
     - Registry & Scheduled Tasks: persistence/registry-scheduled-tasks.md
@@ -154,16 +150,21 @@ nav:
     - Ligolo-ng & Chisel: port-forwarding/ligolo-chisel.md
   - Tools:
     - Overview: tools/index.md
-    - Bloodhound: tools/bloodhound.md
-    - Command-line Shells: tools/command-line-shells.md
-    - Impacket: tools/impacket.md
-    - Metasploit Resource Scripts: tools/metasploit-resource-scripts.md
-    - Mimikatz: tools/mimikatz.md
-    - NetExec: tools/netexec.md
-    - Nuclei: tools/nuclei.md
-    - Responder: tools/responder.md
-    - WMIexec: tools/wmiexec.md
+    - BloodHound: tools/bloodhound.md
+    - Burp Suite: applications/tools/burp-suite.md
     - cadaver: tools/cadaver.md
+    - Command-Line Shells: tools/command-line-shells.md
+    - Impacket: tools/impacket.md
     - kerbrute: tools/kerbrute.md
     - ldapsearch: tools/ldapsearch.md
+    - Metasploit: tools/metasploit.md
+    - Metasploit Resource Scripts: tools/metasploit-resource-scripts.md
+    - Mimikatz: tools/mimikatz.md
+    - MSFVenom: tools/msfvenom.md
+    - NetExec: tools/netexec.md
+    - Nikto: applications/tools/nikto.md
+    - Nuclei: tools/nuclei.md
+    - Password Cracking: tools/password-cracking.md
+    - Responder: tools/responder.md
     - rpcclient: tools/rpcclient.md
+    - WMIExec: tools/wmiexec.md
