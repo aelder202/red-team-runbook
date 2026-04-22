@@ -8,13 +8,8 @@
 ## Setting Shell Variables
 
 ```bash
-# bash/zsh
 export IP=10.10.10.10
 export URL=http://10.10.10.10
-
-# fish
-set -x IP 10.10.10.10
-set -x URL http://10.10.10.10
 ```
 
 ---
