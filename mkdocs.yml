@@ -35,14 +35,14 @@ plugins:
 
 nav:
   - Home: index.md
-  - Network Scanning & Recon:
+  - Recon:
     - Overview: network-scanning/index.md
     - Network Scanning: network-scanning/network-scanning.md
     - Reconnaissance: network-scanning/reconnaissance.md
     - Traffic Capture: network-scanning/traffic-capture.md
     - User & Host Enumeration: network-scanning/user-host-enumeration.md
     - EyeWitness: applications/tools/eyewitness.md
-  - Service Enumeration:
+  - Services:
     - Overview: information-gathering/index.md
     - DNS (53): information-gathering/service-analysis/dns-53.md
     - Docker API (2375): information-gathering/service-analysis/docker-2375.md
@@ -107,7 +107,7 @@ nav:
       - Bind & Reverse Shells: exploitation/shells/bind-reverse-shells.md
       - Escaping Restricted Shells: exploitation/shells/escaping-restricted-shells.md
       - Web Shells: exploitation/shells/web-shells.md
-  - Privilege Escalation:
+  - Priv Esc:
     - Overview: privilege-escalation/index.md
     - Linux:
       - Local Enumeration: privilege-escalation/linux/local-enumeration.md
@@ -143,7 +143,7 @@ nav:
     - Overview: data-exfiltration/index.md
     - File Transfer Techniques: data-exfiltration/file-transfer-techniques.md
     - Secure Transfers: data-exfiltration/secure-transfers.md
-  - Port Forwarding & Tunneling:
+  - Tunneling:
     - Overview: port-forwarding/index.md
     - Port Forwarding: port-forwarding/port-forwarding.md
     - Ligolo-ng & Chisel: port-forwarding/ligolo-chisel.md
