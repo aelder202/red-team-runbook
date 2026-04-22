@@ -26,11 +26,13 @@ Look for:
 whatweb http://10.10.10.10
 ```
 
-**Nmap + NSE**:
+**Unauthenticated REST API user enumeration**:
 
 ```bash
-nmap -p 80,443 --script http-wordpress-enum 10.10.10.10
+curl -s http://10.10.10.10/wp-json/wp/v2/users | jq
 ```
+
+Returns usernames (`slug` field) without authentication on most WordPress deployments — faster and quieter than wpscan.
 
 ---
 

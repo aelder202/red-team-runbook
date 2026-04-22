@@ -3,10 +3,13 @@
 !!! tip "Tip"
     After importing SharpHound data, run these queries immediately: "Shortest Paths to Domain Admins", "Find AS-REP Roastable Users", "Find Kerberoastable Users with Most Privileges". These cover 80% of HTB AD paths.
 
+!!! warning "BloodHound CE vs Legacy"
+    BloodHound Community Edition (CE) is the actively maintained version — runs via Docker Compose and exposes a web UI at `http://localhost:8080`. Legacy BloodHound (Electron app + local Neo4j) is no longer updated. Use CE on new installs: `curl -L https://ghst.ly/getbhce -o docker-compose.yml && docker compose up -d`. SharpHound and bloodhound-python data work with both — the collectors are unchanged.
+
 ---
 ## SharpHound Data Collection
 
-## Setup (.ps1)
+### Setup (.ps1)
 
 ```bash
 powershell -ep bypass
@@ -20,7 +23,7 @@ Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Temp\ -OutputPrefix 
 - Update `-OutputDirectory` to the path where SharpHound is located
 - Update `-OutputPrefix` to the target name — output file will be named `TARGET_<id>.zip`
 
-## Setup (.exe)
+### Setup (.exe)
 
 ```cmd
 SharpHound.exe -c all,gpolocalgroup
@@ -34,37 +37,43 @@ SharpHound.exe -c Session,LocalAdmin,ObjectProps
 
 Use this when attempting to stay low-noise in a monitored environment.
 
-## Output
+### Output
 
 Once SharpHound completes, a zip file is created in the specified directory. Download it to import into BloodHound.
 
 ---
 ## BloodHound UI
 
-### Setup using Kali (Preferred)
+### Python Collection (from Kali)
 
-Run the collection using bloodhound-python:
-
-```bash
-bloodhound-python -c all,Group,Session,DCOM,RDP,PSRemote,LoggedOn,Container,ObjectProps,ACL -d "example.com" -ns 10.10.10.10 -v -u <user> -p <pass> --zip
-```
-
-Start BloodHound:
+No binary drop needed on target — runs over the network:
 
 ```bash
-sudo neo4j start
-bloodhound
+bloodhound-python -c All -d example.com -ns 10.10.10.10 -u <user> -p <pass> --zip
+
+# Authenticated via NTLM hash
+bloodhound-python -c All -d example.com -ns 10.10.10.10 -u <user> --hashes :<ntlm-hash> --zip
+
+# Via NetExec (writes .zip to current dir)
+nxc ldap 10.10.10.10 -u <user> -p <pass> --bloodhound --collection All --dns-server 10.10.10.10
 ```
 
-### Uploading SharpHound Collection (File Ingest)
+### Start BloodHound CE
 
-Navigate to:
+```bash
+docker compose up -d    # from the CE install directory
+# then browse to http://localhost:8080 (default creds shown by docker on first run)
+```
+
+### Upload Collection Data
+
+In the CE UI, navigate to:
 
 ```
 http://localhost:8080/ui/administration/file-ingest
 ```
 
-Choose `Upload File(s)` and select the SharpHound zip.
+Click `Upload File(s)` and drop in the SharpHound/bloodhound-python zip.
 
 ---
 ## Common Abuse Paths Mapped by BloodHound

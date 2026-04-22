@@ -33,6 +33,9 @@ GET <key>               # read a key value
 
 If Redis can write files and SSH is running:
 
+!!! warning "Watch out"
+    `FLUSHALL` wipes the entire Redis database. Fine on a CTF box — on a real engagement, this is a service-disrupting action. Document the operation, get explicit authorization first, and if possible snapshot the keyspace with `SAVE` and copy the RDB file before flushing. Consider using a unique key name without `FLUSHALL` unless the target key must start at offset zero.
+
 ```bash
 # Generate a key pair
 ssh-keygen -t rsa -f /tmp/redis_key

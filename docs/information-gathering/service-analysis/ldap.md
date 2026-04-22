@@ -51,8 +51,8 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
 ## CrackMapExec
 
 ```bash
-crackmapexec ldap 10.10.10.10 -u <user> -p <pass> --users
-crackmapexec ldap 10.10.10.10 -u <user> -H <hash>
+nxc ldap 10.10.10.10 -u <user> -p <pass> --users
+nxc ldap 10.10.10.10 -u <user> -H <hash>
 ```
 
 ---

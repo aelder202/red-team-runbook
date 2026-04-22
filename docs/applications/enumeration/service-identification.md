@@ -35,10 +35,22 @@ whatweb -a 3 http://10.10.10.10
 
 - `-a 3`: Aggressive scanning mode
 
-### Wappalyzer
+### httpx (tech detection)
 
 ```sh
-wappalyzer-cli https://example.com
+httpx -u https://example.com -tech-detect -title -status-code -server
+```
+
+Run against a list of targets piped from `subfinder` or a file:
+
+```sh
+subfinder -d example.com -silent | httpx -tech-detect -title -status-code
+```
+
+### webanalyze
+
+```sh
+webanalyze -host https://example.com -crawl 2
 ```
 
 ---

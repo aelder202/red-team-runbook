@@ -21,6 +21,21 @@ kerbrute userenum -d example.com --dc 10.10.10.10 /usr/share/seclists/Usernames/
 
 ---
 
+## Password Spraying
+
+Validate a single password against every user in one shot. Significantly stealthier than SMB spraying — Kerberos pre-auth failures log Event ID 4771 (not 4625 like SMB), and most SIEM rules are tuned to SMB lockouts first.
+
+```bash
+kerbrute passwordspray -d example.com --dc 10.10.10.10 users.txt 'Winter2024!'
+```
+
+To spray a small credential set without triggering lockouts, respect the domain lockout threshold (`nxc smb 10.10.10.10 -u '' -p '' --pass-pol` or query from LDAP) and keep attempts well under it.
+
+!!! warning "Watch out"
+    Even with low attempt counts, spraying generates enough 4771s to stand out if the blue team is watching pre-auth failures. On monitored environments, limit to one spray per password and pull user lists from existing LDAP/BloodHound data rather than kerbrute userenum, which itself generates 4768s per attempt.
+
+---
+
 ## ASREPRoasting (No Credentials)
 
 Accounts with pre-authentication disabled return a crackable AS-REP hash without any password.

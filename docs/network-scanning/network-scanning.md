@@ -5,6 +5,24 @@
 
 ---
 
+## Host Discovery (Local Segment)
+
+On an internal engagement where you have L2 access to the target subnet, ARP is faster and more reliable than ICMP sweeps — every live host on the segment must answer ARP.
+
+```bash
+sudo arp-scan -l                        # auto-detect interface and subnet
+sudo arp-scan 192.168.1.0/24
+sudo netdiscover -r 192.168.1.0/24
+```
+
+For remote subnets, fall back to nmap ping sweeps:
+
+```bash
+nmap -sn -PE -PA21,23,80,3389 10.10.10.0/24
+```
+
+---
+
 ## Phase 1: Quick Scan
 
 Hit the top 1000 ports and identify services fast. Run this first, then start enumerating immediately.

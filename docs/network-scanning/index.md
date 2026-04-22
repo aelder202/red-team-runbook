@@ -86,16 +86,17 @@ See [Traffic Capture](traffic-capture.md) for Wireshark filters and protocol-spe
 
 ---
 
-### 5. User & Host Enumeration
+### 5. Unauthenticated Network Enumeration
 
-Once you have a foothold or access to the network, enumerate users and internal hostnames.
+Once you have network access, enumerate users and hosts through null sessions and anonymous binds before attempting any authentication.
 
 ```bash
-nxc smb 10.10.10.0/24 --gen-relay-list alive.txt   # find SMB hosts
+nxc smb 10.10.10.0/24 --gen-relay-list alive.txt    # find SMB hosts
 nxc smb 10.10.10.10 -u '' -p '' --users             # null session user enum
+rpcclient -U "" -N 10.10.10.10                      # anonymous RPC
 ```
 
-See [User & Host Enumeration](user-host-enumeration.md) for RPC, LDAP, and Kerberos-based user enumeration.
+Protocol-specific enumeration (SMB, LDAP, Kerberos, SMTP, SNMP, etc.) lives in the [Services](../information-gathering/index.md) section — each port has its own page with the relevant commands.
 
 ---
 

@@ -28,7 +28,7 @@ impacket-mssqlclient 'EXAMPLE/username':'password'@10.10.10.10 -windows-auth
 ## Brute Force
 
 ```bash
-crackmapexec mssql 10.10.10.10 -u users.txt -p passwords.txt
+nxc mssql 10.10.10.10 -u users.txt -p passwords.txt
 hydra -L users.txt -P passwords.txt mssql://10.10.10.10
 ```
 

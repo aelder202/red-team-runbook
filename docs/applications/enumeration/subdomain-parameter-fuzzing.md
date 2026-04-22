@@ -30,14 +30,13 @@ amass enum -passive -d example.com
 gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
 ```
 
-### ffuf
+### ffuf (vhost fuzzing)
 
 ```sh
-ffuf -u 'http://example.com' -H 'Host: FUZZ.example.com' -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+ffuf -u 'http://example.com' -H 'Host: FUZZ.example.com' -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -fs <baseline-size>
 ```
 
-- `-fc 301` → Filters out HTTP 301 responses.
-- `-fs` → Filters responses by size.
+Capture the baseline response size for the default host first (wildcard DNS returns 200 for everything), then filter it out with `-fs`. You can also filter by word or line count: `-fw <n>` / `-fl <n>`.
 
 ---
 

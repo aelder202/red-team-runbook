@@ -21,7 +21,7 @@ mysql -h 10.10.10.10 -u root -p
 ```
 
 !!! tip ""
-    If you get a TLS error, add `--skip-ssl-verify-server-cert`.
+    If you get a TLS error, add `--ssl-mode=DISABLED` (MySQL 5.7+) or `--skip-ssl` (MariaDB).
 
 ---
 
@@ -29,7 +29,6 @@ mysql -h 10.10.10.10 -u root -p
 
 ```bash
 hydra -L users.txt -P passwords.txt mysql://10.10.10.10
-crackmapexec mssql 10.10.10.10 -u users.txt -p passwords.txt
 ```
 
 ---

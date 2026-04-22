@@ -40,18 +40,20 @@ nav:
     - Network Scanning: network-scanning/network-scanning.md
     - Reconnaissance: network-scanning/reconnaissance.md
     - Traffic Capture: network-scanning/traffic-capture.md
-    - User & Host Enumeration: network-scanning/user-host-enumeration.md
     - EyeWitness: applications/tools/eyewitness.md
   - Services:
     - Overview: information-gathering/index.md
     - DNS (53): information-gathering/service-analysis/dns-53.md
     - Docker API (2375): information-gathering/service-analysis/docker-2375.md
+    - Elasticsearch (9200): information-gathering/service-analysis/elasticsearch-9200.md
     - FTP (21): information-gathering/service-analysis/ftp-21.md
+    - HTTP/HTTPS (80, 443): information-gathering/service-analysis/http-80-443.md
     - IMAP (143, 993): information-gathering/service-analysis/imap.md
     - IPMI (623): information-gathering/service-analysis/ipmi-623.md
     - IKE/ISAKMP (500, 4500): information-gathering/service-analysis/isakmp-ike.md
     - Kerberos (88): information-gathering/service-analysis/kerberos-88.md
     - LDAP (389, 636): information-gathering/service-analysis/ldap.md
+    - MongoDB (27017): information-gathering/service-analysis/mongodb-27017.md
     - MSSQL (1433): information-gathering/service-analysis/mssql-1433.md
     - MySQL (3306): information-gathering/service-analysis/mysql-3306.md
     - NFS (2049): information-gathering/service-analysis/nfs-2049.md
@@ -109,6 +111,7 @@ nav:
       - Web Shells: exploitation/shells/web-shells.md
   - Priv Esc:
     - Overview: privilege-escalation/index.md
+    - Situational Awareness: privilege-escalation/situational-awareness.md
     - Linux:
       - Local Enumeration: privilege-escalation/linux/local-enumeration.md
       - Credential Hunting: privilege-escalation/linux/credential-hunting.md
