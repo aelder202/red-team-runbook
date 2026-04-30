@@ -1,0 +1,32 @@
+# MkDocs build output
+site/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# AI agent / assistant local storage (not shared)
+AGENTS.md
+.claude/
+.claude.local/
+CLAUDE.local.md
+.cursor/
+.cursorrules
+.aider*
+.continue/
+.copilot/
+.windsurf/
+.codeium/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
