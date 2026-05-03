@@ -14,6 +14,7 @@ rpcclient -U <user>%<password> <target>
 Examples:
 
 ```bash
+rpcclient -U "%" 10.10.10.10
 rpcclient -U "guest%" 10.10.10.10
 rpcclient -U "john%Winter2023!" 10.10.10.10
 rpcclient -N 10.10.10.10             # Null session

