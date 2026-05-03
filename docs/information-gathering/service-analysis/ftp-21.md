@@ -11,14 +11,24 @@
 nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd-backdoor 10.10.10.10
 ```
 
+!!! tip "CVE-2022-22836"
+    CoreFTP Server version 727 and below is vulnerable to [CVE-2022-22836](https://www.exploit-db.com/exploits/50652), an authenticated exploit that allows for file directory traversal using a simple cURL request.
+
+---
+
+## FTP Login Syntax
+
+```bash
+ftp user@IP
+```
+
 ---
 
 ## Anonymous Login
 
 ```bash
-ftp 10.10.10.10
-# Username: anonymous
-# Password: anonymous
+ftp anonymous@10.10.10.10
+# Password: anonymous OR anon
 
 ftp> ls -la
 ftp> ls -laR       # recursive listing

@@ -9,6 +9,8 @@
 ---
 
 ## Hydra
+!!! tip "Non-Standart Port"
+    Found a service running on a non-standard port? Use `-s x` to signify the port to work with hydra's built-in protocol tools. Example: `hydra -s 2121 -L users.list -P passwords.list ftp://10.10.10.10`
 
 ### HTTP Basic Authentication
 

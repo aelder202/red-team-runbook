@@ -11,6 +11,10 @@
 nxc <protocol> <target> [auth] [action]
 ```
 
+!!! tip "Non-standard Port"
+    Found a service running on a non-standard port? Use `--port x` to specify the port of the target.
+    Example: `nxc ftp -u user.list -p pass.list --port 2121`
+
 Common target forms:
 
 | Target type | Example |
