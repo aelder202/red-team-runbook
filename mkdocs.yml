@@ -1,9 +1,10 @@
 site_name: Red Team Runbook
 site_description: A practitioner's reference for offensive security operations — built from real engagements and lab work.
-site_author: aelder202
+site_author: Taylor Elder
 site_url: https://taylorelder.com/red-team-runbook/
 repo_url: https://github.com/aelder202/red-team-runbook
 repo_name: aelder202/red-team-runbook
+copyright: Copyright &copy; Taylor Elder
 
 theme:
   name: material
@@ -19,9 +20,30 @@ theme:
     - search.highlight
     - content.code.copy
 
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  generator: false
+  social:
+    - icon: fontawesome/solid/globe
+      link: https://taylorelder.com
+      name: Portfolio — taylorelder.com
+    - icon: fontawesome/brands/github
+      link: https://github.com/aelder202
+      name: GitHub
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/taylor-elder/
+      name: LinkedIn
+
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.superfences
   - pymdownx.highlight:
       anchor_linenums: true
@@ -113,17 +135,20 @@ nav:
     - Overview: privilege-escalation/index.md
     - Situational Awareness: privilege-escalation/situational-awareness.md
     - Linux:
+      - Overview: privilege-escalation/linux/index.md
       - Local Enumeration: privilege-escalation/linux/local-enumeration.md
       - Credential Hunting: privilege-escalation/linux/credential-hunting.md
       - Cron Job & SUID/GUID: privilege-escalation/linux/cron-suid-guid.md
       - Capabilities, LD_PRELOAD & PATH: privilege-escalation/linux/capabilities-ldpreload.md
       - Kernel Exploitation: privilege-escalation/linux/kernel-exploitation.md
     - Windows:
+      - Overview: privilege-escalation/windows/index.md
       - Local Enumeration: privilege-escalation/windows/local-enumeration.md
       - Credential Dumping: privilege-escalation/windows/credential-dumping.md
       - Privilege Abuse: privilege-escalation/windows/privilege-abuse.md
       - Service Exploitation: privilege-escalation/windows/service-exploitation.md
     - Active Directory:
+      - Overview: privilege-escalation/active-directory/index.md
       - Domain Enumeration: privilege-escalation/active-directory/domain-enumeration.md
       - AS-REP Roasting: privilege-escalation/active-directory/asrep-roasting.md
       - Kerberoasting: privilege-escalation/active-directory/kerberoasting.md
