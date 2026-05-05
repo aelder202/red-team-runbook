@@ -1,0 +1,16 @@
+/* Match the portfolio (taylorelder.com) accent palette exactly. */
+:root {
+  --md-primary-fg-color: #18b87a;
+  --md-primary-fg-color--light: #36d399;
+  --md-primary-fg-color--dark: #0c8e5c;
+  --md-accent-fg-color: #f3b44e;
+  --md-accent-fg-color--transparent: rgba(243, 180, 78, 0.1);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #18b87a;
+  --md-primary-fg-color--light: #36d399;
+  --md-primary-fg-color--dark: #0c8e5c;
+  --md-accent-fg-color: #f3b44e;
+  --md-typeset-a-color: #36d399;
+}
