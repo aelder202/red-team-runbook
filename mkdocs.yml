@@ -195,4 +195,3 @@ nav:
     - Password Cracking: tools/password-cracking.md
     - Responder: tools/responder.md
     - rpcclient: tools/rpcclient.md
-    - WMIExec: tools/wmiexec.md

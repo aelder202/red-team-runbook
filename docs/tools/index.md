@@ -18,7 +18,6 @@ Quick-reference pages for the core offensive security toolkit. For protocol-spec
 | [Kerbrute](kerbrute.md) | Kerberos user enumeration and password spraying without lockout |
 | [ldapsearch](ldapsearch.md) | Manual LDAP queries for users, groups, computers, and policy |
 | [rpcclient](rpcclient.md) | SMB/RPC enumeration — user list, SID resolution, null sessions |
-| [WMIExec](wmiexec.md) | Stealthy remote command execution via WMI (no service creation) |
 | [Nuclei](nuclei.md) | Template-based vulnerability scanning for known CVEs and misconfigs |
 | [Burp Suite](../applications/tools/burp-suite.md) | Web proxy — intercept, replay, and fuzz HTTP requests |
 | [Nikto](../applications/tools/nikto.md) | Web server misconfiguration and vulnerability scanning |

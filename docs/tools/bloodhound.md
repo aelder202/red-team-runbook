@@ -83,7 +83,7 @@ Click `Upload File(s)` and drop in the SharpHound/bloodhound-python zip.
 | ACL Abuse | Exploit GenericWrite/All permissions on users/groups | PowerView, SharpHound |
 | GPO Abuse | Edit group policy on target OUs | Gptpwnt.py |
 | Kerberoasting | Request and crack SPNs to recover service account creds | Rubeus, Impacket |
-| AS-REP Roasting | Crack accounts without preauth | GetNPUsers.py |
+| AS-REP Roasting | Crack accounts without preauth | impacket-GetNPUsers |
 | Constrained Delegation | Abuse s4u2proxy for impersonation | Rubeus, Impacket |
 | Unconstrained Delegation | Steal TGT from LSASS on a machine with unconstrained delegation | Rubeus, Mimikatz |
 | Shadow Credentials | Add `altSecurityIdentities` attribute | Whisker |

