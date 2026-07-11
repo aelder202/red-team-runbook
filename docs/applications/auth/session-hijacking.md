@@ -1,7 +1,7 @@
 # Session Hijacking
 
 !!! tip "Tip"
-    Session tokens in URL parameters (not cookies) are the easiest to steal — look for `?session=`, `?token=`, or `?sid=` in links. Check Referer header leakage too.
+    Session tokens in URL parameters (not cookies) are the easiest to steal. Look for `?session=`, `?token=`, or `?sid=` in links. Check Referer header leakage too.
 
 !!! warning "Watch out"
     HttpOnly cookies can't be stolen via XSS. If the cookie has HttpOnly, pivot to CSRF or session fixation instead of cookie theft.

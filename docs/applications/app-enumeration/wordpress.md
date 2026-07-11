@@ -1,7 +1,7 @@
 # WordPress Attack Surface
 
 !!! tip "Tip"
-    `wpscan --url http://10.10.10.10 --enumerate u` to enumerate users first — then target those accounts. Check `/wp-json/wp/v2/users` for unauthenticated user enumeration even if wpscan is blocked.
+    `wpscan --url http://10.10.10.10 --enumerate u` to enumerate users first, then target those accounts. Check `/wp-json/wp/v2/users` for unauthenticated user enumeration even if wpscan is blocked.
 
 !!! warning "Watch out"
     wpscan's plugin/theme detection is noisy and slow. Run `--enumerate p` only after confirming the scan won't trip rate limiting or WAF rules.
@@ -32,7 +32,7 @@ whatweb http://10.10.10.10
 curl -s http://10.10.10.10/wp-json/wp/v2/users | jq
 ```
 
-Returns usernames (`slug` field) without authentication on most WordPress deployments — faster and quieter than wpscan.
+Returns usernames (`slug` field) without authentication on most WordPress deployments, faster and quieter than wpscan.
 
 ---
 

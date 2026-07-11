@@ -1,10 +1,10 @@
 # WebDAV Testing
 
 !!! tip "Tip"
-    Use `cadaver` for interactive WebDAV access or `davtest` to quickly test which file types can be uploaded. If PUT is allowed, try uploading `.asp`, `.aspx`, `.php` — whichever matches the server stack.
+    Use `cadaver` for interactive WebDAV access or `davtest` to quickly test which file types can be uploaded. If PUT is allowed, try uploading `.asp`, `.aspx`, `.php`, whichever matches the server stack.
 
 !!! warning "Watch out"
-    WebDAV PROPFIND can enumerate the directory structure even without write access — always check what's exposed before focusing on upload attacks.
+    WebDAV PROPFIND can enumerate the directory structure even without write access. Always check what's exposed before focusing on upload attacks.
 
 ---
 

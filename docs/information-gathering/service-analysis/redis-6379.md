@@ -1,7 +1,7 @@
 # Redis (6379)
 
 !!! tip "Start here"
-    Connect without credentials: `redis-cli -h 10.10.10.10`. Run `INFO` — if it responds, you have unauthenticated access. Check if you can write to disk with `CONFIG SET dir` and `CONFIG SET dbfilename` — this is the path to SSH key injection or webshell drops.
+    Connect without credentials: `redis-cli -h 10.10.10.10`. Run `INFO`, if it responds, you have unauthenticated access. Check if you can write to disk with `CONFIG SET dir` and `CONFIG SET dbfilename`, this is the path to SSH key injection or webshell drops.
 
 ---
 
@@ -34,7 +34,7 @@ GET <key>               # read a key value
 If Redis can write files and SSH is running:
 
 !!! warning "Watch out"
-    `FLUSHALL` wipes the entire Redis database. Fine on a CTF box — on a real engagement, this is a service-disrupting action. Document the operation, get explicit authorization first, and if possible snapshot the keyspace with `SAVE` and copy the RDB file before flushing. Consider using a unique key name without `FLUSHALL` unless the target key must start at offset zero.
+    `FLUSHALL` wipes the entire Redis database. Fine on a CTF box, on a real engagement, this is a service-disrupting action. Document the operation, get explicit authorization first, and if possible snapshot the keyspace with `SAVE` and copy the RDB file before flushing. Consider using a unique key name without `FLUSHALL` unless the target key must start at offset zero.
 
 ```bash
 # Generate a key pair
@@ -87,4 +87,4 @@ hydra -P /usr/share/wordlists/rockyou.txt redis://10.10.10.10
 ```
 
 !!! tip "Real-world"
-    Redis without a password is still extremely common — it was designed as an in-memory cache on trusted internal networks, and auth was an afterthought. The SSH key injection technique works reliably when Redis runs as root (common on misconfigured servers). Even when it's not root, the web shell or cron path is often viable. Always check what user Redis is running as with `INFO server` before choosing an attack path.
+    Redis without a password is still extremely common, it was designed as an in-memory cache on trusted internal networks, and auth was an afterthought. The SSH key injection technique works reliably when Redis runs as root (common on misconfigured servers). Even when it's not root, the web shell or cron path is often viable. Always check what user Redis is running as with `INFO server` before choosing an attack path.

@@ -1,7 +1,7 @@
 # Credential Brute Forcing
 
 !!! tip "Tip"
-    Username enumeration via timing or error message differences is often easier than brute-forcing — confirm valid usernames first, then target those with a password list.
+    Username enumeration via timing or error message differences is often easier than brute-forcing. Confirm valid usernames first, then target those with a password list.
 
 !!! warning "Watch out"
     Always check for account lockout before running hydra or Burp Intruder. A single locked account will alert a blue team immediately. Test with 2-3 attempts on a throwaway account first.

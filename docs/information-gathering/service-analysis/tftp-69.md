@@ -1,7 +1,7 @@
 # TFTP (69)
 
 !!! tip "Start here"
-    TFTP has no authentication — fetch common config files immediately: `atftp --get --remote-file running-config --local-file running-config 10.10.10.10`. Network device configs often contain SNMP community strings, local credentials, and VPN pre-shared keys.
+    TFTP has no authentication, fetch common config files immediately: `atftp --get --remote-file running-config --local-file running-config 10.10.10.10`. Network device configs often contain SNMP community strings, local credentials, and VPN pre-shared keys.
 
 ---
 
@@ -55,4 +55,4 @@ tftp> put malicious_pxeboot.efi
 ```
 
 !!! tip "Real-world"
-    TFTP mostly shows up on network gear (Cisco, Juniper) used for config backups, and on Windows Deployment Services for PXE. The config backup case is straightforward — pull and read. PXE write access is rare but devastating: any device that PXE boots will execute your image on reboot.
+    TFTP mostly shows up on network gear (Cisco, Juniper) used for config backups, and on Windows Deployment Services for PXE. The config backup case is straightforward. Pull and read. PXE write access is rare but devastating: any device that PXE boots will execute your image on reboot.

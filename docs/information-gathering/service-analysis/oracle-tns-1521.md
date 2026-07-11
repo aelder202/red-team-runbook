@@ -1,7 +1,7 @@
 # Oracle TNS (1521)
 
 !!! tip "Start here"
-    Enumerate SIDs first — you can't connect without one: `odat.py sidguesser -s 10.10.10.10`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@10.10.10.10:1521/<SID>`.
+    Enumerate SIDs first, you can't connect without one: `odat.py sidguesser -s 10.10.10.10`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@10.10.10.10:1521/<SID>`.
 
 ---
 
@@ -79,4 +79,4 @@ END;
 ```
 
 !!! tip "Real-world"
-    Oracle is common in enterprise environments and often runs with overprivileged service accounts. SID enumeration is the critical first step — without the right SID, you can't authenticate at all. `SCOTT:tiger` is ancient but still shows up on legacy installations that were never hardened.
+    Oracle is common in enterprise environments and often runs with overprivileged service accounts. SID enumeration is the critical first step, without the right SID, you can't authenticate at all. `SCOTT:tiger` is ancient but still shows up on legacy installations that were never hardened.

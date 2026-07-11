@@ -1,7 +1,7 @@
 # Kerberos (88)
 
 !!! tip "Start here"
-    Port 88 open means you're looking at a domain controller. Start with username enumeration (no creds needed): `kerbrute userenum -d example.com --dc 10.10.10.10 userlist.txt`. Then immediately try ASREPRoasting — accounts without pre-auth required hand you crackable hashes.
+    Port 88 open means you're looking at a domain controller. Start with username enumeration (no creds needed): `kerbrute userenum -d example.com --dc 10.10.10.10 userlist.txt`. Then immediately try ASREPRoasting, accounts without pre-auth required hand you crackable hashes.
 
 ---
 
@@ -23,7 +23,7 @@ kerbrute userenum -d example.com --dc 10.10.10.10 /usr/share/seclists/Usernames/
 
 ## Password Spraying
 
-Validate a single password against every user in one shot. Significantly stealthier than SMB spraying — Kerberos pre-auth failures log Event ID 4771 (not 4625 like SMB), and most SIEM rules are tuned to SMB lockouts first.
+Validate a single password against every user in one shot. Significantly stealthier than SMB spraying. Kerberos pre-auth failures log Event ID 4771 (not 4625 like SMB), and most SIEM rules are tuned to SMB lockouts first.
 
 ```bash
 kerbrute passwordspray -d example.com --dc 10.10.10.10 users.txt 'Winter2024!'
@@ -52,7 +52,7 @@ hashcat -m 18200 asrep-hashes.txt /usr/share/wordlists/rockyou.txt
 
 ## Kerberoasting (Requires Valid Credentials)
 
-Request TGS tickets for accounts with SPNs — the encrypted tickets are crackable offline.
+Request TGS tickets for accounts with SPNs, the encrypted tickets are crackable offline.
 
 ```bash
 GetUserSPNs.py example.com/<user>:<pass> -dc-ip 10.10.10.10 -request -outputfile tgs-tickets.txt
@@ -63,4 +63,4 @@ hashcat -m 13100 tgs-tickets.txt /usr/share/wordlists/rockyou.txt
 ```
 
 !!! tip "Real-world"
-    ASREPRoasting is low-noise and requires zero credentials — run it as soon as you have a username list. Kerberoasting requires a foothold but is very effective against service accounts that haven't had their passwords rotated. Both attacks are noisy in event logs (4768/4769) but rarely alert on modern deployments unless specifically tuned.
+    ASREPRoasting is low-noise and requires zero credentials. Run it as soon as you have a username list. Kerberoasting requires a foothold but is very effective against service accounts that haven't had their passwords rotated. Both attacks are noisy in event logs (4768/4769) but rarely alert on modern deployments unless specifically tuned.

@@ -1,10 +1,10 @@
 # AS-REP Roasting
 
 !!! tip "Tip"
-    Always check for AS-REP roastable accounts early — it requires no credentials. `impacket-GetNPUsers example.com/ -dc-ip 10.10.10.10 -request` enumerates from Linux with no auth if null sessions work.
+    Always check for AS-REP roastable accounts early, it requires no credentials. `impacket-GetNPUsers example.com/ -dc-ip 10.10.10.10 -request` enumerates from Linux with no auth if null sessions work.
 
 !!! note "From the lab"
-    AS-REP roasting often finds accounts misconfigured during provisioning scripts. Check service accounts and CI/CD runner accounts first — pre-auth is commonly disabled for convenience.
+    AS-REP roasting often finds accounts misconfigured during provisioning scripts. Check service accounts and CI/CD runner accounts first, pre-auth is commonly disabled for convenience.
 
 ---
 

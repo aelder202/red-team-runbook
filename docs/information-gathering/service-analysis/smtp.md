@@ -50,4 +50,4 @@ hydra -L users.txt -P passwords.txt smtp://10.10.10.10
 ```
 
 !!! tip "Real-world"
-    SMTP user enumeration is a solid early step — VRFY and EXPN are often left enabled on internal mail servers. An open relay is worth documenting as a finding even if you don't exploit it; it's straightforwardly demonstrable (send a spoofed email) and clients understand the risk immediately.
+    SMTP user enumeration is a solid early step. VRFY and EXPN are often left enabled on internal mail servers. An open relay is worth documenting as a finding even if you don't exploit it; it's straightforwardly demonstrable (send a spoofed email) and clients understand the risk immediately.

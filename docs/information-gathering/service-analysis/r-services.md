@@ -41,4 +41,4 @@ rexec 10.10.10.10 -l <user> -p <pass> "id"
 ```
 
 !!! tip "Real-world"
-    R-services predate SSH and have no encryption — all traffic including credentials is cleartext. They're nearly extinct on modern systems but occasionally show up on legacy Unix hosts, embedded devices, or old network appliances. When you find them, trust-based access is the first thing to check before touching brute force.
+    R-services predate SSH and have no encryption, all traffic including credentials is cleartext. They're nearly extinct on modern systems but occasionally show up on legacy Unix hosts, embedded devices, or old network appliances. When you find them, trust-based access is the first thing to check before touching brute force.

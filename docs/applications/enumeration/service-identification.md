@@ -1,10 +1,10 @@
 # Service Identification
 
 !!! tip "Tip"
-    Response headers often reveal framework and version: `X-Powered-By`, `Server`, `X-Generator`. Also check error pages — frameworks leak version info in stack traces.
+    Response headers often reveal framework and version: `X-Powered-By`, `Server`, `X-Generator`. Also check error pages, frameworks leak version info in stack traces.
 
 !!! warning "Watch out"
-    Don't rely solely on HTTP headers for fingerprinting — they can be spoofed or stripped. Confirm with behavior-based checks (error message format, cookie names, response timing).
+    Don't rely solely on HTTP headers for fingerprinting, they can be spoofed or stripped. Confirm with behavior-based checks (error message format, cookie names, response timing).
 
 ---
 

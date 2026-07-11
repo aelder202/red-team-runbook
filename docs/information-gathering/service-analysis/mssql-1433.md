@@ -1,7 +1,7 @@
 # MSSQL (1433)
 
 !!! tip "Start here"
-    Try SA with a blank password first: `impacket-mssqlclient sa:@10.10.10.10`. If you get in, run `xp_cmdshell 'whoami'` — it's often already enabled on unmanaged instances. If not, enable it with `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
+    Try SA with a blank password first: `impacket-mssqlclient sa:@10.10.10.10`. If you get in, run `xp_cmdshell 'whoami'`, it's often already enabled on unmanaged instances. If not, enable it with `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
 
 !!! warning "Watch out"
     `xp_cmdshell` execution is logged. Use it to establish a shell quickly, then move to a less monitored method.
@@ -92,4 +92,4 @@ SELECT * FROM table_name;                                           -- dump tabl
 ```
 
 !!! tip "Real-world"
-    SA with a blank password is more common than it should be, especially on developer workstations and legacy installations. On internal assessments, also check for linked servers (`SELECT * FROM sys.servers`) — a low-privilege MSSQL instance linked to a high-privilege one is a common lateral movement path.
+    SA with a blank password is more common than it should be, especially on developer workstations and legacy installations. On internal assessments, also check for linked servers (`SELECT * FROM sys.servers`), a low-privilege MSSQL instance linked to a high-privilege one is a common lateral movement path.

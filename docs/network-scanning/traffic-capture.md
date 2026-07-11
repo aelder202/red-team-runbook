@@ -1,7 +1,7 @@
 # Traffic Capture
 
 !!! tip "Tip"
-    Always specify an interface explicitly (`-i tun0` or `-i eth0`) — defaulting to `any` on a busy network produces unmanageable output. Use `-w capture.pcap` to write to disk and analyze offline with Wireshark or `tshark`.
+    Always specify an interface explicitly (`-i tun0` or `-i eth0`), defaulting to `any` on a busy network produces unmanageable output. Use `-w capture.pcap` to write to disk and analyze offline with Wireshark or `tshark`.
 
 ## Quick Interface Triage
 
@@ -25,11 +25,11 @@ sudo tcpdump -i tun0 port 80
 
 Common options:
 
-- `-w capture.pcap` — Save output to a file for later analysis
-- `-v` — Verbose output
-- `-vv` — More verbose output, including ASCII data
-- `icmp` — Filter ICMP packets only
-- `-n` — Do not resolve IP addresses to hostnames
+- `-w capture.pcap`: Save output to a file for later analysis
+- `-v`: Verbose output
+- `-vv`: More verbose output, including ASCII data
+- `icmp`: Filter ICMP packets only
+- `-n`: Do not resolve IP addresses to hostnames
 
 ---
 
@@ -87,7 +87,7 @@ tshark -r output.pcap
 
 ## tshark Display Filters
 
-`tshark` uses the same display filter syntax as Wireshark — more expressive than tcpdump BPF filters. Read a pcap and extract only what matters:
+`tshark` uses the same display filter syntax as Wireshark, more expressive than tcpdump BPF filters. Read a pcap and extract only what matters:
 
 ```bash
 # All HTTP requests with URI

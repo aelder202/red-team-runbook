@@ -1,7 +1,7 @@
 # MSFVenom
 
 !!! tip ""
-    For Windows targets with AV, use a staged payload (`windows/x64/meterpreter/reverse_tcp`) over stageless (`windows/x64/meterpreter_reverse_tcp`) — staged payloads are smaller and easier to obfuscate. Pair with `shikata_ga_nai` or a custom XOR encoder.
+    For Windows targets with AV, use a staged payload (`windows/x64/meterpreter/reverse_tcp`) over stageless (`windows/x64/meterpreter_reverse_tcp`), staged payloads are smaller and easier to obfuscate. Pair with `shikata_ga_nai` or a custom XOR encoder.
 
 !!! warning "Watch out"
     Output format matters: `-f exe` for Windows, `-f elf` for Linux, `-f raw` for shellcode injection. Wrong format = silent failure on execution.

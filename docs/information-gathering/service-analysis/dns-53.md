@@ -1,7 +1,7 @@
 # DNS (53)
 
 !!! tip "Start here"
-    Try zone transfer first: `dig axfr @10.10.10.10 example.com`. Internal DNS servers are commonly misconfigured and will hand you the full record set — subdomains, internal IPs, mail servers, everything.
+    Try zone transfer first: `dig axfr @10.10.10.10 example.com`. Internal DNS servers are commonly misconfigured and will hand you the full record set, subdomains, internal IPs, mail servers, everything.
 
 ---
 
@@ -27,7 +27,7 @@ nmap --script=dns-zone-transfer -p 53 10.10.10.10
 ## Subdomain Enumeration
 
 ```bash
-# Passive — no direct contact with target
+# Passive - no direct contact with target
 subfinder -d example.com
 amass enum -passive -d example.com
 
@@ -37,7 +37,7 @@ dnsenum --dnsserver 10.10.10.10 -f /usr/share/seclists/Discovery/DNS/subdomains-
 ```
 
 !!! tip "Real-world"
-    Start with passive enumeration (`subfinder`, `amass -passive`) before touching the target's DNS server — passive techniques are invisible to the client's logging. Save active brute force for later or when passive results are thin.
+    Start with passive enumeration (`subfinder`, `amass -passive`) before touching the target's DNS server, passive techniques are invisible to the client's logging. Save active brute force for later or when passive results are thin.
 
 ---
 

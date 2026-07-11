@@ -1,7 +1,7 @@
 # Directory & Page Fuzzing
 
 !!! tip "Wordlist selection"
-    Start with `raft-medium-directories.txt` for general discovery. Use `common.txt` if you need speed over coverage. `directory-list-2.3-big.txt` only when you've confirmed there's something worth finding — it's slow. For API endpoints, use `api/api-endpoints.txt` from SecLists.
+    Start with `raft-medium-directories.txt` for general discovery. Use `common.txt` if you need speed over coverage. `directory-list-2.3-big.txt` only when you've confirmed there's something worth finding, it's slow. For API endpoints, use `api/api-endpoints.txt` from SecLists.
 
 !!! warning "Watch out"
     Always filter 404s (`--filter-status 404` / `-fc 404`) and the default page size if the app returns 200 for everything. Filter by response size with `--filter-size <n>` (feroxbuster) or `-fs <n>` (ffuf) when the app returns the same "not found" body for every miss.
@@ -10,7 +10,7 @@
 
 ## feroxbuster
 
-The fastest and most ergonomic tool for general directory busting — recursion, auto-filtering, and progress indicators out of the box.
+The fastest and most ergonomic tool for general directory busting, recursion, auto-filtering, and progress indicators out of the box.
 
 ```bash
 feroxbuster -u http://10.10.10.10 -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -x php,html,txt --filter-status 404

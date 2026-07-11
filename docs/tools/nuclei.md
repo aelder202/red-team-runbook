@@ -1,4 +1,4 @@
-# Nuclei — Vulnerability Scanner
+# Nuclei: Vulnerability Scanner
 
 !!! tip "Tip"
     For web API enumeration: `nuclei -u https://10.10.10.10 -t exposed-panels/ -t exposures/ -t misconfiguration/` covers the most impactful templates. Use `-severity critical,high` to filter noise. Nuclei is much faster than manual checks for known CVEs on large scope.

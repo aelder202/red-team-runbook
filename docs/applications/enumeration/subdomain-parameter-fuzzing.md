@@ -1,10 +1,10 @@
 # Subdomain & Parameter Fuzzing
 
 !!! tip "Tip"
-    For parameter fuzzing, `x8` is faster than ffuf for discovering hidden parameters in existing endpoints. For subdomain fuzzing, filter by response size — wildcard DNS returns 200 for everything.
+    For parameter fuzzing, `x8` is faster than ffuf for discovering hidden parameters in existing endpoints. For subdomain fuzzing, filter by response size, wildcard DNS returns 200 for everything.
 
 !!! warning "Watch out"
-    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.example.com"` — changing the URL path won't work.
+    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.example.com"`, changing the URL path won't work.
 
 ---
 

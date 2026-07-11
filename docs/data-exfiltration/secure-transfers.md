@@ -1,7 +1,7 @@
 # Secure Transfers
 
 !!! tip "Tip"
-    Use `scp` or `sftp` when SSH is available — fastest and encrypted by default. For exfiltrating over HTTP without detection, encode files with `base64` and send as POST body parameters rather than binary uploads.
+    Use `scp` or `sftp` when SSH is available, fastest and encrypted by default. For exfiltrating over HTTP without detection, encode files with `base64` and send as POST body parameters rather than binary uploads.
 
 ---
 

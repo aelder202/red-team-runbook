@@ -1,7 +1,7 @@
 # Active Directory Lateral Movement
 
 !!! tip ""
-    Pass-the-Ticket and Overpass-the-Hash let you move laterally using Kerberos tickets rather than NTLM hashes — useful when NTLM authentication is restricted or when you want to impersonate a specific domain user. Check `klist` after injecting a ticket to confirm it loaded.
+    Pass-the-Ticket and Overpass-the-Hash let you move laterally using Kerberos tickets rather than NTLM hashes, useful when NTLM authentication is restricted or when you want to impersonate a specific domain user. Check `klist` after injecting a ticket to confirm it loaded.
 
 ---
 
@@ -71,7 +71,7 @@ nxc smb 10.10.10.10 -k --use-kcache
 
 ## DCOM Lateral Movement
 
-Distributed COM execution — less signatured than PsExec on some EDR platforms.
+Distributed COM execution, less signatured than PsExec on some EDR platforms.
 
 ```bash
 impacket-dcomexec CORP/Administrator:'Password1'@10.10.10.10
@@ -88,7 +88,7 @@ $com.Document.ActiveView.ExecuteShellCommand("cmd.exe",$null,"/c whoami > C:\Tem
 
 ## Resource-Based Constrained Delegation (RBCD)
 
-If you can write to the `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute on a target computer (typical when you have GenericAll / GenericWrite on the computer object, or control any account in a group with that right), you can impersonate any user — including Domain Admins — to that computer.
+If you can write to the `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute on a target computer (typical when you have GenericAll / GenericWrite on the computer object, or control any account in a group with that right), you can impersonate any user, including Domain Admins, to that computer.
 
 ### Requirements
 

@@ -55,4 +55,4 @@ ssh -i id_rsa user@10.10.10.10
 ```
 
 !!! tip "Real-world"
-    Rsync without authentication is a misconfiguration that mostly shows up on backup servers and internal infrastructure. Modules that expose `/home`, `/etc`, or application directories are high-value — pull everything and grep offline. Write access to a web-accessible path is a direct shell upload.
+    Rsync without authentication is a misconfiguration that mostly shows up on backup servers and internal infrastructure. Modules that expose `/home`, `/etc`, or application directories are high-value. Pull everything and grep offline. Write access to a web-accessible path is a direct shell upload.

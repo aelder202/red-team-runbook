@@ -8,7 +8,7 @@ Web application testing follows a consistent pattern: fingerprint the stack, map
 
 ### 1. Fingerprint the Application
 
-Identify the technology stack before testing anything — the right exploits depend on knowing what's running.
+Identify the technology stack before testing anything, the right exploits depend on knowing what's running.
 
 ```bash
 whatweb http://10.10.10.10
@@ -43,7 +43,7 @@ ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u htt
 See [Directory & Page Fuzzing](enumeration/directory-page-fuzzing.md) and [Subdomain & Parameter Fuzzing](enumeration/subdomain-parameter-fuzzing.md).
 
 !!! tip "Real-world"
-    Find the admin panel before testing anything else — it's usually the highest-value target and often has weaker controls than the public-facing app.
+    Find the admin panel before testing anything else, it's usually the highest-value target and often has weaker controls than the public-facing app.
 
 ---
 
@@ -51,9 +51,9 @@ See [Directory & Page Fuzzing](enumeration/directory-page-fuzzing.md) and [Subdo
 
 Weak authentication is the most common path to initial access on web applications.
 
-- Default credentials (`admin:admin`, `admin:password`) — check before brute-forcing
+- Default credentials (`admin:admin`, `admin:password`). Check before brute-forcing
 - Username enumeration via error message or timing differences
-- JWT tampering — `alg: none`, weak secret, key confusion
+- JWT tampering: `alg: none`, weak secret, key confusion
 - Session token predictability or fixation
 
 ```bash
@@ -66,7 +66,7 @@ See [Credential Brute-Forcing](auth/credential-brute-forcing.md), [JWT Attacks](
 
 ### 4. Test for Common Vulnerabilities
 
-Work through vulnerability classes in order of likelihood for the technology stack. Don't spray every payload everywhere — read the app first.
+Work through vulnerability classes in order of likelihood for the technology stack. Don't spray every payload everywhere. Read the app first.
 
 | Vulnerability | First probe |
 |---|---|
@@ -83,7 +83,7 @@ Work through vulnerability classes in order of likelihood for the technology sta
 See the [Exploits](exploits/command-injection.md) sub-pages for full technique detail.
 
 !!! tip "Real-world"
-    Burp Suite Repeater is worth setting up early — you'll re-send modified requests constantly. Map the app passively through the proxy before running any active scans.
+    Burp Suite Repeater is worth setting up early, you'll re-send modified requests constantly. Map the app passively through the proxy before running any active scans.
 
 ---
 

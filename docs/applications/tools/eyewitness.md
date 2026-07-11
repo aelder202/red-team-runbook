@@ -1,7 +1,7 @@
 # EyeWitness
 
 !!! tip "Tip"
-    EyeWitness is most useful after an nmap scan — pipe the XML output directly: `eyewitness --web -x nmap.xml`. The HTML report lets you quickly identify interesting services without opening each one manually.
+    EyeWitness is most useful after an nmap scan, pipe the XML output directly: `eyewitness --web -x nmap.xml`. The HTML report lets you quickly identify interesting services without opening each one manually.
 
 ---
 

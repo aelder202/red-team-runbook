@@ -1,6 +1,6 @@
 # Persistence
 
-Persistence mechanisms maintain access to a compromised system after a reboot, session timeout, or credential rotation. On real engagements, only establish persistence when explicitly in scope — and always document and remove every mechanism before the assessment closes.
+Persistence mechanisms maintain access to a compromised system after a reboot, session timeout, or credential rotation. On real engagements, only establish persistence when explicitly in scope, and always document and remove every mechanism before the assessment closes.
 
 !!! warning "Watch out"
     Leaving backdoors in client environments without explicit sign-off is a significant liability. Document every persistence mechanism with the host, technique, location, and timestamp. Clean up during the debrief phase.
@@ -11,11 +11,11 @@ Persistence mechanisms maintain access to a compromised system after a reboot, s
 
 ### 1. Determine If Persistence Is Needed
 
-On HTB and most CTFs, persistence isn't necessary — you have full control of the environment. On real engagements, assess whether persistence is in scope and what level is appropriate:
+On HTB and most CTFs, persistence isn't necessary, you have full control of the environment. On real engagements, assess whether persistence is in scope and what level is appropriate:
 
-- **Session persistence** — survive a disconnect but not a reboot (SSH key, WinRM backdoor)
-- **Reboot persistence** — survive a restart (cron, scheduled task, registry run key, service)
-- **Domain persistence** — survive credential rotation (Golden Ticket, shadow admin account)
+- **Session persistence**: survive a disconnect but not a reboot (SSH key, WinRM backdoor)
+- **Reboot persistence**: survive a restart (cron, scheduled task, registry run key, service)
+- **Domain persistence**: survive credential rotation (Golden Ticket, shadow admin account)
 
 ---
 
@@ -59,10 +59,10 @@ See [Windows Persistence](windows.md), [Registry & Scheduled Tasks](registry-sch
 
 ### 4. Active Directory Persistence
 
-Domain-level persistence survives local remediation — the account or ticket remains valid even after the initially compromised host is wiped.
+Domain-level persistence survives local remediation, the account or ticket remains valid even after the initially compromised host is wiped.
 
 ```powershell
-# Golden Ticket — valid for 10 years by default
+# Golden Ticket - valid for 10 years by default
 mimikatz # lsadump::lsa /patch         # dump krbtgt hash
 mimikatz # kerberos::golden /user:Administrator /domain:corp.local /sid:<sid> /krbtgt:<hash> /ptt
 ```

@@ -1,5 +1,5 @@
 site_name: Red Team Runbook
-site_description: A practitioner's reference for offensive security operations — built from real engagements and lab work.
+site_description: An operator-focused offensive security reference for moving from first signal to verified impact across web, network, and Active Directory assessments.
 site_author: Taylor Elder
 site_url: https://taylorelder.com/red-team-runbook/
 repo_url: https://github.com/aelder202/red-team-runbook
@@ -26,6 +26,7 @@ extra_css:
 
 extra:
   generator: false
+  social_image: https://taylorelder.com/images/code.jpg
   social:
     - icon: fontawesome/solid/globe
       link: https://taylorelder.com
@@ -46,6 +47,8 @@ markdown_extensions:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -57,7 +60,11 @@ plugins:
   - search
 
 nav:
-  - Home: index.md
+  - Start Here:
+    - Overview: index.md
+    - Operator Workflow: workflow.md
+    - About & Standards: about.md
+  - Command Index: command-index.md
   - Recon:
     - Overview: network-scanning/index.md
     - Network Scanning: network-scanning/network-scanning.md

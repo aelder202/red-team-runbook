@@ -1,4 +1,4 @@
-# RPCClient — SMB/RPC Enumeration
+# RPCClient: SMB/RPC Enumeration
 
 !!! tip "Tip"
     Null session: `rpcclient -U "" -N 10.10.10.10`. Useful commands: `enumdomusers` (user list), `queryuser <rid>` (user details), `enumdomgroups` (group list). RID cycling: `for i in $(seq 500 1100); do rpcclient -U "" -N 10.10.10.10 -c "queryuser $i" 2>/dev/null | grep "User Name"; done`.

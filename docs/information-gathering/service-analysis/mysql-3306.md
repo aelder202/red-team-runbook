@@ -87,4 +87,4 @@ hashcat -m 300 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
 !!! tip "Real-world"
-    Remote MySQL exposure is almost always a misconfiguration — it's supposed to be localhost-only. When you find it, check `FILE` and `EXECUTE` privileges immediately. `FILE` gives you LFI/write; UDF exploitation via `EXECUTE` is a path to OS-level RCE but requires uploading a shared library.
+    Remote MySQL exposure is almost always a misconfiguration, it's supposed to be localhost-only. When you find it, check `FILE` and `EXECUTE` privileges immediately. `FILE` gives you LFI/write; UDF exploitation via `EXECUTE` is a path to OS-level RCE but requires uploading a shared library.

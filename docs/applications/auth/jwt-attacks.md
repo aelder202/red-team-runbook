@@ -1,10 +1,10 @@
 # JWT Attacks
 
 !!! tip "Tip"
-    Try `alg: none` first — some libraries still accept unsigned tokens. If RS256 is used, check if the public key is exposed (e.g. `/jwks.json`) and try switching to HS256 signed with the public key as the secret.
+    Try `alg: none` first, some libraries still accept unsigned tokens. If RS256 is used, check if the public key is exposed (e.g. `/jwks.json`) and try switching to HS256 signed with the public key as the secret.
 
 !!! warning "Watch out"
-    JWT signature validation failures often return a generic 401 — confirm you're actually testing the right field by checking what the app decodes, not just what it rejects.
+    JWT signature validation failures often return a generic 401. Confirm you're actually testing the right field by checking what the app decodes, not just what it rejects.
 
 ---
 
@@ -65,7 +65,7 @@ jwt_tool <JWT> -S hs256 -p "<cracked_secret>"
 
 ### Key Confusion Attack (RS256 → HS256)
 
-If the server accepts the algorithm field from the header, swap `RS256` to `HS256` and sign with the RSA public key as the HMAC secret — the server will "verify" using the public key it trusts, producing a valid signature.
+If the server accepts the algorithm field from the header, swap `RS256` to `HS256` and sign with the RSA public key as the HMAC secret, the server will "verify" using the public key it trusts, producing a valid signature.
 
 Grab the public key (commonly exposed at `/jwks.json`, `/.well-known/jwks.json`, or the JWT's `jku`):
 
@@ -91,7 +91,7 @@ The server fetches the attacker JWKS, pulls the attacker's public key, and valid
 
 ### x5u / x5c Header Injection
 
-Similar to jku but references an X.509 cert chain. Same bypass — the server trusts a cert URL or embedded cert it shouldn't:
+Similar to jku but references an X.509 cert chain. Same bypass, the server trusts a cert URL or embedded cert it shouldn't:
 
 ```bash
 jwt_tool <JWT> -X x -pc attacker.crt -pk attacker.key

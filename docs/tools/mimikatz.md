@@ -1,7 +1,7 @@
 # Mimikatz
 
 !!! tip "Tip"
-    Always run `privilege::debug` first before any dump commands — without it, most commands fail silently. If you get `ERROR kuhl_m_privilege_simple ; RtlAdjustPrivilege (20) c0000061`, you're not running as admin or token impersonation failed.
+    Always run `privilege::debug` first before any dump commands, without it, most commands fail silently. If you get `ERROR kuhl_m_privilege_simple ; RtlAdjustPrivilege (20) c0000061`, you're not running as admin or token impersonation failed.
 
 !!! warning "Watch out"
     Mimikatz is heavily detected. Use obfuscated versions (`Invoke-Mimikatz` from PowerSploit, or `mimikatz_trunk` with custom compilation) on systems with AV. The PyPy port `pypykatz` runs without dropping a binary.
@@ -23,7 +23,7 @@ token::elevate
 sekurlsa::logonpasswords
 ```
 
-Lists credentials currently in memory — including NTLM hashes, clear-text passwords (if cached), and Kerberos TGT info.
+Lists credentials currently in memory, including NTLM hashes, clear-text passwords (if cached), and Kerberos TGT info.
 
 When you find a valid username and NTLM hash, attempt to crack it with hashcat. If unable to crack, use `evil-winrm` to perform a PtH attack and move laterally.
 

@@ -1,7 +1,7 @@
 # Domain Enumeration
 
 !!! tip "Tip"
-    BloodHound collection first, analysis second. Throw the ZIP into BloodHound and run "Shortest Paths to Domain Admins" before spending time on manual enumeration — the graph almost always surfaces the path faster.
+    BloodHound collection first, analysis second. Throw the ZIP into BloodHound and run "Shortest Paths to Domain Admins" before spending time on manual enumeration, the graph almost always surfaces the path faster.
 
 !!! warning "Watch out"
     SharpHound / bloodhound-python generates LDAP queries from every collector, SMB connections from SessionEnum, and SPN scans from ComputerOnly collectors. On monitored environments, pick your method (`-CollectionMethod DCOnly`, `--auth-method ntlm`) carefully.
@@ -40,7 +40,7 @@ nxc ldap 10.10.10.10 -u <user> -p '<pass>' --bloodhound --collection All --dns-s
 
 ## LDAP Enumeration (No PowerShell Required)
 
-### ldapsearch — anonymous bind check
+### ldapsearch: anonymous bind check
 
 ```bash
 ldapsearch -x -H ldap://10.10.10.10 -b "DC=example,DC=com" -s base
@@ -79,7 +79,7 @@ nxc smb 10.10.10.10 -u <user> -p '<pass>' --shares
 
 ## PowerView (From a Domain-Joined Shell)
 
-PowerView's dev branch uses the `Get-Domain*` naming. Stock PowerSploit (older) uses `Get-Net*` — both appear in the wild, but the dev branch is current.
+PowerView's dev branch uses the `Get-Domain*` naming. Stock PowerSploit (older) uses `Get-Net*`, both appear in the wild, but the dev branch is current.
 
 ```powershell
 Import-Module .\PowerView.ps1
@@ -141,4 +141,4 @@ From Linux:
 nxc smb 10.10.10.10 -u <user> -p '<pass>' -M enum_trusts
 ```
 
-Any bidirectional trust or "Forest" trust is worth mapping in BloodHound — misconfigurations in parent/child trusts frequently let a child DA hop to the forest root.
+Any bidirectional trust or "Forest" trust is worth mapping in BloodHound, misconfigurations in parent/child trusts frequently let a child DA hop to the forest root.

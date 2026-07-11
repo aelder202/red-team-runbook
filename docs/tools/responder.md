@@ -1,7 +1,7 @@
 # Responder – LLMNR/NBT-NS/MDNS Poisoning & Credential Capture
 
 !!! tip "Tip"
-    Run `sudo responder -I tun0 -wrf` as soon as you have internal network access — it passively captures NTLMv2 hashes from any misconfigured name resolution. Crack with `hashcat -m 5600`. If SMB signing is disabled on targets, relay with `impacket-ntlmrelayx` instead of cracking.
+    Run `sudo responder -I tun0 -wrf` as soon as you have internal network access, it passively captures NTLMv2 hashes from any misconfigured name resolution. Crack with `hashcat -m 5600`. If SMB signing is disabled on targets, relay with `impacket-ntlmrelayx` instead of cracking.
 
 ---
 

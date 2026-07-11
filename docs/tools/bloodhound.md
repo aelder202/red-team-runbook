@@ -1,10 +1,10 @@
-# BloodHound — AD Attack Path Mapping
+# BloodHound: AD Attack Path Mapping
 
 !!! tip "Tip"
     After importing SharpHound data, run these queries immediately: "Shortest Paths to Domain Admins", "Find AS-REP Roastable Users", "Find Kerberoastable Users with Most Privileges". These cover 80% of HTB AD paths.
 
 !!! warning "BloodHound CE vs Legacy"
-    BloodHound Community Edition (CE) is the actively maintained version — runs via Docker Compose and exposes a web UI at `http://localhost:8080`. Legacy BloodHound (Electron app + local Neo4j) is no longer updated. Use CE on new installs: `curl -L https://ghst.ly/getbhce -o docker-compose.yml && docker compose up -d`. SharpHound and bloodhound-python data work with both — the collectors are unchanged.
+    BloodHound Community Edition (CE) is the actively maintained version, runs via Docker Compose and exposes a web UI at `http://localhost:8080`. Legacy BloodHound (Electron app + local Neo4j) is no longer updated. Use CE on new installs: `curl -L https://ghst.ly/getbhce -o docker-compose.yml && docker compose up -d`. SharpHound and bloodhound-python data work with both, the collectors are unchanged.
 
 ---
 ## SharpHound Data Collection
@@ -21,7 +21,7 @@ Invoke-BloodHound -CollectionMethod All -OutputDirectory C:\Temp\ -OutputPrefix 
 ```
 
 - Update `-OutputDirectory` to the path where SharpHound is located
-- Update `-OutputPrefix` to the target name — output file will be named `TARGET_<id>.zip`
+- Update `-OutputPrefix` to the target name: output file will be named `TARGET_<id>.zip`
 
 ### Setup (.exe)
 
@@ -46,7 +46,7 @@ Once SharpHound completes, a zip file is created in the specified directory. Dow
 
 ### Python Collection (from Kali)
 
-No binary drop needed on target — runs over the network:
+No binary drop needed on target, runs over the network:
 
 ```bash
 bloodhound-python -c All -d example.com -ns 10.10.10.10 -u <user> -p <pass> --zip

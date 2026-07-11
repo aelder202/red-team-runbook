@@ -1,7 +1,7 @@
 # Reconnaissance
 
 !!! tip "Tip"
-    Start passive before going active — WHOIS, certificate transparency, and search engines leave no trace on the target. Move to active DNS brute-forcing and port probing only after passive sources are exhausted.
+    Start passive before going active. WHOIS, certificate transparency, and search engines leave no trace on the target. Move to active DNS brute-forcing and port probing only after passive sources are exhausted.
 
 ## Passive Recon
 
@@ -16,7 +16,7 @@ whois 10.10.10.10
 
 ### DNS Lookups
 
-Use `dig` — `nslookup` is dated and harder to parse.
+Use `dig`, `nslookup` is dated and harder to parse.
 
 ```bash
 dig example.com ANY +noall +answer
@@ -37,7 +37,7 @@ dnsrecon -d example.com -t axfr
 
 ### Certificate Transparency (crt.sh)
 
-CT logs are the single best passive source for subdomains — every public cert issued is logged.
+CT logs are the single best passive source for subdomains, every public cert issued is logged.
 
 ```bash
 curl -s 'https://crt.sh/?q=%25.example.com&output=json' \
@@ -113,7 +113,7 @@ shodan host 10.10.10.10
 
 ### Netcraft Site Report
 
-Netcraft's site report returns hosting, nameservers, and tech stack for a given domain. Use the URL directly — there's no grep-from-homepage shortcut.
+Netcraft's site report returns hosting, nameservers, and tech stack for a given domain. Use the URL directly, there's no grep-from-homepage shortcut.
 
 ```
 https://sitereport.netcraft.com/?url=example.com
@@ -185,13 +185,13 @@ When direct scanning is blocked or you're pivoting through a SOCKS proxy:
 proxychains nmap -sT -Pn -p 80,443 10.10.10.10
 ```
 
-TCP connect (`-sT`) is required — `proxychains` can't tunnel raw SYN packets. See [Tunneling](../port-forwarding/index.md).
+TCP connect (`-sT`) is required, `proxychains` can't tunnel raw SYN packets. See [Tunneling](../port-forwarding/index.md).
 
 ---
 
 ## Next Steps
 
-Once you have live hosts and open ports, move to protocol-specific enumeration in the [Services](../information-gathering/index.md) section — SMB, SMTP, SNMP, LDAP, and everything else is covered there with per-port commands.
+Once you have live hosts and open ports, move to protocol-specific enumeration in the [Services](../information-gathering/index.md) section. SMB, SMTP, SNMP, LDAP, and everything else is covered there with per-port commands.
 
 !!! tip "Real-world"
     On external engagements, CT logs + `subfinder` + `httpx` will surface 80% of the attack surface in the first ten minutes. Wayback and GitHub dorking frequently hand over credentials or forgotten staging subdomains that bypass every WAF the client pays for.

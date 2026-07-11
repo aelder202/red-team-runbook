@@ -1,7 +1,7 @@
 # IPMI (623)
 
 !!! tip "Start here"
-    Dump IPMI hashes unauthenticated using Metasploit — this works against IPMI 2.0 without credentials. Crack offline with hashcat mode 7300. Default creds are also worth trying immediately: `admin:admin`, `ADMIN:ADMIN`, `root:calvin`.
+    Dump IPMI hashes unauthenticated using Metasploit, this works against IPMI 2.0 without credentials. Crack offline with hashcat mode 7300. Default creds are also worth trying immediately: `admin:admin`, `ADMIN:ADMIN`, `root:calvin`.
 
 ---
 
@@ -56,4 +56,4 @@ ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> shell
 ```
 
 !!! tip "Real-world"
-    IPMI is common on bare-metal server hardware (Dell iDRAC, HP iLO, Supermicro BMC). The `root:calvin` default is specific to Dell iDRAC and still works on plenty of unpatched systems. Hash dumps are particularly valuable here — even a cracked IPMI hash often reuses credentials on the host OS or other management interfaces.
+    IPMI is common on bare-metal server hardware (Dell iDRAC, HP iLO, Supermicro BMC). The `root:calvin` default is specific to Dell iDRAC and still works on plenty of unpatched systems. Hash dumps are particularly valuable here, even a cracked IPMI hash often reuses credentials on the host OS or other management interfaces.

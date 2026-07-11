@@ -1,4 +1,4 @@
-# LDAPSearch — LDAP Enumeration
+# LDAPSearch: LDAP Enumeration
 
 !!! tip "Tip"
     Anonymous bind query: `ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local" "(objectClass=user)" sAMAccountName`. Pipe to `grep sAMAccountName` for a clean user list. Add `-D "user@domain" -w "pass"` for authenticated queries.

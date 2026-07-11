@@ -1,7 +1,7 @@
 # DCSync Attack
 
 !!! tip "Tip"
-    DCSync requires `DS-Replication-Get-Changes` and `DS-Replication-Get-Changes-All` rights — typically Domain Admins, Enterprise Admins, or explicitly delegated accounts. Use `mimikatz lsadump::dcsync /user:krbtgt` to dump the krbtgt hash for golden tickets.
+    DCSync requires `DS-Replication-Get-Changes` and `DS-Replication-Get-Changes-All` rights, typically Domain Admins, Enterprise Admins, or explicitly delegated accounts. Use `mimikatz lsadump::dcsync /user:krbtgt` to dump the krbtgt hash for golden tickets.
 
 !!! warning "Watch out"
     DCSync generates Event ID 4662 on the DC. On monitored environments, this will alert. Do it once, get what you need, stop.

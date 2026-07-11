@@ -40,7 +40,7 @@ Hashcat's [example hashes page](https://hashcat.net/wiki/doku.php?id=example_has
 
 ## Extract Hashes from Files (`*2john`)
 
-John ships a family of converters that pull crackable hashes out of password-protected files. They live in `/usr/share/john/` (or `/opt/john/run/` for a source build) and the output is John-format — strip the leading `filename:` to feed it into hashcat.
+John ships a family of converters that pull crackable hashes out of password-protected files. They live in `/usr/share/john/` (or `/opt/john/run/` for a source build) and the output is John-format. Strip the leading `filename:` to feed it into hashcat.
 
 ```bash
 # Find what's installed
@@ -63,7 +63,7 @@ locate 2john
 | `pfx2john.py` | PKCS#12 / `.pfx` cert store | 24410 |
 | `racf2john` | Mainframe RACF | 8500 |
 
-**Workflow** — extract, strip the filename prefix, then hand off:
+**Workflow**: extract, strip the filename prefix, then hand off:
 
 ```bash
 zip2john secret.zip > zip.hash
@@ -86,7 +86,7 @@ hashcat -m 9600 <(cut -d: -f2- office.hash) rockyou.txt
 ```
 
 !!! tip "Real-world"
-    Recovered KeePass databases, encrypted 7z archives in IT shares, and bitlocker recovery volumes pulled from disk images are some of the highest-value loot you'll find. Always run `*2john` on these — even a weak passphrase from rockyou unlocks the rest of the credential tree.
+    Recovered KeePass databases, encrypted 7z archives in IT shares, and bitlocker recovery volumes pulled from disk images are some of the highest-value loot you'll find. Always run `*2john` on these, even a weak passphrase from rockyou unlocks the rest of the credential tree.
 
 ---
 
@@ -153,7 +153,7 @@ hashcat -b -m 1000                                          # benchmark a single
 
 | Flag | Effect |
 |------|--------|
-| `-O` | Optimised kernels — faster, but caps password length (~32). Drop for long passphrases. |
+| `-O` | Optimised kernels: faster, but caps password length (~32). Drop for long passphrases. |
 | `-w 3` / `-w 4` | Workload profile. `4` is full-throttle, will lag your desktop. |
 | `--username` | Strip a leading `user:` from the hash file. |
 | `--show` / `--left` | Show cracked / uncracked entries. |
@@ -178,7 +178,7 @@ john --show hashes.txt
 john --list=formats | grep -i krb                           # list supported formats
 ```
 
-John auto-detects format on most hashes — only specify `--format=` when it guesses wrong (common with `*2john` output that has ambiguous prefixes).
+John auto-detects format on most hashes, only specify `--format=` when it guesses wrong (common with `*2john` output that has ambiguous prefixes).
 
 ---
 
@@ -195,7 +195,7 @@ cd username-anarchy
 ./username-anarchy John Doe                                 # one-off generation
 ```
 
-Output covers every common scheme — `jdoe`, `john.doe`, `doe.john`, `j.doe`, `doej`, `johnd`, etc. Feed straight into Kerbrute / NetExec / spray:
+Output covers every common scheme, `jdoe`, `john.doe`, `doe.john`, `j.doe`, `doej`, `johnd`, etc. Feed straight into Kerbrute / NetExec / spray:
 
 ```bash
 kerbrute userenum -d corp.local --dc 10.10.10.10 usernames.txt
@@ -208,7 +208,7 @@ See [Kerbrute](kerbrute.md) for AD username validation and [NetExec](netexec.md)
 
 ## Wordlist Generation
 
-### CeWL — crawl a target and generate a custom wordlist
+### CeWL: crawl a target and generate a custom wordlist
 
 Useful when the target likely has a custom password policy (company name, product names):
 
@@ -218,14 +218,14 @@ cewl https://example.com -d 3 -m 5 --with-numbers -e -o cewl.txt    # include em
 hashcat -m 1000 hashes.txt cewl.txt -r best64.rule
 ```
 
-### Crunch — pattern-based generation
+### Crunch: pattern-based generation
 
 ```bash
 crunch 8 10 abcdefghijklmnopqrstuvwxyz0123456789 -o custom.txt
 crunch 8 8 -t Pass@,%%      # P, a, s, s, @, [A-Z], [0-9], [0-9]
 ```
 
-### Mentalist / Mutate — rule-augmented permutations
+### Mentalist / Mutate: rule-augmented permutations
 
 ```bash
 hashcat --stdout cewl.txt -r best64.rule > cewl-mutated.txt
@@ -242,4 +242,4 @@ hashcat -m 1800 combined.txt rockyou.txt                    # SHA-512crypt
 hashcat -m 30900 combined.txt rockyou.txt                   # yescrypt (Debian 12+/Ubuntu 24.04+)
 ```
 
-`unshadow` merges the username/UID from `passwd` with the hash from `shadow` so John can attribute cracks to accounts. Modern Debian/Ubuntu now default to `yescrypt` (`$y$`) rather than `$6$` — check the prefix before picking the mode.
+`unshadow` merges the username/UID from `passwd` with the hash from `shadow` so John can attribute cracks to accounts. Modern Debian/Ubuntu now default to `yescrypt` (`$y$`) rather than `$6$`. Check the prefix before picking the mode.

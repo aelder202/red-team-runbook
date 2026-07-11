@@ -1,7 +1,7 @@
 # Silver & Golden Ticket Attacks
 
 !!! tip "Tip"
-    Golden tickets require the krbtgt NTLM hash (get via DCSync or NTDS.dit dump). Silver tickets only require the service account hash — lower privilege to obtain but scoped to a single service. Use golden for persistence, silver for targeted lateral movement.
+    Golden tickets require the krbtgt NTLM hash (get via DCSync or NTDS.dit dump). Silver tickets only require the service account hash, lower privilege to obtain but scoped to a single service. Use golden for persistence, silver for targeted lateral movement.
 
 ---
 
@@ -18,7 +18,7 @@
 
 ---
 
-# Silver Ticket Attack
+## Silver Ticket Attack
 
 ## Requirements
 
@@ -52,7 +52,7 @@ Invoke-WebRequest -UseDefaultCredentials http://web.corp.local
 
 ---
 
-# Golden Ticket Attack
+## Golden Ticket Attack
 
 ## Requirements
 

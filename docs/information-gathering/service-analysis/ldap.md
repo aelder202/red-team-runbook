@@ -1,7 +1,7 @@
 # LDAP (389, 636)
 
 !!! tip "Start here"
-    Try anonymous bind first: `ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"`. If it returns data you have unauthenticated enumeration of the entire directory — usernames, computers, group memberships, sometimes passwords in description fields.
+    Try anonymous bind first: `ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"`. If it returns data you have unauthenticated enumeration of the entire directory, usernames, computers, group memberships, sometimes passwords in description fields.
 
 ---
 
@@ -66,4 +66,4 @@ ntlmrelayx.py -t ldap://10.10.10.10 --dump
 ```
 
 !!! tip "Real-world"
-    Anonymous LDAP is still common on internal AD environments — it's rarely intentional, usually a misconfiguration from legacy requirements. Even with credentials, `description` fields are a reliable place to find passwords that sysadmins embedded years ago. Pull the full dump and grep it offline rather than running targeted queries.
+    Anonymous LDAP is still common on internal AD environments, it's rarely intentional, usually a misconfiguration from legacy requirements. Even with credentials, `description` fields are a reliable place to find passwords that sysadmins embedded years ago. Pull the full dump and grep it offline rather than running targeted queries.

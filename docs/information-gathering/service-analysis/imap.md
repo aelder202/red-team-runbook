@@ -1,7 +1,7 @@
 # IMAP (143, 993)
 
 !!! tip "Start here"
-    Connect directly and check capabilities: `nc 10.10.10.10 143`, then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` on port 143 — if present, credentials are in cleartext. Worth a quick brute force with a default credentials list before going to rockyou.
+    Connect directly and check capabilities: `nc 10.10.10.10 143`, then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` on port 143, if present, credentials are in cleartext. Worth a quick brute force with a default credentials list before going to rockyou.
 
 ---
 
@@ -64,4 +64,4 @@ Once authenticated, search emails for:
 - Attachments containing configuration files
 
 !!! tip "Real-world"
-    IMAP access on a compromised account is often more valuable than it looks. IT staff and developers frequently have credentials, VPN configs, or MFA backup codes sitting in their inbox. Always check sent items and drafts too — not just the inbox.
+    IMAP access on a compromised account is often more valuable than it looks. IT staff and developers frequently have credentials, VPN configs, or MFA backup codes sitting in their inbox. Always check sent items and drafts too, not just the inbox.

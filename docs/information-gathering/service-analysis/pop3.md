@@ -51,7 +51,7 @@ If port 110 is open without TLS, credentials are sent in cleartext. Check what a
 openssl s_client -connect 10.10.10.10:110 -starttls pop3
 ```
 
-Look for `AUTH PLAIN` or `AUTH LOGIN` in the capability response — if present on an unencrypted connection, credentials are interceptable.
+Look for `AUTH PLAIN` or `AUTH LOGIN` in the capability response, if present on an unencrypted connection, credentials are interceptable.
 
 !!! tip "Real-world"
-    POP3 is low priority compared to IMAP — it downloads and deletes messages rather than leaving them server-side, so you get less visibility. That said, compromised POP3 credentials are worth testing across SMB, WinRM, and VPN immediately. IT staff email is often a goldmine for internal hostnames and credentials in forwarded threads.
+    POP3 is low priority compared to IMAP, it downloads and deletes messages rather than leaving them server-side, so you get less visibility. That said, compromised POP3 credentials are worth testing across SMB, WinRM, and VPN immediately. IT staff email is often a goldmine for internal hostnames and credentials in forwarded threads.

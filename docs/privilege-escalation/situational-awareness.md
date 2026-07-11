@@ -3,7 +3,7 @@
 !!! tip "Tip"
     Before running any priv-esc tooling, answer three questions: who am I, where am I, and who else is here? A minute of manual orientation prevents wasted scans and tells you what kind of escalation path is even possible.
 
-The commands below are the first thing to run on any new shell — they're intentionally manual so you understand the environment before firing off `linpeas` or `winpeas`. See [Linux Local Enumeration](linux/local-enumeration.md) and [Windows Local Enumeration](windows/local-enumeration.md) for automated follow-up.
+The commands below are the first thing to run on any new shell, they're intentionally manual so you understand the environment before firing off `linpeas` or `winpeas`. See [Linux Local Enumeration](linux/local-enumeration.md) and [Windows Local Enumeration](windows/local-enumeration.md) for automated follow-up.
 
 ---
 
@@ -103,7 +103,7 @@ Get-NetTCPConnection -State Listen
 
 ## Active Directory
 
-Once you confirm you're domain-joined (via `echo %USERDOMAIN%` or `(Get-WmiObject Win32_ComputerSystem).Domain`), fall back to built-in `net` commands — no tools to upload, works from any user context:
+Once you confirm you're domain-joined (via `echo %USERDOMAIN%` or `(Get-WmiObject Win32_ComputerSystem).Domain`), fall back to built-in `net` commands, no tools to upload, works from any user context:
 
 ```cmd
 net user /domain                        # all domain users
@@ -126,4 +126,4 @@ Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincip
 For full AD enumeration without relying on the AD module, see [Domain Enumeration](active-directory/domain-enumeration.md) and [BloodHound](../tools/bloodhound.md).
 
 !!! tip "Real-world"
-    `whoami /priv` on Windows is the single most valuable command after landing a shell. `SeImpersonatePrivilege`, `SeBackupPrivilege`, `SeAssignPrimaryToken`, or `SeLoadDriverPrivilege` each map to a concrete local-to-SYSTEM path — check [Privilege Abuse](windows/privilege-abuse.md) first before anything else.
+    `whoami /priv` on Windows is the single most valuable command after landing a shell. `SeImpersonatePrivilege`, `SeBackupPrivilege`, `SeAssignPrimaryToken`, or `SeLoadDriverPrivilege` each map to a concrete local-to-SYSTEM path. Check [Privilege Abuse](windows/privilege-abuse.md) first before anything else.

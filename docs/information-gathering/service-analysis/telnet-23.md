@@ -1,7 +1,7 @@
 # Telnet (23)
 
 !!! tip "Start here"
-    Connect and check the banner: `telnet 10.10.10.10`. The banner often reveals the device type, OS, and version. Everything is cleartext — if you can capture traffic on the same segment, you get credentials for free.
+    Connect and check the banner: `telnet 10.10.10.10`. The banner often reveals the device type, OS, and version. Everything is cleartext, if you can capture traffic on the same segment, you get credentials for free.
 
 ---
 
@@ -51,4 +51,4 @@ sudo tcpdump -i eth0 port 23 -A -w telnet.pcap
 ```
 
 !!! tip "Real-world"
-    Telnet on modern servers is almost always a misconfiguration or a forgotten legacy install. On network gear (routers, switches, industrial control systems), it's much more common and often the only management interface available. Default credentials are worth trying before brute force — most network gear ships with known defaults and they rarely get changed.
+    Telnet on modern servers is almost always a misconfiguration or a forgotten legacy install. On network gear (routers, switches, industrial control systems), it's much more common and often the only management interface available. Default credentials are worth trying before brute force, most network gear ships with known defaults and they rarely get changed.

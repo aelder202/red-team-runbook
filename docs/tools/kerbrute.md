@@ -1,7 +1,7 @@
-# Kerbrute — Kerberos User Enumeration & AS-REP Roasting
+# Kerbrute: Kerberos User Enumeration & AS-REP Roasting
 
 !!! tip "Tip"
-    `kerbrute userenum --dc 10.10.10.10 -d example.com userlist.txt` validates usernames without lockout (Kerberos pre-auth errors don't trigger lockout by default). Start with `jsmith`, `john.smith`, `jsmith@domain` format variations — AD environments vary in UPN format.
+    `kerbrute userenum --dc 10.10.10.10 -d example.com userlist.txt` validates usernames without lockout (Kerberos pre-auth errors don't trigger lockout by default). Start with `jsmith`, `john.smith`, `jsmith@domain` format variations. AD environments vary in UPN format.
 
 ---
 
@@ -77,7 +77,7 @@ Output:
 
 - Works only if UDP/88 or TCP/88 is reachable
 - Does not require domain join or admin rights
-- Avoids logging on SMB/WinRM — quieter than `nxc smb` sprays
+- Avoids logging on SMB/WinRM: quieter than `nxc smb` sprays
 - Combine with `ldapsearch` or BloodHound output to build user wordlists
 
 ---

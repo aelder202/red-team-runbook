@@ -1,6 +1,6 @@
 # Port Forwarding & Tunneling
 
-Port forwarding and tunneling extend your network reach through a compromised host — letting you interact with internal services that aren't directly accessible from your attacker machine. The right tool depends on what's available on the pivot host and what you need to reach.
+Port forwarding and tunneling extend your network reach through a compromised host, letting you interact with internal services that aren't directly accessible from your attacker machine. The right tool depends on what's available on the pivot host and what you need to reach.
 
 ---
 
@@ -20,9 +20,9 @@ Before setting up a tunnel, be clear about the goal:
 
 | Situation | Best tool |
 |---|---|
-| SSH access to the pivot host | SSH `-L` (local) or `-R` (remote) — no extra tools |
-| Need to proxy an entire subnet | Ligolo-ng — full Layer 3 routing |
-| Quick single-port tunnel, no SSH | Chisel — lightweight, runs on any OS |
+| SSH access to the pivot host | SSH `-L` (local) or `-R` (remote): no extra tools |
+| Need to proxy an entire subnet | Ligolo-ng: full Layer 3 routing |
+| Quick single-port tunnel, no SSH | Chisel: lightweight, runs on any OS |
 | One-shot relay without installing anything | `socat` or `netcat` |
 | Metasploit session active | `route add` + proxychains |
 
@@ -30,20 +30,20 @@ Before setting up a tunnel, be clear about the goal:
 
 ### 3. SSH Port Forwarding
 
-**Local forward** — access a remote port locally:
+**Local forward**: access a remote port locally:
 
 ```bash
 # Access internal RDP (3389) via localhost:13389
 ssh -L 13389:10.10.10.20:3389 user@10.10.10.10
 ```
 
-**Remote forward** — expose your local port through the target (reverse tunnel):
+**Remote forward**: expose your local port through the target (reverse tunnel):
 
 ```bash
 ssh -R 4444:localhost:4444 user@10.10.10.10
 ```
 
-**Dynamic SOCKS proxy** — route any tool through the pivot:
+**Dynamic SOCKS proxy**: route any tool through the pivot:
 
 ```bash
 ssh -D 1080 user@10.10.10.10
@@ -54,7 +54,7 @@ ssh -D 1080 user@10.10.10.10
 
 ### 4. Ligolo-ng (Full Subnet Pivoting)
 
-Best option when you need to reach an entire internal network segment. Sets up a proper Layer 3 tunnel — tools don't need proxychains.
+Best option when you need to reach an entire internal network segment. Sets up a proper Layer 3 tunnel, tools don't need proxychains.
 
 ```bash
 # Attacker: start the proxy
@@ -98,4 +98,4 @@ impacket-secretsdump -proxy socks5://127.0.0.1:1080 CORP/admin:'pass'@10.10.20.1
 ```
 
 !!! tip "Real-world"
-    Ligolo-ng is the cleanest option for HTB Pro Labs and real internal engagements — once the route is added, every tool works normally without proxychains wrapping. Set it up first before spending time configuring individual SOCKS proxies.
+    Ligolo-ng is the cleanest option for HTB Pro Labs and real internal engagements, once the route is added, every tool works normally without proxychains wrapping. Set it up first before spending time configuring individual SOCKS proxies.

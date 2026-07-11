@@ -1,7 +1,7 @@
 # Command Line Shells
 
 !!! tip ""
-    For Windows: PowerShell is more capable but more monitored than cmd.exe. Use `cmd.exe` for quick recon, PowerShell for scripting and .NET access. On Linux, check `echo $SHELL` — you may be in a restricted shell.
+    For Windows: PowerShell is more capable but more monitored than cmd.exe. Use `cmd.exe` for quick recon, PowerShell for scripting and .NET access. On Linux, check `echo $SHELL`, you may be in a restricted shell.
 
 ---
 

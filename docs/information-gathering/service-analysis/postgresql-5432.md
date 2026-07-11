@@ -1,7 +1,7 @@
 # PostgreSQL (5432)
 
 !!! tip "Start here"
-    Try connecting as `postgres` with no password: `psql -h 10.10.10.10 -U postgres`. Many installs use `postgres:postgres` or trust authentication for local-equivalent connections. If you get in, check if `COPY` is available — it gives you file read and write on the host OS.
+    Try connecting as `postgres` with no password: `psql -h 10.10.10.10 -U postgres`. Many installs use `postgres:postgres` or trust authentication for local-equivalent connections. If you get in, check if `COPY` is available, it gives you file read and write on the host OS.
 
 ---
 
@@ -88,4 +88,4 @@ SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;
 ```
 
 !!! tip "Real-world"
-    PostgreSQL is common in Linux environments and often runs as the `postgres` OS user. If you get RCE via `COPY TO PROGRAM`, you're executing as that user — check `sudo -l` immediately. Trust authentication (`pg_hba.conf`) misconfiguration is the most common finding: connections from `127.0.0.1/32` allowed without a password.
+    PostgreSQL is common in Linux environments and often runs as the `postgres` OS user. If you get RCE via `COPY TO PROGRAM`, you're executing as that user. Check `sudo -l` immediately. Trust authentication (`pg_hba.conf`) misconfiguration is the most common finding: connections from `127.0.0.1/32` allowed without a password.

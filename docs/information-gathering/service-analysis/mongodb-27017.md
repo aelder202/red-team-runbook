@@ -1,7 +1,7 @@
 # MongoDB (27017)
 
 !!! tip "Start here"
-    Connect without credentials: `mongosh --host 10.10.10.10` (or legacy `mongo --host 10.10.10.10`). MongoDB before 3.6 bound to `0.0.0.0` by default with no authentication — unauthenticated access is still extremely common on internal deployments and exposed cloud instances.
+    Connect without credentials: `mongosh --host 10.10.10.10` (or legacy `mongo --host 10.10.10.10`). MongoDB before 3.6 bound to `0.0.0.0` by default with no authentication, unauthenticated access is still extremely common on internal deployments and exposed cloud instances.
 
 ---
 
@@ -67,7 +67,7 @@ db.getCollectionNames().forEach(function(c) {
 });
 ```
 
-Dump everything and grep offline — faster than querying interactively:
+Dump everything and grep offline, faster than querying interactively:
 
 ```bash
 mongodump --host 10.10.10.10 --out ./mongo_dump
@@ -85,4 +85,4 @@ run
 ```
 
 !!! tip "Real-world"
-    MongoDB was responsible for one of the largest classes of data exposure incidents in the 2017-2019 timeframe — tens of thousands of internet-facing instances without authentication. Modern defaults (3.6+) bind to localhost and require auth, but internal deployments, development environments, and lift-and-shift migrations frequently end up back at the old configuration. Dump everything and treat it like an Elasticsearch index — the value is usually in application data, not the database engine itself.
+    MongoDB was responsible for one of the largest classes of data exposure incidents in the 2017-2019 timeframe, tens of thousands of internet-facing instances without authentication. Modern defaults (3.6+) bind to localhost and require auth, but internal deployments, development environments, and lift-and-shift migrations frequently end up back at the old configuration. Dump everything and treat it like an Elasticsearch index, the value is usually in application data, not the database engine itself.

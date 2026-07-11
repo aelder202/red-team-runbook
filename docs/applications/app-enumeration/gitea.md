@@ -1,7 +1,7 @@
 # Gitea Enumeration & Exploitation
 
 !!! tip "Tip"
-    Check for public repos and exposed `.git` directories first. Gitea's explore page (`/explore/repos`) is unauthenticated by default — look for private-looking repos that were accidentally made public.
+    Check for public repos and exposed `.git` directories first. Gitea's explore page (`/explore/repos`) is unauthenticated by default. Look for private-looking repos that were accidentally made public.
 
 !!! warning "Watch out"
     Gitea admin credentials are often default (`admin:admin` or `gitea:gitea`) on self-hosted instances spun up quickly for labs or internal tools.

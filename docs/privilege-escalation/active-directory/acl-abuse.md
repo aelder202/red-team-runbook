@@ -1,7 +1,7 @@
 # ACL Abuse
 
 !!! tip "Tip"
-    BloodHound is the authoritative source for ACL paths — it resolves nested group memberships and converts control rights (WriteDACL, GenericAll, GenericWrite, AddMember, ForceChangePassword, WriteOwner, AllExtendedRights) into actionable attack edges. Don't manually enumerate ACLs domain-wide; target specific objects after BloodHound points you at them.
+    BloodHound is the authoritative source for ACL paths, it resolves nested group memberships and converts control rights (WriteDACL, GenericAll, GenericWrite, AddMember, ForceChangePassword, WriteOwner, AllExtendedRights) into actionable attack edges. Don't manually enumerate ACLs domain-wide; target specific objects after BloodHound points you at them.
 
 ---
 
@@ -77,7 +77,7 @@ net rpc group addmem "Target Group" <attacker> -U 'example.com/<user>%<pass>' -S
 
 ---
 
-## WriteDACL on the Domain — Grant DCSync
+## WriteDACL on the Domain: Grant DCSync
 
 With `WriteDACL` on the root domain object, grant yourself replication rights:
 
@@ -85,7 +85,7 @@ With `WriteDACL` on the root domain object, grant yourself replication rights:
 Add-DomainObjectAcl -TargetIdentity "DC=example,DC=com" -PrincipalIdentity <attacker> -Rights DCSync
 ```
 
-Then run DCSync — see [DCSync](dcsync.md).
+Then run DCSync, see [DCSync](dcsync.md).
 
 From Linux (`dacledit.py` from Impacket, recent versions):
 
@@ -115,7 +115,7 @@ dacledit.py -action write -rights FullControl -principal <attacker> -target targ
 
 ## ForceChangePassword Extended Right
 
-A targeted form of password reset — doesn't require knowing the old password.
+A targeted form of password reset, doesn't require knowing the old password.
 
 ```powershell
 Set-DomainUserPassword -Identity target_user -AccountPassword (ConvertTo-SecureString 'NewPass123!' -AsPlainText -Force)
@@ -123,7 +123,7 @@ Set-DomainUserPassword -Identity target_user -AccountPassword (ConvertTo-SecureS
 
 ---
 
-## ReadGMSAPassword — Retrieve gMSA Password
+## ReadGMSAPassword: Retrieve gMSA Password
 
 Group Managed Service Accounts (gMSA) store their password in a special LDAP attribute. If your user or a group you're in has read access, retrieve and use the NTLM hash:
 
@@ -140,7 +140,7 @@ The returned NTLM hash can be used directly for pass-the-hash against services t
 
 ## Shadow Credentials (msDS-KeyCredentialLink)
 
-Modern alternative to password reset — works when you have GenericWrite/GenericAll on a user or computer and the domain has Kerberos PKI enabled (any DC running Windows Server 2016+ that supports [PKINIT](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview)). You add a certificate to `msDS-KeyCredentialLink`, then use it to request a TGT.
+Modern alternative to password reset, works when you have GenericWrite/GenericAll on a user or computer and the domain has Kerberos PKI enabled (any DC running Windows Server 2016+ that supports [PKINIT](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview)). You add a certificate to `msDS-KeyCredentialLink`, then use it to request a TGT.
 
 ### With pywhisker (Linux)
 
@@ -169,11 +169,11 @@ getnthash.py -key <as-rep-key> example.com/target_user
 ```
 
 !!! tip "When to use Shadow Credentials over password reset"
-    Resetting a user's password locks them out and gets noticed immediately. Shadow Credentials add a cert without changing the password — the user keeps working, you keep access. Much quieter for real engagements.
+    Resetting a user's password locks them out and gets noticed immediately. Shadow Credentials add a cert without changing the password, the user keeps working, you keep access. Much quieter for real engagements.
 
 ---
 
-## AddSelf — Add Yourself to a Group
+## AddSelf: Add Yourself to a Group
 
 If you have `Self` + `Member` write rights on a group, add yourself without needing `GenericAll`:
 

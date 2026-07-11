@@ -1,6 +1,6 @@
 # Network Scanning & Recon
 
-Start here on every engagement. The goal is to build an accurate map of the attack surface before touching anything — what hosts are alive, what ports are open, what services are running, and who's on the network.
+Start here on every engagement. The goal is to build an accurate map of the attack surface before touching anything, what hosts are alive, what ports are open, what services are running, and who's on the network.
 
 ---
 
@@ -30,20 +30,20 @@ See [Reconnaissance](reconnaissance.md) for OSINT techniques, subdomain enumerat
 
 ### 2. Host Discovery
 
-Identify live hosts before port scanning — especially important on large subnets.
+Identify live hosts before port scanning, especially important on large subnets.
 
 ```bash
 nmap -sn 10.10.10.0/24
 ```
 
-On an internal segment, ARP sweep is more reliable than ICMP — many hosts block ping but can't hide from ARP:
+On an internal segment, ARP sweep is more reliable than ICMP, many hosts block ping but can't hide from ARP:
 
 ```bash
 nmap -PR -sn 10.10.10.0/24
 ```
 
 !!! warning "Watch out"
-    Confirm target IPs are in scope before scanning. On real engagements, verify against the scope document — hitting out-of-scope hosts, even accidentally, is a significant problem.
+    Confirm target IPs are in scope before scanning. On real engagements, verify against the scope document, hitting out-of-scope hosts, even accidentally, is a significant problem.
 
 ---
 
@@ -96,13 +96,13 @@ nxc smb 10.10.10.10 -u '' -p '' --users             # null session user enum
 rpcclient -U "" -N 10.10.10.10                      # anonymous RPC
 ```
 
-Protocol-specific enumeration (SMB, LDAP, Kerberos, SMTP, SNMP, etc.) lives in the [Services](../information-gathering/index.md) section — each port has its own page with the relevant commands.
+Protocol-specific enumeration (SMB, LDAP, Kerberos, SMTP, SNMP, etc.) lives in the [Services](../information-gathering/index.md) section, each port has its own page with the relevant commands.
 
 ---
 
 ### 6. Web Screenshot Sweep
 
-After identifying HTTP/HTTPS services, use EyeWitness to screenshot all of them at once — saves time over opening each manually.
+After identifying HTTP/HTTPS services, use EyeWitness to screenshot all of them at once, saves time over opening each manually.
 
 ```bash
 eyewitness -x nmap_services.xml -d output

@@ -1,6 +1,6 @@
 # Information Gathering & Enumeration
 
-Solid enumeration wins engagements. The goal here isn't to run every tool — it's to build an accurate picture of what's exposed before touching anything.
+Solid enumeration wins engagements. The goal here isn't to run every tool, it's to build an accurate picture of what's exposed before touching anything.
 
 ---
 
@@ -13,7 +13,7 @@ nmap -sn 10.10.10.0/24
 ```
 
 !!! tip "Real-world"
-    On internal engagements, ARP sweep with `-PR -sn` is more reliable than ICMP — many hosts block ping but can't hide from ARP on the same segment. If you're on an external assessment, skip discovery and go straight to port scanning your scoped IP list.
+    On internal engagements, ARP sweep with `-PR -sn` is more reliable than ICMP, many hosts block ping but can't hide from ARP on the same segment. If you're on an external assessment, skip discovery and go straight to port scanning your scoped IP list.
 
 ---
 
@@ -37,10 +37,10 @@ sudo nmap -sU --top-ports 100 -oN nmap_udp.txt <target>
 ```
 
 !!! tip "Real-world"
-    Drop to `-T2` and avoid `-sC` on the initial sweep against production systems — some NSE scripts are intrusive and have caused service disruptions on fragile hosts. Run scripts only against specific ports once you know what's there. Also save everything with `-oA` from the start; you'll need timestamps if the client asks what hit their systems and when.
+    Drop to `-T2` and avoid `-sC` on the initial sweep against production systems, some NSE scripts are intrusive and have caused service disruptions on fragile hosts. Run scripts only against specific ports once you know what's there. Also save everything with `-oA` from the start; you'll need timestamps if the client asks what hit their systems and when.
 
 !!! warning "Watch out"
-    Confirm your target IPs are in scope before running anything. On real engagements, verify against the scope document — scanning out-of-scope hosts, even accidentally, is a significant problem.
+    Confirm your target IPs are in scope before running anything. On real engagements, verify against the scope document, scanning out-of-scope hosts, even accidentally, is a significant problem.
 
 ---
 

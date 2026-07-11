@@ -1,7 +1,7 @@
 # SSH (22)
 
 !!! tip "Start here"
-    Check what auth methods are enabled: `ssh -v user@10.10.10.10` — look for `publickey,password`. If password auth is on and you have a username, brute force is viable. Run `ssh-audit 10.10.10.10` to check for weak algorithms and known vulnerabilities.
+    Check what auth methods are enabled: `ssh -v user@10.10.10.10`. Look for `publickey,password`. If password auth is on and you have a username, brute force is viable. Run `ssh-audit 10.10.10.10` to check for weak algorithms and known vulnerabilities.
 
 ---
 

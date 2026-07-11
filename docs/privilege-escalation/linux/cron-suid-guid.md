@@ -1,10 +1,10 @@
 # Cron, SUID & GUID Exploitation
 
 !!! tip "Tip"
-    For SUID binaries, check GTFOBins first before writing custom exploits — most common binaries have documented privesc paths. For cron, check if the script is writable OR if any directory in its path is writable (path injection).
+    For SUID binaries, check GTFOBins first before writing custom exploits, most common binaries have documented privesc paths. For cron, check if the script is writable OR if any directory in its path is writable (path injection).
 
 !!! warning "Watch out"
-    SUID on custom binaries (not standard Linux utils) is a red flag — these are often intentional CTF vectors. In real engagements, SUID on non-standard binaries can indicate misconfiguration worth investigating.
+    SUID on custom binaries (not standard Linux utils) is a red flag, these are often intentional CTF vectors. In real engagements, SUID on non-standard binaries can indicate misconfiguration worth investigating.
 
 ---
 
@@ -104,4 +104,4 @@ If `cp`, `tee`, `dd`, or another file-writing binary has SUID, overwrite `/etc/p
     ```
 
 !!! tip "Why /etc/passwd, not /etc/shadow"
-    Modifying `/etc/shadow` only works if `/etc/passwd` still points at it. Writing a hash directly into `/etc/passwd` (the second field) is the more portable primitive — Linux falls back to it when `/etc/shadow` doesn't contain the user.
+    Modifying `/etc/shadow` only works if `/etc/passwd` still points at it. Writing a hash directly into `/etc/passwd` (the second field) is the more portable primitive. Linux falls back to it when `/etc/shadow` doesn't contain the user.

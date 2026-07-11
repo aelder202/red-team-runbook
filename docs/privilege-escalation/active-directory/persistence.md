@@ -1,7 +1,7 @@
 # AD Persistence
 
 !!! warning "Watch out"
-    Golden tickets and shadow copies are high-noise persistence mechanisms. In a real engagement, document and demonstrate rather than leaving active backdoors — clean up after yourself.
+    Golden tickets and shadow copies are high-noise persistence mechanisms. In a real engagement, document and demonstrate rather than leaving active backdoors, clean up after yourself.
 
 ---
 
@@ -111,19 +111,19 @@ The ACL on `CN=AdminSDHolder,CN=System,DC=example,DC=com` is copied to all prote
 Add-DomainObjectAcl -TargetIdentity 'CN=AdminSDHolder,CN=System,DC=example,DC=com' -PrincipalIdentity <attacker> -Rights All
 ```
 
-Wait up to 60 minutes, then re-check Domain Admin ACLs — your rights will have propagated.
+Wait up to 60 minutes, then re-check Domain Admin ACLs, your rights will have propagated.
 
 ---
 
 ## SID History Injection
 
-Modify a user's `sidHistory` attribute to include Enterprise Admins or DA SIDs. Kerberos trusts SIDs in the TGT regardless of current group membership — the user becomes effectively privileged even after the account is reset.
+Modify a user's `sidHistory` attribute to include Enterprise Admins or DA SIDs. Kerberos trusts SIDs in the TGT regardless of current group membership, the user becomes effectively privileged even after the account is reset.
 
 ```
 mimikatz # sid::add /sam:<attacker> /new:<DA-sid>
 ```
 
-Requires DC-level access (DCShadow or direct NTDS write) — not a foothold technique, but durable once set.
+Requires DC-level access (DCShadow or direct NTDS write), not a foothold technique, but durable once set.
 
 ---
 
@@ -139,4 +139,4 @@ mimikatz # lsadump::dcshadow /push
 ```
 
 !!! warning "Operational"
-    DCShadow requires local SYSTEM on a machine with DC-level replication rights (DA or equivalent). It's a persistence amplifier — use it to entrench, not to escalate.
+    DCShadow requires local SYSTEM on a machine with DC-level replication rights (DA or equivalent). It's a persistence amplifier. Use it to entrench, not to escalate.

@@ -1,7 +1,7 @@
 # FTP (21)
 
 !!! tip "Start here"
-    Always try anonymous login first. If you get in, check for write access — if the FTP root maps to a web directory, it's a direct file upload path.
+    Always try anonymous login first. If you get in, check for write access, if the FTP root maps to a web directory, it's a direct file upload path.
 
 ---
 
@@ -86,7 +86,7 @@ grep ftp /etc/passwd
 ```
 
 !!! tip "Real-world"
-    FTP is rarely exposed externally on modern networks — when you do see it, it's usually a legacy system or an oversight. Treat it as higher priority than it looks; misconfigured FTP on an internal network often has write access to paths that matter.
+    FTP is rarely exposed externally on modern networks, when you do see it, it's usually a legacy system or an oversight. Treat it as higher priority than it looks; misconfigured FTP on an internal network often has write access to paths that matter.
 
 ---
 

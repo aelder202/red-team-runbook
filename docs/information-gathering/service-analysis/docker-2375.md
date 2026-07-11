@@ -1,7 +1,7 @@
 # Docker API (2375, 2376)
 
 !!! tip "Start here"
-    Check if the API is unauthenticated: `curl http://10.10.10.10:2375/version`. If it responds, you have full control of the Docker daemon — list containers, pull images, and mount the host filesystem into a new container for a complete host takeover.
+    Check if the API is unauthenticated: `curl http://10.10.10.10:2375/version`. If it responds, you have full control of the Docker daemon, list containers, pull images, and mount the host filesystem into a new container for a complete host takeover.
 
 !!! warning "Watch out"
     Port 2375 is unencrypted (no TLS). Port 2376 uses TLS but may still lack client cert verification. Try both.
@@ -82,4 +82,4 @@ docker -H tcp://10.10.10.10:2375 exec -it <container-id> sh
 ```
 
 !!! tip "Real-world"
-    Unauthenticated Docker API is an immediate critical — it's full host compromise in two commands. It shows up on dev/staging servers where engineers exposed the API for convenience and never locked it down. Always check 2375 on any Linux host running Docker. TLS on 2376 without client cert verification is equally exploitable.
+    Unauthenticated Docker API is an immediate critical, it's full host compromise in two commands. It shows up on dev/staging servers where engineers exposed the API for convenience and never locked it down. Always check 2375 on any Linux host running Docker. TLS on 2376 without client cert verification is equally exploitable.

