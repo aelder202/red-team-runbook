@@ -1,223 +1,267 @@
 # Network Scanning
 
 !!! tip ""
-    Two-phase approach: quick scan first to identify open ports, then launch a full scan in the background while you start enumeration. Don't wait for `-p-` to finish, by the time it completes you should already have a foothold on whatever the quick scan surfaced.
+    Discover ports quickly, start the full TCP scan in parallel, and enumerate confirmed services while it runs.
+
+## Host Discovery
+
+### Local IPv4 Segment
+
+ARP is the most reliable way to identify reachable IPv4 hosts on the local broadcast domain. Specify the interface when the scanning host has multiple physical, VPN, or tunnel interfaces.
+
+```bash
+sudo arp-scan --interface=eth0 192.168.1.0/24
+sudo netdiscover -i eth0 -r 192.168.1.0/24
+sudo nmap -sn -PR -n 192.168.1.0/24 -oA nmap/hosts-arp
+```
+
+### Routed Subnet
+
+Mix ICMP, TCP SYN/ACK, and UDP probes. A response to any probe is enough for Nmap to mark the host up.
+
+```bash
+sudo nmap -sn -PE -PP -PS22,80,443,3389 -PA80,443 -PU53,161 -n 10.10.10.0/24 -oA nmap/hosts-routed
+```
+
+If a known host does not respond to discovery, retry the port scan with `-Pn`. For ranges, scan the discovered hosts first and use `-Pn` selectively for coverage gaps.
+
+### Target Files and Exclusions
+
+Preview a target file before sending probes:
+
+```bash
+nmap -sL -n -iL targets.txt
+```
+
+Exclude prohibited or out-of-scope addresses from range scans:
+
+```bash
+sudo nmap -sn -n -iL targets.txt --excludefile exclude.txt -oA nmap/hosts
+```
+
+`-n` disables reverse-DNS lookups. Remove it when PTR records are useful and DNS queries are acceptable.
 
 ---
 
-## Host Discovery (Local Segment)
+## TCP Port Discovery
 
-On an internal engagement where you have L2 access to the target subnet, ARP is faster and more reliable than ICMP sweeps, every live host on the segment must answer ARP, and most host firewalls won't block it.
+### Quick Nmap Scan
 
-```bash
-sudo arp-scan -l                        # auto-detect interface and subnet
-sudo arp-scan 192.168.1.0/24
-sudo netdiscover -r 192.168.1.0/24
-```
-
-For remote subnets, mix ICMP echo, TCP ACK, and SYN probes against ports the host firewall is likely to permit:
+Use the first pass for port discovery only. Run version detection and NSE after the port list is known.
 
 ```bash
-nmap -sn -PE -PP -PS21,22,80,443,3389 -PA80,443 10.10.10.0/24
+sudo nmap -sS -Pn -n --top-ports 1000 --open -oA nmap/quick 10.10.10.10
 ```
 
-!!! tip "Real-world"
-    On hardened networks, hosts often drop ICMP entirely, ping sweeps return zero results even when the subnet is full of live machines. If host discovery turns up nothing, **skip it entirely with `-Pn`** and let the port scan tell you what's alive.
+Nmap's default set is the 1,000 most commonly observed TCP ports, not ports 1 through 1000.
+
+### Full TCP Scan
+
+```bash
+sudo nmap -sS -Pn -n -p- --open -oA nmap/full 10.10.10.10
+```
+
+`-p-` scans TCP ports 1 through 65535, including the ports checked by the quick scan. If raw-packet access is unavailable, use `-sT` instead of `-sS`.
+
+For a stable link with a measured acceptable packet rate:
+
+```bash
+sudo nmap -sS -Pn -n -p- --open --min-rate <tested-pps> --max-retries <tested-retries> -oA nmap/full-fast 10.10.10.10
+```
+
+`--min-rate` sets a speed floor; it does not improve reliability. Rates that exceed the path or target capacity can cause missed ports. Repeat important high-speed results with adaptive timing or a lower rate.
+
+### RustScan
+
+RustScan performs fast TCP connect scans, then passes the discovered ports and everything after `--` to Nmap:
+
+```bash
+rustscan -a 10.10.10.10 -- -Pn -n -sV -oA nmap/rustscan
+```
+
+`-Pn` is passed to Nmap because RustScan has already demonstrated that the target accepted a TCP connection. Without it, the Nmap handoff can still stop when its separate discovery probes are filtered.
+
+Tune RustScan with `-b <batch-size>` and `-T <timeout-ms>`. Higher batch sizes and shorter timeouts are faster but can miss ports or place unnecessary load on sensitive targets. Prefer Nmap when stability matters more than scan time.
+
+### Masscan
+
+Use Masscan for large, explicitly scoped ranges, then confirm every result with Nmap:
+
+```bash
+sudo masscan 10.10.0.0/16 -p1-65535 --rate <tested-pps> --excludefile exclude.txt -oX nmap/masscan.xml
+
+nmap -Pn -n -sV -p<ports-from-masscan> -oA nmap/services <host-from-masscan>
+```
+
+Start with a conservative rate and raise it only after confirming that the scanning host, network path, and target environment can handle the traffic.
 
 ---
 
-## Phase 1: Quick Scan
+## Service, OS, and NSE Follow-Up
 
-Hit the top 1000 ports and identify services fast. Run this first, then start enumerating immediately.
+### Service Detection
 
-```bash
-nmap -sV -sC --open -T4 -Pn -oA quick 10.10.10.10
-```
-
-| Flag | Purpose |
-|------|---------|
-| `-sV` | Service/version detection |
-| `-sC` | Default NSE scripts (`safe` + `default` categories) |
-| `-Pn` | Skip host discovery: assume host is up |
-| `-oA quick` | Save normal/grepable/XML output (`quick.nmap`, `.gnmap`, `.xml`) |
-| `-T4` | Aggressive timing: fine for most networks, drop to `-T3` if you see drops |
-
-!!! warning "Always use `-Pn` on real engagements"
-    Without `-Pn`, nmap sends ICMP/ARP probes first and skips any host that doesn't reply. Modern Windows hosts, hardened Linux servers, and most cloud instances drop ICMP by default, you'll miss them entirely. Make `-Pn` your default and only drop it when sweeping a range where you genuinely don't know which hosts exist.
-
-RustScan is faster for port discovery on a known-up host, it finds open ports in seconds, then hands off to nmap for service detection:
+Run version detection only against confirmed ports:
 
 ```bash
-rustscan -a 10.10.10.10 --ulimit 5000 -- -sV -sC -oA quick
+sudo nmap -sS -Pn -n -sV -p22,80,443,445,3389 -oA nmap/services 10.10.10.10
 ```
+
+Treat banners and CPE matches as leads. Proxies, load balancers, backported packages, and deliberately altered banners can produce misleading versions.
+
+### NSE Scripts
+
+`-sC` runs the `default` script category. It does not mean `default and safe`, and a small number of default scripts may still be intrusive.
+
+```bash
+# Default scripts on confirmed ports
+sudo nmap -sS -Pn -n -sV -sC -p22,80,443,445 -oA nmap/default-scripts 10.10.10.10
+
+# Focused HTTP checks
+nmap -Pn -n -sV -p80,443,8080,8443 --script "http-title,http-headers,http-methods" 10.10.10.10
+
+# Focused SMB checks
+nmap -Pn -n -sV -p139,445 --script "smb-protocols,smb2-security-mode,smb2-time,smb-os-discovery" 10.10.10.10
+```
+
+Preview an NSE selection before running it:
+
+```bash
+nmap --script-help "default"
+nmap --script-help "vuln and safe"
+```
+
+| Selection | Use |
+|---|---|
+| `default` / `-sC` | Common service information; review the selected scripts |
+| `safe` | Lower-risk discovery scripts, not a guarantee of harmless behavior |
+| `discovery` | Additional host, service, share, and directory information |
+| `auth` | Authentication and anonymous-access checks; may generate auth events |
+| `vuln` | Vulnerability checks with mixed behavior; inspect scripts individually |
+| `brute`, `exploit`, `dos` | Explicit authorization only |
+
+### OS Detection
+
+OS fingerprinting is most reliable when Nmap can test at least one open and one closed TCP port:
+
+```bash
+sudo nmap -O -Pn -n -p<open-port>,<closed-port> -oA nmap/os 10.10.10.10
+```
+
+Use `--osscan-limit` when scanning multiple hosts so Nmap skips targets without suitable fingerprinting conditions.
+
+### Vulnerability Leads
+
+```bash
+# Only scripts categorized as both vuln and safe
+nmap -Pn -n -sV --script "vuln and safe" -p<ports> 10.10.10.10
+
+# Version/CPE matches from the external Vulners service
+nmap -Pn -n -sV --script vulners --script-args vulners.mincvss=7.0 -p<ports> 10.10.10.10
+```
+
+`vulners` sends detected software names, versions, or CPEs to a third-party API. Use it only when that disclosure is acceptable. A version-to-CVE match is not a verified finding; confirm the installed build, patch state, configuration, and behavior.
+
+Move confirmed services into the matching [service playbook](../information-gathering/index.md) for deeper enumeration and validation.
 
 ---
 
-## Phase 2: Full Port Scan
+## UDP and IPv6
 
-Run in the background while you work on what Phase 1 found. Catches anything above port 1000.
+### UDP
+
+Start with the most common UDP ports, then run version detection against the ports that remain `open` or `open|filtered`:
 
 ```bash
-sudo nmap -p- -sS -Pn --min-rate 1000 --open -oA full 10.10.10.10
+sudo nmap -sU -Pn -n --top-ports 100 -oA nmap/udp-top 10.10.10.10
+
+sudo nmap -sU -sV -Pn -n -p53,67,68,69,111,123,137,138,161,162,500,4500,514,623,1900,5353 -oA nmap/udp-targeted 10.10.10.10
 ```
 
-| Flag | Purpose |
-|------|---------|
-| `-p-` | All 65535 TCP ports |
-| `-sS` | SYN stealth scan (requires root, faster and quieter than `-sT`) |
-| `--min-rate 1000` | Pin packet rate floor: more reliable than `-T4` on slow links |
-| `--max-retries 2` | Cut retransmit time on filtered ports |
+High-value UDP services include DNS, DHCP, TFTP, RPC, NTP, NetBIOS, SNMP, IKE, Syslog, IPMI, SSDP, and mDNS.
 
-If you can't run as root (or you're tunneling through `proxychains`), use `-sT` instead, full TCP connect, slower but works without raw socket access.
-
-!!! tip "Tuning over timing templates"
-    `-T4` is fine as a default, but on flaky networks `--min-rate`/`--max-retries`/`--host-timeout` give you finer control. On solid links, `--min-rate 5000` against a single host is significantly faster than any `-T` template alone.
-
-For very large ranges (`/16` and up), drop nmap and use masscan for initial port discovery, then feed the output back into nmap for service detection:
+An exhaustive UDP scan is valid when scope, stability, and available time require it:
 
 ```bash
-sudo masscan -p1-65535 10.10.0.0/16 --rate=10000 -oG masscan.gnmap
+sudo nmap -sU -Pn -n -p- --open -oA nmap/udp-full 10.10.10.10
 ```
 
----
+UDP scans are slow because many open and filtered services do not respond. Use `-sV` on the reduced result set to help distinguish truly open ports from `open|filtered`.
 
-## Service & Script Scan
+### IPv6
 
-Once you have a port list from Phase 1/2, run a focused scan with version detection and the relevant NSE categories:
-
-```bash
-nmap -sV -sC -p 22,80,443,445,3389 --version-intensity 7 -Pn \
-     -oA services 10.10.10.10
-```
-
-NSE script categories worth knowing. Combine with `--script`:
-
-| Category | Use case |
-|----------|----------|
-| `default`, `safe` | Run by `-sC`. Safe to use everywhere. |
-| `discovery` | Extra enumeration (NetBIOS names, DNS records, SMB shares). |
-| `version` | Aggressive version probing (combined with `-sV --version-intensity 9`). |
-| `auth` | Default-cred and anonymous-bind checks. |
-| `vuln` | Known-CVE checks. **Some are intrusive**: see warning below. |
-| `brute` | Credential brute-forcers. Loud and slow: usually not what you want. |
-| `exploit` | Active exploitation. Treat like `vuln`. |
+Do not assume IPv4 discovery provides IPv6 coverage. Start with addresses collected from DNS, neighbor tables, application responses, or other reconnaissance rather than attempting to sweep an entire `/64`.
 
 ```bash
-nmap -p 445 --script "smb-vuln-* and safe" 10.10.10.10
-nmap -p 80,443 --script "http-enum,http-title,http-headers" 10.10.10.10
-```
+ip -6 neigh show
 
----
+# Link-local addresses require an interface zone
+sudo nmap -6 -sn -n 'fe80::1%eth0'
 
-## OS Detection
-
-Useful when you need to confirm Windows vs Linux before queueing up follow-up tooling. Runs alongside `-sV`:
-
-```bash
-sudo nmap -O -sV -Pn 10.10.10.10
-```
-
-Less reliable than fingerprinting a known service (SMB, SSH banners, HTTP `Server` headers). Treat the result as a hint, not gospel.
-
----
-
-## UDP (Targeted)
-
-UDP is slow and noisy. Never `-sU -p-`. Scan for the specific services you actually care about:
-
-```bash
-sudo nmap -sU --top-ports 50 -Pn 10.10.10.10
-sudo nmap -sU -sV -p 53,69,111,123,161,500,4500,514,623 -Pn 10.10.10.10
-```
-
-Common high-value UDP ports: DNS (53), TFTP (69), NTP (123), SNMP (161), IKE (500/4500), Syslog (514), IPMI (623).
-
----
-
-## Firewall / IDS Evasion
-
-When something's clearly between you and the host, escalate carefully, these flags make scans louder, not quieter, against any halfway competent monitoring stack.
-
-```bash
-nmap -Pn -f -D RND:5 --source-port 53 --data-length 24 -p 80,443 10.10.10.10
-```
-
-| Flag | Effect |
-|------|--------|
-| `-Pn` | Skip discovery: covered above. The single most useful evasion flag. |
-| `-f` / `--mtu 16` | Fragment packets to slip past simple packet inspection. |
-| `-D RND:5` | Spoof 5 random decoy source IPs alongside your real one. |
-| `--source-port 53` | Many old ACLs trust source port 53/DNS. Worth trying against ancient firewalls. |
-| `--data-length 24` | Pad packets to dodge length-based signatures. |
-| `-T2` / `-T1` | "Polite"/"sneaky" timing. Useful when you actually need to evade IDS. |
-
-!!! warning "Authorization"
-    Evasion techniques can produce alerts that look like a real attack and may breach engagement scope. Only use them when explicitly in-scope and coordinated with the blue team or client.
-
----
-
-## Saving & Reusing Output
-
-Always save with `-oA`, the grepable (`.gnmap`) format pipes cleanly into shell tools, the XML feeds tools like Metasploit (`db_import`) and EyeWitness (`-x`), and the normal output is what you'll paste into the report.
-
-```bash
-# Pull just the open ports as a comma-separated list
-grep -oP '\d+/open' full.gnmap | cut -d/ -f1 | sort -nu | paste -sd,
-
-# Feed into the next nmap run
-ports=$(grep -oP '\d+/open' full.gnmap | cut -d/ -f1 | sort -nu | paste -sd,)
-nmap -sV -sC -p"$ports" -Pn -oA services 10.10.10.10
-```
-
-For multi-host scans, drive nmap from a target file:
-
-```bash
-nmap -sV -sC -Pn -iL targets.txt -oA sweep
+# Known IPv6 target
+sudo nmap -6 -sS -Pn -n -p- --open -oA nmap/ipv6-full <ipv6-target>
 ```
 
 ---
 
-## Vulnerability Scanning
+## Pivots and Filtering
 
-Quick CVE-aware sweep across whatever services Phase 1/2 turned up. Useful for picking out low-hanging fruit before deep-diving each service, not a substitute for a real vulnerability scanner.
+### SOCKS Proxy
 
-### General sweep (broad)
-
-```bash
-nmap -sV -Pn --script "vuln and safe" -p <ports> 10.10.10.10
-nmap -sV -Pn --script vulners -p <ports> 10.10.10.10
-```
-
-`vulners` is the highest-signal script in the box, it takes `-sV` banners and queries vulners.com for matching CVEs. Run it on every engagement.
+`proxychains` can proxy TCP connect scans, not raw SYN scans:
 
 ```bash
-nmap -sV -Pn --script vulners --script-args mincvss=7.0 -p <ports> 10.10.10.10
+proxychains nmap -sT -Pn -n -p22,80,443,445,3389 10.10.20.10
 ```
 
-!!! warning "`--script vuln` is intrusive"
-    The unfiltered `vuln` category includes scripts that send real exploit payloads (`smb-vuln-ms17-010`, `http-shellshock`, etc.) and can crash unpatched services. Default to `"vuln and safe"` and only widen the filter when you've scoped exploitation with the client.
+Scan a focused port set first. Full connect scans through a high-latency proxy can be extremely slow and may overload the pivot. Route-based tunnels such as Ligolo-ng can support normal routed tooling; see [Port Forwarding](../port-forwarding/index.md).
 
-### Targeted scripts by service
+### Filtering Diagnostics
 
-| Service | Useful scripts |
-|---------|----------------|
-| SSL/TLS (443, 8443, 636, 993, 995) | `ssl-heartbleed`, `ssl-poodle`, `ssl-ccs-injection`, `ssl-dh-params`, `ssl-cert`, `ssl-enum-ciphers` |
-| HTTP/HTTPS (80, 443, 8080, 8443) | `http-vuln-*`, `http-shellshock`, `http-enum`, `http-title`, `http-headers`, `http-methods`, `http-robots.txt` |
-| SMB (139, 445) | `smb-vuln-ms17-010`, `smb-vuln-ms08-067`, `smb2-security-mode`, `smb-os-discovery`, see [SMB](../information-gathering/service-analysis/smb.md) |
-| RDP (3389) | `rdp-ntlm-info`, `rdp-vuln-ms12-020`, `rdp-enum-encryption` |
-| DNS (53) | `dns-recursion`, `dns-zone-transfer`, `dns-cache-snoop` |
-| FTP (21) | `ftp-anon`, `ftp-vsftpd-backdoor`, `ftp-proftpd-backdoor` |
-| SSH (22) | `ssh2-enum-algos`, `ssh-hostkey`, `ssh-auth-methods` |
-| SMTP (25, 465, 587) | `smtp-enum-users`, `smtp-vuln-cve2010-4344`, `smtp-open-relay` |
-| SNMP (161/udp) | `snmp-info`, `snmp-brute`, `snmp-processes`, `snmp-win32-software` |
+Use state reasons and a small packet trace before changing scan techniques:
 
 ```bash
-# SSL/TLS posture on every HTTPS-ish port at once
-nmap -sV -Pn -p 443,636,993,995,8443 \
-  --script "ssl-heartbleed,ssl-poodle,ssl-ccs-injection,ssl-enum-ciphers" 10.10.10.10
+# Explain why each port received its state
+sudo nmap -sS -Pn -n --reason -p22,80,443 10.10.10.10
 
-# HTTP enumeration + common CVE checks
-nmap -sV -Pn -p 80,443,8080 --script "http-enum,http-title,http-methods,http-vuln-*" 10.10.10.10
+# Map whether a firewall permits packets; ACK scans do not identify open ports
+sudo nmap -sA -Pn -n --reason -p22,80,443 10.10.10.10
+
+# Inspect one port without producing an unmanageable trace
+sudo nmap -sS -Pn -n --packet-trace -p443 10.10.10.10
 ```
 
-Service-specific exploitation, default-cred testing, and deep enumeration live in the [Services](../information-gathering/index.md) section, each port has its own page.
+!!! warning "Authorized evasion testing"
+    Test fragmentation, source-port manipulation, padding, timing changes, or controlled decoys one at a time and only when they are explicitly in scope. Avoid random decoys: spoofed third-party addresses create unnecessary traffic, and unsuitable decoys can reduce accuracy or contribute to SYN-flood-like behavior. Fragmentation and decoys also do not cover Nmap version detection or NSE connections.
+
+---
+
+## Output and Handoff
+
+`-oA <basename>` saves normal, XML, and grepable output. Grepable output remains convenient for one-off shell extraction but is deprecated; prefer XML for durable automation.
+
+```bash
+# Exact open TCP states from grepable output; excludes open|filtered
+grep -oP '\d+(?=/open/tcp)' nmap/full.gnmap | sort -nu | paste -sd,
+
+# Exact open TCP states from XML
+xmlstarlet sel -t -m '//port[@protocol="tcp"][state/@state="open"]' -v '@portid' -n nmap/full.xml | sort -nu | paste -sd,
+```
+
+Guard against an empty port list before launching the service scan:
+
+```bash
+ports=$(grep -oP '\d+(?=/open/tcp)' nmap/full.gnmap | sort -nu | paste -sd,)
+
+if [ -n "$ports" ]; then
+  sudo nmap -sS -Pn -n -sV -sC -p"$ports" -oA nmap/services 10.10.10.10
+fi
+```
+
+Nmap overwrites an existing basename, so use a separate directory or a target- and date-specific name for repeated scans. Resume an interrupted scan from its saved output:
+
+```bash
+sudo nmap --resume nmap/full.nmap
+```
+
+After confirming a service, continue with the relevant [service-analysis page](../information-gathering/index.md), such as [HTTP/HTTPS](../information-gathering/service-analysis/http-80-443.md), [SMB](../information-gathering/service-analysis/smb.md), [LDAP](../information-gathering/service-analysis/ldap.md), or [SNMP](../information-gathering/service-analysis/snmp.md).

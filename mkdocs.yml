@@ -70,7 +70,6 @@ nav:
     - Network Scanning: network-scanning/network-scanning.md
     - Reconnaissance: network-scanning/reconnaissance.md
     - Traffic Capture: network-scanning/traffic-capture.md
-    - EyeWitness: applications/tools/eyewitness.md
   - Services:
     - Overview: information-gathering/index.md
     - DNS (53): information-gathering/service-analysis/dns-53.md
@@ -189,6 +188,7 @@ nav:
     - Burp Suite: applications/tools/burp-suite.md
     - cadaver: tools/cadaver.md
     - Command-Line Shells: tools/command-line-shells.md
+    - EyeWitness: applications/tools/eyewitness.md
     - Impacket: tools/impacket.md
     - kerbrute: tools/kerbrute.md
     - ldapsearch: tools/ldapsearch.md
