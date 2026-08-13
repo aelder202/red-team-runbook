@@ -1,14 +1,14 @@
 # IMAP (143, 993)
 
 !!! tip "Start here"
-    Connect directly and check capabilities: `nc 10.10.10.10 143`, then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` on port 143, if present, credentials are in cleartext. Worth a quick brute force with a default credentials list before going to rockyou.
+    Connect directly and check capabilities: `nc $IP 143`, then send `a1 CAPABILITY`. Look for `AUTH=PLAIN` or `AUTH=LOGIN` on port 143, if present, credentials are in cleartext. Worth a quick brute force with a default credentials list before going to rockyou.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 143,993 --script imap-capabilities,imap-ntlm-info 10.10.10.10
+nmap -p 143,993 --script imap-capabilities,imap-ntlm-info $IP
 ```
 
 ---
@@ -16,7 +16,7 @@ nmap -p 143,993 --script imap-capabilities,imap-ntlm-info 10.10.10.10
 ## Manual Interaction
 
 ```bash
-nc 10.10.10.10 143
+nc $IP 143
 
 # Once connected:
 a1 CAPABILITY              # check supported auth methods
@@ -29,8 +29,8 @@ a1 FETCH 1:* FLAGS         # list all messages with flags
 
 For IMAPS (port 993):
 ```bash
-openssl s_client -connect 10.10.10.10:993
-openssl s_client -connect 10.10.10.10:143 -starttls imap
+openssl s_client -connect $IP:993
+openssl s_client -connect $IP:143 -starttls imap
 ```
 
 ---
@@ -38,8 +38,8 @@ openssl s_client -connect 10.10.10.10:143 -starttls imap
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P /usr/share/seclists/Passwords/Default-Credentials/default-userpasscombo.txt imap://10.10.10.10
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt imap://10.10.10.10
+hydra -L users.txt -P /usr/share/seclists/Passwords/Default-Credentials/default-userpasscombo.txt imap://$IP
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt imap://$IP
 ```
 
 ---
@@ -47,7 +47,7 @@ hydra -L users.txt -P /usr/share/wordlists/rockyou.txt imap://10.10.10.10
 ## NTLM Info (Windows environments)
 
 ```bash
-nmap --script imap-ntlm-info -p 143,993 10.10.10.10
+nmap --script imap-ntlm-info -p 143,993 $IP
 ```
 
 If NTLM authentication is in use, the response leaks internal hostname, domain, and OS version without any credentials.

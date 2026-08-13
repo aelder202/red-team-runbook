@@ -1,7 +1,7 @@
 # Nuclei: Vulnerability Scanner
 
 !!! tip "Tip"
-    For web API enumeration: `nuclei -u https://10.10.10.10 -t exposed-panels/ -t exposures/ -t misconfiguration/` covers the most impactful templates. Use `-severity critical,high` to filter noise. Nuclei is much faster than manual checks for known CVEs on large scope.
+    For web API enumeration: `nuclei -u https://$IP -t exposed-panels/ -t exposures/ -t misconfiguration/` covers the most impactful templates. Use `-severity critical,high` to filter noise. Nuclei is much faster than manual checks for known CVEs on large scope.
 
 ---
 
@@ -24,7 +24,7 @@ ls ~/.nuclei-templates/
 Scanning a single URL:
 
 ```bash
-nuclei -u https://10.10.10.10
+nuclei -u https://$IP
 ```
 
 Scanning multiple URLs:
@@ -40,25 +40,25 @@ cat urls.txt | nuclei -l -
 ### Identifying API Endpoints
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/api/api-endpoints.yaml
+nuclei -u https://$IP -t http/api/api-endpoints.yaml
 ```
 
 ### Scanning for API Keys and Sensitive Data
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/exposures/api-tokens.yaml
+nuclei -u https://$IP -t http/exposures/api-tokens.yaml
 ```
 
 ### Checking for Open API (Swagger) Exposure
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/api/openapi.yaml
+nuclei -u https://$IP -t http/api/openapi.yaml
 ```
 
 ### Detecting GraphQL Misconfigurations
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/api/graphql.yaml
+nuclei -u https://$IP -t http/api/graphql.yaml
 ```
 
 ---
@@ -68,19 +68,19 @@ nuclei -u https://10.10.10.10 -t http/api/graphql.yaml
 ### Running a Full Web Security Scan
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/
+nuclei -u https://$IP -t http/
 ```
 
 ### Scanning for CVEs in Web Applications
 
 ```bash
-nuclei -u https://10.10.10.10 -t cves/
+nuclei -u https://$IP -t cves/
 ```
 
 ### Finding Subdomains and Associated Services
 
 ```bash
-nuclei -u https://10.10.10.10 -t dns/
+nuclei -u https://$IP -t dns/
 ```
 
 ---
@@ -90,19 +90,19 @@ nuclei -u https://10.10.10.10 -t dns/
 ### Excluding False Positives
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/ -exclude-severity info
+nuclei -u https://$IP -t http/ -exclude-severity info
 ```
 
 ### Saving Output to a File
 
 ```bash
-nuclei -u https://10.10.10.10 -t http/ -o results.txt
+nuclei -u https://$IP -t http/ -o results.txt
 ```
 
 ### Running Nuclei with Proxy for Stealth
 
 ```bash
-nuclei -u https://10.10.10.10 -proxy http://127.0.0.1:8080
+nuclei -u https://$IP -proxy http://127.0.0.1:8080
 ```
 
 ---
@@ -112,11 +112,11 @@ nuclei -u https://10.10.10.10 -proxy http://127.0.0.1:8080
 ### Running Nuclei on Subdomain Enumeration Results
 
 ```bash
-subfinder -d example.com -silent | nuclei -t http/
+subfinder -d $DOMAIN -silent | nuclei -t http/
 ```
 
 ### Using Nuclei with FFuF for Parameter Fuzzing
 
 ```bash
-ffuf -w wordlist.txt -u https://10.10.10.10/FUZZ | nuclei -t http/
+ffuf -w wordlist.txt -u https://$IP/FUZZ | nuclei -t http/
 ```

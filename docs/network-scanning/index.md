@@ -11,14 +11,14 @@ Start here on every engagement. The goal is to build an accurate map of the atta
 Before sending a single packet, collect what's publicly available. Useful for external assessments and building a target list.
 
 ```bash
-whois example.com
-dig example.com ANY
+whois $DOMAIN
+dig $DOMAIN ANY
 ```
 
 Check certificate transparency for subdomains:
 
 ```bash
-curl -s "https://crt.sh/?q=%.example.com&output=json" | jq '.[].name_value' | sort -u
+curl -s "https://crt.sh/?q=%.$DOMAIN&output=json" | jq '.[].name_value' | sort -u
 ```
 
 See [Reconnaissance](reconnaissance.md) for OSINT techniques, subdomain enumeration, and Google dorking.
@@ -33,13 +33,13 @@ See [Reconnaissance](reconnaissance.md) for OSINT techniques, subdomain enumerat
 Identify live hosts before port scanning, especially important on large subnets.
 
 ```bash
-nmap -sn 10.10.10.0/24
+nmap -sn $SUBNET
 ```
 
 On an internal segment, ARP sweep is more reliable than ICMP, many hosts block ping but can't hide from ARP:
 
 ```bash
-nmap -PR -sn 10.10.10.0/24
+nmap -PR -sn $SUBNET
 ```
 
 !!! warning "Watch out"
@@ -54,19 +54,19 @@ Quick scan first to get something to work with, full scan in the background whil
 **Quick scan (top 1000 ports):**
 
 ```bash
-nmap -sV --open -T4 10.10.10.10
+nmap -sV --open -T4 $IP
 ```
 
 **Full TCP (run in background):**
 
 ```bash
-nmap -p- -T4 --open -oN nmap_full.txt 10.10.10.10
+nmap -p- -T4 --open -oN nmap_full.txt $IP
 ```
 
 **Targeted service scan once you have a port list:**
 
 ```bash
-nmap -sC -sV -p 22,80,443 10.10.10.10 -oN nmap_services.txt
+nmap -sC -sV -p 22,80,443 $IP -oN nmap_services.txt
 ```
 
 See [Network Scanning](network-scanning.md) for RustScan, UDP scanning, and SMB vuln scripts.
@@ -91,9 +91,9 @@ See [Traffic Capture](traffic-capture.md) for Wireshark filters and protocol-spe
 Once you have network access, enumerate users and hosts through null sessions and anonymous binds before attempting any authentication.
 
 ```bash
-nxc smb 10.10.10.0/24 --gen-relay-list alive.txt    # find SMB hosts
-nxc smb 10.10.10.10 -u '' -p '' --users             # null session user enum
-rpcclient -U "" -N 10.10.10.10                      # anonymous RPC
+nxc smb $SUBNET --gen-relay-list alive.txt    # find SMB hosts
+nxc smb $IP -u '' -p '' --users             # null session user enum
+rpcclient -U "" -N $IP                      # anonymous RPC
 ```
 
 Protocol-specific enumeration (SMB, LDAP, Kerberos, SMTP, SNMP, etc.) lives in the [Services](../information-gathering/index.md) section, each port has its own page with the relevant commands.

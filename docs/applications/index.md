@@ -11,8 +11,8 @@ Web application testing follows a consistent pattern: fingerprint the stack, map
 Identify the technology stack before testing anything, the right exploits depend on knowing what's running.
 
 ```bash
-whatweb http://10.10.10.10
-curl -I http://10.10.10.10          # response headers
+whatweb http://$IP
+curl -I http://$IP          # response headers
 ```
 
 Look for:
@@ -31,13 +31,13 @@ Enumerate directories, subdomains, and parameters before testing exploits. You c
 **Directory fuzzing:**
 
 ```bash
-feroxbuster -u http://10.10.10.10 -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -t 10 --filter-status 403,404
+feroxbuster -u http://$IP -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -t 10 --filter-status 403,404
 ```
 
 **Subdomain enumeration:**
 
 ```bash
-ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://10.10.10.10 -H "Host: FUZZ.example.com" -fc 301,302
+ffuf -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://$IP -H "Host: FUZZ.$DOMAIN" -fc 301,302
 ```
 
 See [Directory & Page Fuzzing](enumeration/directory-page-fuzzing.md) and [Subdomain & Parameter Fuzzing](enumeration/subdomain-parameter-fuzzing.md).
@@ -57,7 +57,7 @@ Weak authentication is the most common path to initial access on web application
 - Session token predictability or fixation
 
 ```bash
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.10.10 http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect"
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt $IP http-post-form "/login:username=^USER^&password=^PASS^:F=incorrect"
 ```
 
 See [Credential Brute-Forcing](auth/credential-brute-forcing.md), [JWT Attacks](auth/jwt-attacks.md), and [Session Hijacking](auth/session-hijacking.md).

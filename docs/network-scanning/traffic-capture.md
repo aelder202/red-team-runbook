@@ -58,7 +58,7 @@ sudo tcpdump -i eth0 udp port 53
 ### Capture HTTPS Traffic on a Specific Host
 
 ```bash
-sudo tcpdump -i eth0 port 443 and host 192.168.1.10
+sudo tcpdump -i eth0 port 443 and host $IP
 ```
 
 ### Capture All SSH Traffic

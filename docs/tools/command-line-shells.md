@@ -8,8 +8,8 @@
 ## Setting Shell Variables
 
 ```bash
-export IP=10.10.10.10
-export URL=http://10.10.10.10
+export IP=$IP
+export URL=http://$IP
 ```
 
 ---

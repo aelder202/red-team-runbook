@@ -47,7 +47,7 @@ john --wordlist=/usr/share/wordlists/rockyou.txt ssh.hash
 Use the decrypted key:
 
 ```bash
-ssh -i id_rsa <user>@10.10.10.10
+ssh -i id_rsa <user>@$IP
 ```
 
 ---
@@ -65,12 +65,12 @@ find / -type f \( -name "*.conf" -o -name "*.ini" -o -name "*.json" \) -exec gre
 ## Lateral Movement via SSH Keys
 
 ```bash
-ssh -i id_rsa <user>@10.10.10.10
+ssh -i id_rsa <user>@$IP
 ```
 
 If SSH agent forwarding is enabled:
 
 ```bash
-ssh -A <user>@10.10.10.10
-ssh <user>@10.10.10.10
+ssh -A <user>@$IP
+ssh <user>@$IP
 ```

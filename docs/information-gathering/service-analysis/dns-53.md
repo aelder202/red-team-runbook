@@ -1,15 +1,15 @@
 # DNS (53)
 
 !!! tip "Start here"
-    Try zone transfer first: `dig axfr @10.10.10.10 example.com`. Internal DNS servers are commonly misconfigured and will hand you the full record set, subdomains, internal IPs, mail servers, everything.
+    Try zone transfer first: `dig axfr @$DC_IP $DOMAIN`. Internal DNS servers are commonly misconfigured and will hand you the full record set, subdomains, internal IPs, mail servers, everything.
 
 ---
 
 ## Banner Grabbing
 
 ```bash
-nmap -sU -p 53 --script dns-nsid,dns-version 10.10.10.10
-dig CH TXT version.bind @10.10.10.10
+nmap -sU -p 53 --script dns-nsid,dns-version $DC_IP
+dig CH TXT version.bind @$DC_IP
 ```
 
 ---
@@ -17,9 +17,9 @@ dig CH TXT version.bind @10.10.10.10
 ## Zone Transfer
 
 ```bash
-dig axfr @10.10.10.10 example.com
-host -t axfr example.com 10.10.10.10
-nmap --script=dns-zone-transfer -p 53 10.10.10.10
+dig axfr @$DC_IP $DOMAIN
+host -t axfr $DOMAIN $DC_IP
+nmap --script=dns-zone-transfer -p 53 $DC_IP
 ```
 
 ---
@@ -28,12 +28,12 @@ nmap --script=dns-zone-transfer -p 53 10.10.10.10
 
 ```bash
 # Passive - no direct contact with target
-subfinder -d example.com
-amass enum -passive -d example.com
+subfinder -d $DOMAIN
+amass enum -passive -d $DOMAIN
 
 # Active brute force
-gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50
-dnsenum --dnsserver 10.10.10.10 -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt example.com
+gobuster dns -d $DOMAIN -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50
+dnsenum --dnsserver $DC_IP -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt $DOMAIN
 ```
 
 !!! tip "Real-world"
@@ -44,8 +44,8 @@ dnsenum --dnsserver 10.10.10.10 -f /usr/share/seclists/Discovery/DNS/subdomains-
 ## Reverse DNS Lookup
 
 ```bash
-dig -x 10.10.10.10
-nslookup 10.10.10.10
+dig -x $DC_IP
+nslookup $DC_IP
 ```
 
 ---
@@ -53,9 +53,9 @@ nslookup 10.10.10.10
 ## Basic Record Queries
 
 ```bash
-dig A example.com @10.10.10.10       # IPv4 address
-dig MX example.com @10.10.10.10      # Mail servers
-dig NS example.com @10.10.10.10      # Name servers
-dig TXT example.com @10.10.10.10     # SPF, DKIM, verification records
-dig ANY example.com @10.10.10.10     # All records
+dig A $DOMAIN @$DC_IP       # IPv4 address
+dig MX $DOMAIN @$DC_IP      # Mail servers
+dig NS $DOMAIN @$DC_IP      # Name servers
+dig TXT $DOMAIN @$DC_IP     # SPF, DKIM, verification records
+dig ANY $DOMAIN @$DC_IP     # All records
 ```

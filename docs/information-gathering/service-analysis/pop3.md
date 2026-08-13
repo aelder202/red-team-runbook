@@ -1,14 +1,14 @@
 # POP3 (110, 995)
 
 !!! tip "Start here"
-    Connect directly and authenticate: `nc 10.10.10.10 110`, then `USER <username>` / `PASS <password>`. Once in, `LIST` shows available messages and `RETR 1` downloads the first one. Same credentials often work on IMAP, SMTP, and other internal services.
+    Connect directly and authenticate: `nc $IP 110`, then `USER <username>` / `PASS <password>`. Once in, `LIST` shows available messages and `RETR 1` downloads the first one. Same credentials often work on IMAP, SMTP, and other internal services.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 110,995 --script pop3-capabilities 10.10.10.10
+nmap -p 110,995 --script pop3-capabilities $IP
 ```
 
 ---
@@ -16,7 +16,7 @@ nmap -p 110,995 --script pop3-capabilities 10.10.10.10
 ## Manual Interaction
 
 ```bash
-nc 10.10.10.10 110
+nc $IP 110
 
 USER admin
 PASS password
@@ -28,8 +28,8 @@ QUIT
 For POP3S (port 995):
 
 ```bash
-openssl s_client -connect 10.10.10.10:995
-openssl s_client -connect 10.10.10.10:110 -starttls pop3
+openssl s_client -connect $IP:995
+openssl s_client -connect $IP:110 -starttls pop3
 ```
 
 ---
@@ -37,8 +37,8 @@ openssl s_client -connect 10.10.10.10:110 -starttls pop3
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt pop3://10.10.10.10
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt -s 995 pop3s://10.10.10.10
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt pop3://$IP
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt -s 995 pop3s://$IP
 ```
 
 ---
@@ -48,7 +48,7 @@ hydra -L users.txt -P /usr/share/wordlists/rockyou.txt -s 995 pop3s://10.10.10.1
 If port 110 is open without TLS, credentials are sent in cleartext. Check what auth methods are advertised:
 
 ```bash
-openssl s_client -connect 10.10.10.10:110 -starttls pop3
+openssl s_client -connect $IP:110 -starttls pop3
 ```
 
 Look for `AUTH PLAIN` or `AUTH LOGIN` in the capability response, if present on an unencrypted connection, credentials are interceptable.

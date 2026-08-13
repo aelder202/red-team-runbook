@@ -49,3 +49,75 @@
   </script>
   {% endif %}
 {% endblock %}
+
+{% block header %}
+  {{ super() }}
+  <div class="runbook-variables__backdrop" data-runbook-variables-backdrop hidden></div>
+  <aside
+    class="runbook-variables"
+    id="runbook-variables-panel"
+    aria-labelledby="runbook-variables-title"
+    aria-modal="true"
+    role="dialog"
+    hidden
+  >
+    <div class="runbook-variables__header">
+      <div>
+        <p class="runbook-variables__eyebrow">Command variables</p>
+        <h2 id="runbook-variables-title">Engagement values</h2>
+      </div>
+      <button class="runbook-variables__close md-icon" type="button" aria-label="Close variables" data-runbook-variables-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+
+    <p class="runbook-variables__intro">
+      Set values once and command examples update in this browser. Values are never sent to the server.
+    </p>
+
+    <form class="runbook-variables__form" data-runbook-variables-form>
+      <label class="runbook-variables__field">
+        <span>Target <code>$IP</code></span>
+        <input name="IP" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.10.10">
+        <small>Single IP address or hostname</small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Target subnet <code>$SUBNET</code></span>
+        <input name="SUBNET" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.10.0/24">
+        <small>Network in CIDR notation</small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Listener <code>$LHOST</code></span>
+        <input name="LHOST" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.14.2">
+        <small>Operator-controlled IP address or hostname</small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Domain <code>$DOMAIN</code></span>
+        <input name="DOMAIN" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="corp.local">
+        <small>DNS or Active Directory domain; also derives <code>$BASE_DN</code> and <code>$NETBIOS</code></small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Domain controller <code>$DC_IP</code></span>
+        <input name="DC_IP" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.10.5">
+        <small>Domain controller IP address or hostname</small>
+      </label>
+
+      <label class="runbook-variables__remember">
+        <input name="remember" type="checkbox">
+        <span>Remember on this device</span>
+      </label>
+      <p class="runbook-variables__storage-note">Otherwise, values last only for this browser session. Do not store credentials here.</p>
+
+      <p class="runbook-variables__status" role="status" aria-live="polite" data-runbook-variables-status></p>
+
+      <div class="runbook-variables__actions">
+        <button class="runbook-variables__apply" type="submit">Apply values</button>
+        <button class="runbook-variables__reset" type="button" data-runbook-variables-reset>Reset</button>
+      </div>
+    </form>
+  </aside>
+{% endblock %}

@@ -49,13 +49,13 @@ Once SharpHound completes, a zip file is created in the specified directory. Dow
 No binary drop needed on target, runs over the network:
 
 ```bash
-bloodhound-python -c All -d example.com -ns 10.10.10.10 -u <user> -p <pass> --zip
+bloodhound-python -c All -d $DOMAIN -ns $DC_IP -u <user> -p <pass> --zip
 
 # Authenticated via NTLM hash
-bloodhound-python -c All -d example.com -ns 10.10.10.10 -u <user> --hashes :<ntlm-hash> --zip
+bloodhound-python -c All -d $DOMAIN -ns $DC_IP -u <user> --hashes :<ntlm-hash> --zip
 
 # Via NetExec (writes .zip to current dir)
-nxc ldap 10.10.10.10 -u <user> -p <pass> --bloodhound --collection All --dns-server 10.10.10.10
+nxc ldap $DC_IP -u <user> -p <pass> --bloodhound --collection All --dns-server $DC_IP
 ```
 
 ### Start BloodHound CE
@@ -101,8 +101,8 @@ Click `Upload File(s)` and drop in the SharpHound/bloodhound-python zip.
 Example cleanup:
 
 ```bash
-nxc smb 10.10.10.10 -u <user> -p <pass> --exec "del C:\Temp\SharpHound.exe"
-nxc smb 10.10.10.10 -u <user> -p <pass> --exec "del C:\Temp\data.zip"
+nxc smb $IP -u <user> -p <pass> --exec "del C:\Temp\SharpHound.exe"
+nxc smb $IP -u <user> -p <pass> --exec "del C:\Temp\data.zip"
 ```
 
 ---

@@ -1,15 +1,15 @@
 # LDAP (389, 636)
 
 !!! tip "Start here"
-    Try anonymous bind first: `ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"`. If it returns data you have unauthenticated enumeration of the entire directory, usernames, computers, group memberships, sometimes passwords in description fields.
+    Try anonymous bind first: `ldapsearch -x -H ldap://$DC_IP -b "$BASE_DN"`. If it returns data you have unauthenticated enumeration of the entire directory, usernames, computers, group memberships, sometimes passwords in description fields.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 389,636 --script ldap-rootdse,ldap-search 10.10.10.10
-nmap -n -sV --script "ldap* and not brute" 10.10.10.10
+nmap -p 389,636 --script ldap-rootdse,ldap-search $DC_IP
+nmap -n -sV --script "ldap* and not brute" $DC_IP
 ```
 
 ---
@@ -17,7 +17,7 @@ nmap -n -sV --script "ldap* and not brute" 10.10.10.10
 ## Anonymous Bind
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"
+ldapsearch -x -H ldap://$DC_IP -b "$BASE_DN"
 ```
 
 ---
@@ -26,24 +26,24 @@ ldapsearch -x -H ldap://10.10.10.10 -b "dc=example,dc=com"
 
 ```bash
 # All users
-ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
-  -b "dc=example,dc=com" "(objectClass=user)" sAMAccountName
+ldapsearch -x -H ldap://$DC_IP -D 'user@$DOMAIN' -w '<pass>' \
+  -b "$BASE_DN" "(objectClass=user)" sAMAccountName
 
 # All computers
-ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
-  -b "dc=example,dc=com" "(objectClass=computer)" cn
+ldapsearch -x -H ldap://$DC_IP -D 'user@$DOMAIN' -w '<pass>' \
+  -b "$BASE_DN" "(objectClass=computer)" cn
 
 # Admin accounts (adminCount=1)
-ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
-  -b "dc=example,dc=com" "(&(objectClass=user)(adminCount=1))" sAMAccountName
+ldapsearch -x -H ldap://$DC_IP -D 'user@$DOMAIN' -w '<pass>' \
+  -b "$BASE_DN" "(&(objectClass=user)(adminCount=1))" sAMAccountName
 
 # Domain Admins group membership
-ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
-  -b "dc=example,dc=com" "(memberOf=CN=Domain Admins,CN=Users,DC=example,DC=com)" sAMAccountName
+ldapsearch -x -H ldap://$DC_IP -D 'user@$DOMAIN' -w '<pass>' \
+  -b "$BASE_DN" "(memberOf=CN=Domain Admins,CN=Users,$BASE_DN)" sAMAccountName
 
 # Passwords stored in description fields
-ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
-  -b "dc=example,dc=com" "(description=*)" sAMAccountName description
+ldapsearch -x -H ldap://$DC_IP -D 'user@$DOMAIN' -w '<pass>' \
+  -b "$BASE_DN" "(description=*)" sAMAccountName description
 ```
 
 ---
@@ -51,8 +51,8 @@ ldapsearch -x -H ldap://10.10.10.10 -D 'user@example.com' -w '<pass>' \
 ## CrackMapExec
 
 ```bash
-nxc ldap 10.10.10.10 -u <user> -p <pass> --users
-nxc ldap 10.10.10.10 -u <user> -H <hash>
+nxc ldap $DC_IP -u <user> -p <pass> --users
+nxc ldap $DC_IP -u <user> -H <hash>
 ```
 
 ---
@@ -62,7 +62,7 @@ nxc ldap 10.10.10.10 -u <user> -H <hash>
 If you capture NTLMv2 hashes via LLMNR/NBT-NS poisoning, relay them to LDAP:
 
 ```bash
-ntlmrelayx.py -t ldap://10.10.10.10 --dump
+ntlmrelayx.py -t ldap://$DC_IP --dump
 ```
 
 !!! tip "Real-world"

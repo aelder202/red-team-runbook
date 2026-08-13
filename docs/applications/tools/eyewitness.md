@@ -16,7 +16,7 @@ eyewitness --web -f targets.txt -d output --timeout 10
 ## Scanning a Single URL
 
 ```bash
-eyewitness --web -u http://10.10.10.10 -d output
+eyewitness --web -u http://$IP -d output
 ```
 
 ---

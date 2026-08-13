@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="A practitioner's reference for offensive security operations — built from real engagements and lab work.">
+        <meta name="description" content="A practical command and methodology reference for network, web application, and Active Directory assessments.">
       
       
         <meta name="author" content="Taylor Elder">
@@ -21,19 +21,22 @@
         <link rel="next" href="../reconnaissance/">
       
       
+        
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.18">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
-      
-        <title>Network Scanning - Red Team Runbook</title>
-      
+  
+    <title>Network Scanning - Red Team Runbook</title>
+  
+
     
-    
-      <link rel="stylesheet" href="../../assets/stylesheets/main.66ac8b77.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -54,13 +57,32 @@
     
       <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
-    
+  
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="theme-color" content="#0f171a">
+  <meta name="author" content="Taylor Elder">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Red Team Runbook">
+  <meta property="og:title" content="Network Scanning">
+  <meta property="og:description" content="A practical command and methodology reference for network, web application, and Active Directory assessments.">
+  <meta property="og:url" content="https://taylorelder.com/red-team-runbook/network-scanning/network-scanning/">
+  <meta property="og:image" content="https://taylorelder.com/images/code.jpg">
+  <meta property="og:image:alt" content="Red Team Runbook by Taylor Elder">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Network Scanning">
+  <meta name="twitter:description" content="A practical command and methodology reference for network, web application, and Active Directory assessments.">
+  <meta name="twitter:image" content="https://taylorelder.com/images/code.jpg">
+
+  
+
   </head>
   
   
@@ -88,6 +110,7 @@
     </div>
     
     
+  
       
 
 <header class="md-header" data-md-component="header">
@@ -95,12 +118,12 @@
     <a href="../.." title="Red Team Runbook" class="md-header__button md-logo" aria-label="Red Team Runbook" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -124,26 +147,28 @@
     
     
     
-      <label class="md-header__button md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
@@ -151,7 +176,7 @@
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -162,13 +187,14 @@
     </div>
   </div>
 </div>
+      
     
     
       <div class="md-header__source">
         <a href="https://github.com/aelder202/red-team-runbook" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     aelder202/red-team-runbook
@@ -180,6 +206,75 @@
   
 </header>
     
+  <div class="runbook-variables__backdrop" data-runbook-variables-backdrop hidden></div>
+  <aside
+    class="runbook-variables"
+    id="runbook-variables-panel"
+    aria-labelledby="runbook-variables-title"
+    aria-modal="true"
+    role="dialog"
+    hidden
+  >
+    <div class="runbook-variables__header">
+      <div>
+        <p class="runbook-variables__eyebrow">Command variables</p>
+        <h2 id="runbook-variables-title">Engagement values</h2>
+      </div>
+      <button class="runbook-variables__close md-icon" type="button" aria-label="Close variables" data-runbook-variables-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+
+    <p class="runbook-variables__intro">
+      Set values once and command examples update in this browser. Values are never sent to the server.
+    </p>
+
+    <form class="runbook-variables__form" data-runbook-variables-form>
+      <label class="runbook-variables__field">
+        <span>Target <code>$IP</code></span>
+        <input name="IP" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.10.10">
+        <small>Single IP address or hostname</small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Target subnet <code>$SUBNET</code></span>
+        <input name="SUBNET" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.10.0/24">
+        <small>Network in CIDR notation</small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Listener <code>$LHOST</code></span>
+        <input name="LHOST" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.14.2">
+        <small>Operator-controlled IP address or hostname</small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Domain <code>$DOMAIN</code></span>
+        <input name="DOMAIN" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="corp.local">
+        <small>DNS or Active Directory domain; also derives <code>$BASE_DN</code> and <code>$NETBIOS</code></small>
+      </label>
+
+      <label class="runbook-variables__field">
+        <span>Domain controller <code>$DC_IP</code></span>
+        <input name="DC_IP" type="text" inputmode="text" maxlength="255" autocomplete="off" spellcheck="false" placeholder="10.10.10.5">
+        <small>Domain controller IP address or hostname</small>
+      </label>
+
+      <label class="runbook-variables__remember">
+        <input name="remember" type="checkbox">
+        <span>Remember on this device</span>
+      </label>
+      <p class="runbook-variables__storage-note">Otherwise, values last only for this browser session. Do not store credentials here.</p>
+
+      <p class="runbook-variables__status" role="status" aria-live="polite" data-runbook-variables-status></p>
+
+      <div class="runbook-variables__actions">
+        <button class="runbook-variables__apply" type="submit">Apply values</button>
+        <button class="runbook-variables__reset" type="button" data-runbook-variables-reset>Reset</button>
+      </div>
+    </form>
+  </aside>
+
     <div class="md-container" data-md-component="container">
       
       
@@ -194,13 +289,35 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+  
+  Start Here
+
+        </a>
+      </li>
+    
+  
+
+      
         
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../command-index/" class="md-tabs__link">
+        
+  
   
     
   
-  Home
+  Command Index
 
       </a>
     </li>
@@ -208,6 +325,7 @@
 
       
         
+  
   
   
     
@@ -218,6 +336,7 @@
       <li class="md-tabs__item md-tabs__item--active">
         <a href="../" class="md-tabs__link">
           
+  
   
   Recon
 
@@ -231,11 +350,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../information-gathering/" class="md-tabs__link">
           
+  
   
   Services
 
@@ -249,11 +370,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../applications/" class="md-tabs__link">
           
+  
   
   Applications
 
@@ -267,11 +390,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../exploitation/" class="md-tabs__link">
           
+  
   
   Exploitation
 
@@ -285,11 +410,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../privilege-escalation/" class="md-tabs__link">
           
+  
   
   Priv Esc
 
@@ -303,11 +430,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../lateral-movement/" class="md-tabs__link">
           
+  
   
   Lateral Movement
 
@@ -321,11 +450,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../persistence/" class="md-tabs__link">
           
+  
   
   Persistence
 
@@ -339,11 +470,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../data-exfiltration/" class="md-tabs__link">
           
+  
   
   Data Exfiltration
 
@@ -357,11 +490,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../port-forwarding/" class="md-tabs__link">
           
+  
   
   Tunneling
 
@@ -375,11 +510,13 @@
   
   
   
+  
     
     
       <li class="md-tabs__item">
         <a href="../../tools/" class="md-tabs__link">
           
+  
   
   Tools
 
@@ -414,7 +551,7 @@
     <a href="../.." title="Red Team Runbook" class="md-nav__button md-logo" aria-label="Red Team Runbook" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
     Red Team Runbook
@@ -424,7 +561,7 @@
       <a href="https://github.com/aelder202/red-team-runbook" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
   </div>
   <div class="md-source__repository">
     aelder202/red-team-runbook
@@ -440,13 +577,163 @@
   
   
   
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Start Here
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Start Here
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Home
+    
+  
+    Overview
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operator Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About & Standards
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../command-index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Index
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -465,6 +752,7 @@
     
     
     
+    
       
         
         
@@ -478,24 +766,35 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Recon
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Recon
+            
+  
+    Recon
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -509,9 +808,16 @@
       <a href="../" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -539,9 +845,16 @@
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
   
+  
   <span class="md-ellipsis">
+    
+  
     Network Scanning
+  
+
+    
   </span>
+  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -550,9 +863,16 @@
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Network Scanning
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -573,100 +893,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#host-discovery-local-segment" class="md-nav__link">
+  <a href="#host-discovery" class="md-nav__link">
     <span class="md-ellipsis">
-      Host Discovery (Local Segment)
-    </span>
-  </a>
-  
-</li>
       
-        <li class="md-nav__item">
-  <a href="#phase-1-quick-scan" class="md-nav__link">
-    <span class="md-ellipsis">
-      Phase 1: Quick Scan
-    </span>
-  </a>
-  
-</li>
+        Host Discovery
       
-        <li class="md-nav__item">
-  <a href="#phase-2-full-port-scan" class="md-nav__link">
-    <span class="md-ellipsis">
-      Phase 2: Full Port Scan
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#service-script-scan" class="md-nav__link">
-    <span class="md-ellipsis">
-      Service &amp; Script Scan
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#os-detection" class="md-nav__link">
-    <span class="md-ellipsis">
-      OS Detection
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#udp-targeted" class="md-nav__link">
-    <span class="md-ellipsis">
-      UDP (Targeted)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#firewall-ids-evasion" class="md-nav__link">
-    <span class="md-ellipsis">
-      Firewall / IDS Evasion
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#saving-reusing-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Saving &amp; Reusing Output
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vulnerability-scanning" class="md-nav__link">
-    <span class="md-ellipsis">
-      Vulnerability Scanning
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Vulnerability Scanning">
+    <nav class="md-nav" aria-label="Host Discovery">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#general-sweep-broad" class="md-nav__link">
+  <a href="#local-ipv4-segment" class="md-nav__link">
     <span class="md-ellipsis">
-      General sweep (broad)
+      
+        Local IPv4 Segment
+      
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#targeted-scripts-by-service" class="md-nav__link">
+  <a href="#routed-subnet" class="md-nav__link">
     <span class="md-ellipsis">
-      Targeted scripts by service
+      
+        Routed Subnet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-files-and-exclusions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target Files and Exclusions
+      
     </span>
   </a>
   
@@ -674,6 +939,217 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcp-port-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCP Port Discovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TCP Port Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-nmap-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Nmap Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-tcp-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full TCP Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rustscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RustScan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Masscan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-os-and-nse-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service, OS, and NSE Follow-Up
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service, OS, and NSE Follow-Up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nse-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NSE Scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#os-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OS Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vulnerability-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vulnerability Leads
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#udp-and-ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP and IPv6
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UDP and IPv6">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#udp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv6
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pivots-and-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pivots and Filtering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pivots and Filtering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#socks-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SOCKS Proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering Diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-and-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output and Handoff
+      
+    </span>
+  </a>
   
 </li>
       
@@ -696,9 +1172,16 @@
       <a href="../reconnaissance/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Reconnaissance
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -717,30 +1200,16 @@
       <a href="../traffic-capture/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Traffic Capture
-  </span>
   
 
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/tools/eyewitness/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    EyeWitness
+    
   </span>
+  
   
 
       </a>
@@ -763,703 +1232,6 @@
   
   
     
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Services
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Services
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/dns-53/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    DNS (53)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/docker-2375/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Docker API (2375)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/elasticsearch-9200/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Elasticsearch (9200)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/ftp-21/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    FTP (21)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/http-80-443/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    HTTP/HTTPS (80, 443)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/imap/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    IMAP (143, 993)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/ipmi-623/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    IPMI (623)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/isakmp-ike/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    IKE/ISAKMP (500, 4500)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/kerberos-88/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Kerberos (88)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/ldap/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    LDAP (389, 636)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/mongodb-27017/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    MongoDB (27017)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/mssql-1433/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    MSSQL (1433)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/mysql-3306/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    MySQL (3306)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/nfs-2049/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    NFS (2049)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/oracle-tns-1521/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Oracle TNS (1521)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/pop3/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    POP3 (110, 995)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/postgresql-5432/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    PostgreSQL (5432)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/r-services/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    R-Services (512-514)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/rdp-3389/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    RDP (3389)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/redis-6379/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Redis (6379)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/rsync-873/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Rsync (873)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/smb/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SMB (139, 445)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/smtp/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SMTP (25, 465, 587)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/snmp/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SNMP (161, 162)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/snmp-multiplexer/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SNMP Multiplexer (199)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/ssh-22/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SSH (22)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/telnet-23/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Telnet (23)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/tftp-69/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    TFTP (69)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/vnc-5900/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    VNC (5900)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../information-gathering/service-analysis/winrm/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    WinRM (5985, 5986)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -1479,9 +1251,16 @@
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Applications
+    
+  
+    Services
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1490,7 +1269,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            Applications
+            
+  
+    Services
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1501,73 +1284,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../applications/" class="md-nav__link">
+      <a href="../../information-gathering/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
-  </span>
   
 
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Enumeration
   </span>
   
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            Enumeration
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/enumeration/directory-page-fuzzing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Directory & Page Fuzzing
-  </span>
   
 
       </a>
@@ -1583,12 +1312,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../applications/enumeration/service-identification/" class="md-nav__link">
+      <a href="../../information-gathering/service-analysis/dns-53/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Service Identification
+    
+  
+    DNS (53)
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -1604,12 +1340,803 @@
   
   
     <li class="md-nav__item">
-      <a href="../../applications/enumeration/subdomain-parameter-fuzzing/" class="md-nav__link">
+      <a href="../../information-gathering/service-analysis/docker-2375/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Subdomain & Parameter Fuzzing
+    
+  
+    Docker API (2375)
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/elasticsearch-9200/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Elasticsearch (9200)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/ftp-21/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FTP (21)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/http-80-443/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HTTP/HTTPS (80, 443)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/imap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IMAP (143, 993)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/ipmi-623/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IPMI (623)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/isakmp-ike/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IKE/ISAKMP (500, 4500)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/kerberos-88/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kerberos (88)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/ldap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LDAP (389, 636)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/mongodb-27017/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MongoDB (27017)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/mssql-1433/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MSSQL (1433)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/mysql-3306/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MySQL (3306)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/nfs-2049/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NFS (2049)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/oracle-tns-1521/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Oracle TNS (1521)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/pop3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    POP3 (110, 995)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/postgresql-5432/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL (5432)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/r-services/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    R-Services (512-514)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/rdp-3389/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RDP (3389)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/redis-6379/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Redis (6379)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/rsync-873/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Rsync (873)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/smb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SMB (139, 445)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/smtp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SMTP (25, 465, 587)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/snmp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP (161, 162)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/snmp-multiplexer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SNMP Multiplexer (199)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/ssh-22/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSH (22)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/telnet-23/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Telnet (23)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/tftp-69/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TFTP (69)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/vnc-5900/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VNC (5900)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../information-gathering/service-analysis/winrm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WinRM (5985, 5986)
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -1624,494 +2151,6 @@
     </li>
   
 
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Application Enumeration
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
-            <span class="md-nav__icon md-icon"></span>
-            Application Enumeration
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/app-enumeration/gitea/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Gitea
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/app-enumeration/webdav/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    WebDAV
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/app-enumeration/wordpress/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    WordPress
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Authentication Attacks
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_4">
-            <span class="md-nav__icon md-icon"></span>
-            Authentication Attacks
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/auth/credential-brute-forcing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Credential Brute-Forcing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/auth/jwt-attacks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    JWT Attacks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/auth/session-hijacking/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Session Hijacking
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Exploits
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
-            <span class="md-nav__icon md-icon"></span>
-            Exploits
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/command-injection/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Command Injection
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/file-upload-attacks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    File Upload Attacks
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/idor/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    IDOR
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/lfi/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    LFI
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/oauth-exploitation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    OAuth Exploitation
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/sqlmap/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SQLMap
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/ssrf/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SSRF
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/ssti/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SSTI
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/xss/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    XSS
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../applications/exploits/xxe/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    XXE
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
     
       
       
@@ -2119,6 +2158,7 @@
   
   
   
+    
     
     
     
@@ -2138,9 +2178,16 @@
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Exploitation
+    
+  
+    Applications
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2149,7 +2196,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            Exploitation
+            
+  
+    Applications
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2160,12 +2211,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/" class="md-nav__link">
+      <a href="../../applications/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -2180,6 +2238,7 @@
   
   
   
+    
     
     
     
@@ -2199,9 +2258,16 @@
           <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Binary Exploitation
+    
+  
+    Enumeration
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2210,7 +2276,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_2">
             <span class="md-nav__icon md-icon"></span>
-            Binary Exploitation
+            
+  
+    Enumeration
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2221,12 +2291,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/binary/buffer-overflows/" class="md-nav__link">
+      <a href="../../applications/enumeration/directory-page-fuzzing/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Buffer Overflows
+    
+  
+    Directory & Page Fuzzing
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -2242,12 +2319,47 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/binary/elf-dll-analysis/" class="md-nav__link">
+      <a href="../../applications/enumeration/service-identification/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    ELF & DLL Analysis
+    
+  
+    Service Identification
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/enumeration/subdomain-parameter-fuzzing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Subdomain & Parameter Fuzzing
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -2270,6 +2382,7 @@
   
   
   
+    
     
     
     
@@ -2289,9 +2402,16 @@
           <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Credential Attacks
+    
+  
+    Application Enumeration
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2300,7 +2420,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
-            Credential Attacks
+            
+  
+    Application Enumeration
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2311,12 +2435,75 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/credentials/brute-force-cracking/" class="md-nav__link">
+      <a href="../../applications/app-enumeration/gitea/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Brute-Force Cracking
+    
+  
+    Gitea
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/app-enumeration/webdav/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WebDAV
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/app-enumeration/wordpress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WordPress
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -2339,6 +2526,7 @@
   
   
   
+    
     
     
     
@@ -2358,9 +2546,16 @@
           <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Shells
+    
+  
+    Authentication Attacks
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2369,7 +2564,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_4">
             <span class="md-nav__icon md-icon"></span>
-            Shells
+            
+  
+    Authentication Attacks
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2380,12 +2579,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/shells/bind-reverse-shells/" class="md-nav__link">
+      <a href="../../applications/auth/credential-brute-forcing/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Bind & Reverse Shells
+    
+  
+    Credential Brute-Forcing
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -2401,12 +2607,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/shells/escaping-restricted-shells/" class="md-nav__link">
+      <a href="../../applications/auth/jwt-attacks/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Escaping Restricted Shells
+    
+  
+    JWT Attacks
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -2422,12 +2635,359 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exploitation/shells/web-shells/" class="md-nav__link">
+      <a href="../../applications/auth/session-hijacking/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Web Shells
+    
+  
+    Session Hijacking
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exploits
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Exploits
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/command-injection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command Injection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/file-upload-attacks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    File Upload Attacks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/idor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IDOR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/lfi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LFI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/oauth-exploitation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OAuth Exploitation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/sqlmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SQLMap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/ssrf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSRF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/ssti/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSTI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/xss/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XSS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/exploits/xxe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    XXE
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -2457,6 +3017,7 @@
   
   
   
+    
     
     
     
@@ -2476,9 +3037,16 @@
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Priv Esc
+    
+  
+    Exploitation
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2487,7 +3055,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            Priv Esc
+            
+  
+    Exploitation
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2498,12 +3070,99 @@
   
   
     <li class="md-nav__item">
-      <a href="../../privilege-escalation/" class="md-nav__link">
+      <a href="../../exploitation/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Binary Exploitation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Binary Exploitation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/binary/buffer-overflows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Buffer Overflows
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -2519,15 +3178,30 @@
   
   
     <li class="md-nav__item">
-      <a href="../../privilege-escalation/situational-awareness/" class="md-nav__link">
+      <a href="../../exploitation/binary/elf-dll-analysis/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Situational Awareness
+    
+  
+    ELF & DLL Analysis
+  
+
+    
   </span>
+  
   
 
       </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -2539,6 +3213,7 @@
   
   
   
+    
     
     
     
@@ -2558,9 +3233,16 @@
           <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Linux
+    
+  
+    Credential Attacks
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2569,7 +3251,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_3">
             <span class="md-nav__icon md-icon"></span>
-            Linux
+            
+  
+    Credential Attacks
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2580,117 +3266,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../privilege-escalation/linux/" class="md-nav__link">
+      <a href="../../exploitation/credentials/brute-force-cracking/" class="md-nav__link">
         
   
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/linux/local-enumeration/" class="md-nav__link">
-        
   
   <span class="md-ellipsis">
-    Local Enumeration
+    
+  
+    Brute-Force Cracking
+  
+
+    
   </span>
   
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/linux/credential-hunting/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Credential Hunting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/linux/cron-suid-guid/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Cron Job & SUID/GUID
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/linux/capabilities-ldpreload/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Capabilities, LD_PRELOAD & PATH
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/linux/kernel-exploitation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Kernel Exploitation
-  </span>
   
 
       </a>
@@ -2713,6 +3301,7 @@
   
   
   
+    
     
     
     
@@ -2732,9 +3321,16 @@
           <label class="md-nav__link" for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Windows
+    
+  
+    Shells
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2743,7 +3339,11 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6_4">
             <span class="md-nav__icon md-icon"></span>
-            Windows
+            
+  
+    Shells
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2754,291 +3354,75 @@
   
   
     <li class="md-nav__item">
-      <a href="../../privilege-escalation/windows/" class="md-nav__link">
+      <a href="../../exploitation/shells/bind-reverse-shells/" class="md-nav__link">
         
   
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/windows/local-enumeration/" class="md-nav__link">
-        
   
   <span class="md-ellipsis">
-    Local Enumeration
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/windows/credential-dumping/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Credential Dumping
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/windows/privilege-abuse/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Privilege Abuse
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/windows/service-exploitation/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Service Exploitation
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
     
+  
+    Bind & Reverse Shells
+  
+
     
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/shells/escaping-restricted-shells/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
     
-      
-      
-        
-      
+  
+    Escaping Restricted Shells
+  
+
     
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exploitation/shells/web-shells/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
     
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
-            
   
-  <span class="md-ellipsis">
-    Active Directory
+    Web Shells
+  
+
+    
   </span>
   
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6_5">
-            <span class="md-nav__icon md-icon"></span>
-            Active Directory
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Overview
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/domain-enumeration/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Domain Enumeration
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/asrep-roasting/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    AS-REP Roasting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/kerberoasting/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Kerberoasting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/acl-abuse/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    ACL Abuse
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/dcsync/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    DCSync
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/silver-golden-tickets/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Silver & Golden Tickets
-  </span>
   
 
       </a>
@@ -3068,6 +3452,7 @@
   
   
   
+    
     
     
     
@@ -3087,9 +3472,16 @@
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Lateral Movement
+    
+  
+    Priv Esc
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -3098,7 +3490,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
-            Lateral Movement
+            
+  
+    Priv Esc
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3109,12 +3505,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lateral-movement/" class="md-nav__link">
+      <a href="../../privilege-escalation/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3130,12 +3533,327 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lateral-movement/windows/" class="md-nav__link">
+      <a href="../../privilege-escalation/situational-awareness/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
+    Situational Awareness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/local-enumeration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local Enumeration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/credential-hunting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credential Hunting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/cron-suid-guid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cron Job & SUID/GUID
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/capabilities-ldpreload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Capabilities, LD_PRELOAD & PATH
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/linux/kernel-exploitation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kernel Exploitation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_4" id="__nav_7_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
     Windows
+  
+
+    
   </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/windows/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -3151,15 +3869,370 @@
   
   
     <li class="md-nav__item">
-      <a href="../../lateral-movement/active-directory/" class="md-nav__link">
+      <a href="../../privilege-escalation/windows/local-enumeration/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Active Directory
+    
+  
+    Local Enumeration
+  
+
+    
   </span>
+  
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/windows/credential-dumping/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credential Dumping
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/windows/privilege-abuse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Privilege Abuse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/windows/service-exploitation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Service Exploitation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Active Directory
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/domain-enumeration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Domain Enumeration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/asrep-roasting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AS-REP Roasting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/kerberoasting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kerberoasting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/acl-abuse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACL Abuse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/dcsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DCSync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/silver-golden-tickets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Silver & Golden Tickets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -3178,6 +4251,7 @@
   
   
   
+    
     
     
     
@@ -3197,9 +4271,16 @@
           <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Persistence
+    
+  
+    Lateral Movement
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -3208,7 +4289,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
-            Persistence
+            
+  
+    Lateral Movement
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3219,12 +4304,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../persistence/" class="md-nav__link">
+      <a href="../../lateral-movement/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3240,33 +4332,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../persistence/linux/" class="md-nav__link">
+      <a href="../../lateral-movement/windows/" class="md-nav__link">
         
   
-  <span class="md-ellipsis">
-    Linux
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../persistence/windows/" class="md-nav__link">
-        
   
   <span class="md-ellipsis">
+    
+  
     Windows
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3282,75 +4360,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../privilege-escalation/active-directory/persistence/" class="md-nav__link">
+      <a href="../../lateral-movement/active-directory/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Active Directory
+  
+
+    
   </span>
   
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../persistence/backdoor-ssh-winrm/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Backdoor SSH & WinRM
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../persistence/dll-injection-malicious-services/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    DLL Injection & Services
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../persistence/registry-scheduled-tasks/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Registry & Scheduled Tasks
-  </span>
   
 
       </a>
@@ -3372,6 +4394,7 @@
   
   
   
+    
     
     
     
@@ -3391,9 +4414,16 @@
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Data Exfiltration
+    
+  
+    Persistence
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -3402,7 +4432,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
-            Data Exfiltration
+            
+  
+    Persistence
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3413,12 +4447,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../data-exfiltration/" class="md-nav__link">
+      <a href="../../persistence/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3434,12 +4475,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../data-exfiltration/file-transfer-techniques/" class="md-nav__link">
+      <a href="../../persistence/linux/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    File Transfer Techniques
+    
+  
+    Linux
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3455,12 +4503,131 @@
   
   
     <li class="md-nav__item">
-      <a href="../../data-exfiltration/secure-transfers/" class="md-nav__link">
+      <a href="../../persistence/windows/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Secure Transfers
+    
+  
+    Windows
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../privilege-escalation/active-directory/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../persistence/backdoor-ssh-winrm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backdoor SSH & WinRM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../persistence/dll-injection-malicious-services/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DLL Injection & Services
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../persistence/registry-scheduled-tasks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registry & Scheduled Tasks
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -3482,6 +4649,7 @@
   
   
   
+    
     
     
     
@@ -3501,9 +4669,16 @@
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Tunneling
+    
+  
+    Data Exfiltration
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -3512,7 +4687,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
-            Tunneling
+            
+  
+    Data Exfiltration
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3523,12 +4702,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../port-forwarding/" class="md-nav__link">
+      <a href="../../data-exfiltration/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3544,12 +4730,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../port-forwarding/port-forwarding/" class="md-nav__link">
+      <a href="../../data-exfiltration/file-transfer-techniques/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Port Forwarding
+    
+  
+    File Transfer Techniques
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3565,12 +4758,19 @@
   
   
     <li class="md-nav__item">
-      <a href="../../port-forwarding/ligolo-chisel/" class="md-nav__link">
+      <a href="../../data-exfiltration/secure-transfers/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
-    Ligolo-ng & Chisel
+    
+  
+    Secure Transfers
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3595,6 +4795,7 @@
     
     
     
+    
       
       
         
@@ -3611,9 +4812,16 @@
           <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
-    Tools
+    
+  
+    Tunneling
+  
+
+    
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -3622,7 +4830,154 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
-            Tools
+            
+  
+    Tunneling
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../port-forwarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../port-forwarding/port-forwarding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Port Forwarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../port-forwarding/ligolo-chisel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ligolo-ng & Chisel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -3636,9 +4991,16 @@
       <a href="../../tools/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Overview
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3657,9 +5019,16 @@
       <a href="../../tools/bloodhound/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     BloodHound
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3678,9 +5047,16 @@
       <a href="../../applications/tools/burp-suite/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Burp Suite
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3699,9 +5075,16 @@
       <a href="../../tools/cadaver/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     cadaver
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3720,9 +5103,44 @@
       <a href="../../tools/command-line-shells/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Command-Line Shells
+  
+
+    
   </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../applications/tools/eyewitness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EyeWitness
+  
+
+    
+  </span>
+  
   
 
       </a>
@@ -3741,9 +5159,16 @@
       <a href="../../tools/impacket/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Impacket
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3762,9 +5187,16 @@
       <a href="../../tools/kerbrute/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     kerbrute
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3783,9 +5215,16 @@
       <a href="../../tools/ldapsearch/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     ldapsearch
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3804,9 +5243,16 @@
       <a href="../../tools/metasploit/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Metasploit
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3825,9 +5271,16 @@
       <a href="../../tools/metasploit-resource-scripts/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Metasploit Resource Scripts
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3846,9 +5299,16 @@
       <a href="../../tools/mimikatz/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Mimikatz
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3867,9 +5327,16 @@
       <a href="../../tools/msfvenom/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     MSFVenom
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3888,9 +5355,16 @@
       <a href="../../tools/netexec/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     NetExec
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3909,9 +5383,16 @@
       <a href="../../applications/tools/nikto/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Nikto
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3930,9 +5411,16 @@
       <a href="../../tools/nuclei/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Nuclei
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3951,9 +5439,16 @@
       <a href="../../tools/password-cracking/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Password Cracking
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3972,9 +5467,16 @@
       <a href="../../tools/responder/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Responder
+  
+
+    
   </span>
+  
   
 
       </a>
@@ -3993,30 +5495,16 @@
       <a href="../../tools/rpcclient/" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     rpcclient
-  </span>
   
 
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../tools/wmiexec/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    WMIExec
+    
   </span>
+  
   
 
       </a>
@@ -4059,100 +5547,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#host-discovery-local-segment" class="md-nav__link">
+  <a href="#host-discovery" class="md-nav__link">
     <span class="md-ellipsis">
-      Host Discovery (Local Segment)
-    </span>
-  </a>
-  
-</li>
       
-        <li class="md-nav__item">
-  <a href="#phase-1-quick-scan" class="md-nav__link">
-    <span class="md-ellipsis">
-      Phase 1: Quick Scan
-    </span>
-  </a>
-  
-</li>
+        Host Discovery
       
-        <li class="md-nav__item">
-  <a href="#phase-2-full-port-scan" class="md-nav__link">
-    <span class="md-ellipsis">
-      Phase 2: Full Port Scan
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#service-script-scan" class="md-nav__link">
-    <span class="md-ellipsis">
-      Service &amp; Script Scan
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#os-detection" class="md-nav__link">
-    <span class="md-ellipsis">
-      OS Detection
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#udp-targeted" class="md-nav__link">
-    <span class="md-ellipsis">
-      UDP (Targeted)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#firewall-ids-evasion" class="md-nav__link">
-    <span class="md-ellipsis">
-      Firewall / IDS Evasion
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#saving-reusing-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Saving &amp; Reusing Output
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vulnerability-scanning" class="md-nav__link">
-    <span class="md-ellipsis">
-      Vulnerability Scanning
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Vulnerability Scanning">
+    <nav class="md-nav" aria-label="Host Discovery">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#general-sweep-broad" class="md-nav__link">
+  <a href="#local-ipv4-segment" class="md-nav__link">
     <span class="md-ellipsis">
-      General sweep (broad)
+      
+        Local IPv4 Segment
+      
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#targeted-scripts-by-service" class="md-nav__link">
+  <a href="#routed-subnet" class="md-nav__link">
     <span class="md-ellipsis">
-      Targeted scripts by service
+      
+        Routed Subnet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#target-files-and-exclusions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Target Files and Exclusions
+      
     </span>
   </a>
   
@@ -4160,6 +5593,217 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tcp-port-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TCP Port Discovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="TCP Port Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quick-nmap-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Nmap Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-tcp-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full TCP Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rustscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RustScan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#masscan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Masscan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-os-and-nse-follow-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service, OS, and NSE Follow-Up
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service, OS, and NSE Follow-Up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#service-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nse-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NSE Scripts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#os-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OS Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vulnerability-leads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vulnerability Leads
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#udp-and-ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP and IPv6
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="UDP and IPv6">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#udp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        UDP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ipv6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IPv6
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pivots-and-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pivots and Filtering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pivots and Filtering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#socks-proxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SOCKS Proxy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtering-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering Diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-and-handoff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output and Handoff
+      
+    </span>
+  </a>
   
 </li>
       
@@ -4173,9 +5817,11 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
+
 
   
   
@@ -4183,289 +5829,191 @@
 
 <h1 id="network-scanning">Network Scanning<a class="headerlink" href="#network-scanning" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
-<p>Two-phase approach: quick scan first to identify open ports, then launch a full scan in the background while you start enumeration. Don't wait for <code>-p-</code> to finish — by the time it completes you should already have a foothold on whatever the quick scan surfaced.</p>
+<p>Discover ports quickly, start the full TCP scan in parallel, and enumerate confirmed services while it runs.</p>
 </div>
-<hr />
-<h2 id="host-discovery-local-segment">Host Discovery (Local Segment)<a class="headerlink" href="#host-discovery-local-segment" title="Permanent link">&para;</a></h2>
-<p>On an internal engagement where you have L2 access to the target subnet, ARP is faster and more reliable than ICMP sweeps — every live host on the segment must answer ARP, and most host firewalls won't block it.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>arp-scan<span class="w"> </span>-l<span class="w">                        </span><span class="c1"># auto-detect interface and subnet</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>arp-scan<span class="w"> </span><span class="m">192</span>.168.1.0/24
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>netdiscover<span class="w"> </span>-r<span class="w"> </span><span class="m">192</span>.168.1.0/24
+<h2 id="host-discovery">Host Discovery<a class="headerlink" href="#host-discovery" title="Permanent link">&para;</a></h2>
+<h3 id="local-ipv4-segment">Local IPv4 Segment<a class="headerlink" href="#local-ipv4-segment" title="Permanent link">&para;</a></h3>
+<p>ARP is the most reliable way to identify reachable IPv4 hosts on the local broadcast domain. Specify the interface when the scanning host has multiple physical, VPN, or tunnel interfaces.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>arp-scan<span class="w"> </span>--interface<span class="o">=</span>eth0<span class="w"> </span><span class="nv">$SUBNET</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>netdiscover<span class="w"> </span>-i<span class="w"> </span>eth0<span class="w"> </span>-r<span class="w"> </span><span class="nv">$SUBNET</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sn<span class="w"> </span>-PR<span class="w"> </span>-n<span class="w"> </span><span class="nv">$SUBNET</span><span class="w"> </span>-oA<span class="w"> </span>nmap/hosts-arp
 </code></pre></div>
-<p>For remote subnets, mix ICMP echo, TCP ACK, and SYN probes against ports the host firewall is likely to permit:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nmap<span class="w"> </span>-sn<span class="w"> </span>-PE<span class="w"> </span>-PP<span class="w"> </span>-PS21,22,80,443,3389<span class="w"> </span>-PA80,443<span class="w"> </span><span class="m">10</span>.10.10.0/24
+<h3 id="routed-subnet">Routed Subnet<a class="headerlink" href="#routed-subnet" title="Permanent link">&para;</a></h3>
+<p>Mix ICMP, TCP SYN/ACK, and UDP probes. A response to any probe is enough for Nmap to mark the host up.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sn<span class="w"> </span>-PE<span class="w"> </span>-PP<span class="w"> </span>-PS22,80,443,3389<span class="w"> </span>-PA80,443<span class="w"> </span>-PU53,161<span class="w"> </span>-n<span class="w"> </span><span class="nv">$SUBNET</span><span class="w"> </span>-oA<span class="w"> </span>nmap/hosts-routed
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>On hardened networks, hosts often drop ICMP entirely — ping sweeps return zero results even when the subnet is full of live machines. If host discovery turns up nothing, <strong>skip it entirely with <code>-Pn</code></strong> and let the port scan tell you what's alive.</p>
-</div>
+<p>If a known host does not respond to discovery, retry the port scan with <code>-Pn</code>. For ranges, scan the discovered hosts first and use <code>-Pn</code> selectively for coverage gaps.</p>
+<h3 id="target-files-and-exclusions">Target Files and Exclusions<a class="headerlink" href="#target-files-and-exclusions" title="Permanent link">&para;</a></h3>
+<p>Preview a target file before sending probes:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nmap<span class="w"> </span>-sL<span class="w"> </span>-n<span class="w"> </span>-iL<span class="w"> </span>targets.txt
+</code></pre></div>
+<p>Exclude prohibited or out-of-scope addresses from range scans:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sn<span class="w"> </span>-n<span class="w"> </span>-iL<span class="w"> </span>targets.txt<span class="w"> </span>--excludefile<span class="w"> </span>exclude.txt<span class="w"> </span>-oA<span class="w"> </span>nmap/hosts
+</code></pre></div>
+<p><code>-n</code> disables reverse-DNS lookups. Remove it when PTR records are useful and DNS queries are acceptable.</p>
 <hr />
-<h2 id="phase-1-quick-scan">Phase 1: Quick Scan<a class="headerlink" href="#phase-1-quick-scan" title="Permanent link">&para;</a></h2>
-<p>Hit the top 1000 ports and identify services fast. Run this first, then start enumerating immediately.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>--open<span class="w"> </span>-T4<span class="w"> </span>-Pn<span class="w"> </span>-oA<span class="w"> </span>quick<span class="w"> </span><span class="m">10</span>.10.10.10
+<h2 id="tcp-port-discovery">TCP Port Discovery<a class="headerlink" href="#tcp-port-discovery" title="Permanent link">&para;</a></h2>
+<h3 id="quick-nmap-scan">Quick Nmap Scan<a class="headerlink" href="#quick-nmap-scan" title="Permanent link">&para;</a></h3>
+<p>Use the first pass for port discovery only. Run version detection and NSE after the port list is known.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>--top-ports<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--open<span class="w"> </span>-oA<span class="w"> </span>nmap/quick<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p>Nmap's default set is the 1,000 most commonly observed TCP ports, not ports 1 through 1000.</p>
+<h3 id="full-tcp-scan">Full TCP Scan<a class="headerlink" href="#full-tcp-scan" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p-<span class="w"> </span>--open<span class="w"> </span>-oA<span class="w"> </span>nmap/full<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p><code>-p-</code> scans TCP ports 1 through 65535, including the ports checked by the quick scan. If raw-packet access is unavailable, use <code>-sT</code> instead of <code>-sS</code>.</p>
+<p>For a stable link with a measured acceptable packet rate:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p-<span class="w"> </span>--open<span class="w"> </span>--min-rate<span class="w"> </span>&lt;tested-pps&gt;<span class="w"> </span>--max-retries<span class="w"> </span>&lt;tested-retries&gt;<span class="w"> </span>-oA<span class="w"> </span>nmap/full-fast<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p><code>--min-rate</code> sets a speed floor; it does not improve reliability. Rates that exceed the path or target capacity can cause missed ports. Repeat important high-speed results with adaptive timing or a lower rate.</p>
+<h3 id="rustscan">RustScan<a class="headerlink" href="#rustscan" title="Permanent link">&para;</a></h3>
+<p>RustScan performs fast TCP connect scans, then passes the discovered ports and everything after <code>--</code> to Nmap:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>rustscan<span class="w"> </span>-a<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>--<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-oA<span class="w"> </span>nmap/rustscan
+</code></pre></div>
+<p><code>-Pn</code> is passed to Nmap because RustScan has already demonstrated that the target accepted a TCP connection. Without it, the Nmap handoff can still stop when its separate discovery probes are filtered.</p>
+<p>Tune RustScan with <code>-b &lt;batch-size&gt;</code> and <code>-T &lt;timeout-ms&gt;</code>. Higher batch sizes and shorter timeouts are faster but can miss ports or place unnecessary load on sensitive targets. Prefer Nmap when stability matters more than scan time.</p>
+<h3 id="masscan">Masscan<a class="headerlink" href="#masscan" title="Permanent link">&para;</a></h3>
+<p>Use Masscan for large, explicitly scoped ranges, then confirm every result with Nmap:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>masscan<span class="w"> </span><span class="nv">$SUBNET</span><span class="w"> </span>-p1-65535<span class="w"> </span>--rate<span class="w"> </span>&lt;tested-pps&gt;<span class="w"> </span>--excludefile<span class="w"> </span>exclude.txt<span class="w"> </span>-oX<span class="w"> </span>nmap/masscan.xml
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>nmap<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-p&lt;ports-from-masscan&gt;<span class="w"> </span>-oA<span class="w"> </span>nmap/services<span class="w"> </span>&lt;host-from-masscan&gt;
+</code></pre></div>
+<p>Start with a conservative rate and raise it only after confirming that the scanning host, network path, and target environment can handle the traffic.</p>
+<hr />
+<h2 id="service-os-and-nse-follow-up">Service, OS, and NSE Follow-Up<a class="headerlink" href="#service-os-and-nse-follow-up" title="Permanent link">&para;</a></h2>
+<h3 id="service-detection">Service Detection<a class="headerlink" href="#service-detection" title="Permanent link">&para;</a></h3>
+<p>Run version detection only against confirmed ports:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-p22,80,443,445,3389<span class="w"> </span>-oA<span class="w"> </span>nmap/services<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p>Treat banners and CPE matches as leads. Proxies, load balancers, backported packages, and deliberately altered banners can produce misleading versions.</p>
+<h3 id="nse-scripts">NSE Scripts<a class="headerlink" href="#nse-scripts" title="Permanent link">&para;</a></h3>
+<p><code>-sC</code> runs the <code>default</code> script category. It does not mean <code>default and safe</code>, and a small number of default scripts may still be intrusive.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Default scripts on confirmed ports</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>-p22,80,443,445<span class="w"> </span>-oA<span class="w"> </span>nmap/default-scripts<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Focused HTTP checks</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>nmap<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-p80,443,8080,8443<span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;http-title,http-headers,http-methods&quot;</span><span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="c1"># Focused SMB checks</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>nmap<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-p139,445<span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;smb-protocols,smb2-security-mode,smb2-time,smb-os-discovery&quot;</span><span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p>Preview an NSE selection before running it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>nmap<span class="w"> </span>--script-help<span class="w"> </span><span class="s2">&quot;default&quot;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>nmap<span class="w"> </span>--script-help<span class="w"> </span><span class="s2">&quot;vuln and safe&quot;</span>
 </code></pre></div>
 <table>
 <thead>
 <tr>
-<th>Flag</th>
-<th>Purpose</th>
+<th>Selection</th>
+<th>Use</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>-sV</code></td>
-<td>Service/version detection</td>
+<td><code>default</code> / <code>-sC</code></td>
+<td>Common service information; review the selected scripts</td>
 </tr>
 <tr>
-<td><code>-sC</code></td>
-<td>Default NSE scripts (<code>safe</code> + <code>default</code> categories)</td>
-</tr>
-<tr>
-<td><code>-Pn</code></td>
-<td>Skip host discovery — assume host is up</td>
-</tr>
-<tr>
-<td><code>-oA quick</code></td>
-<td>Save normal/grepable/XML output (<code>quick.nmap</code>, <code>.gnmap</code>, <code>.xml</code>)</td>
-</tr>
-<tr>
-<td><code>-T4</code></td>
-<td>Aggressive timing — fine for most networks, drop to <code>-T3</code> if you see drops</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition warning">
-<p class="admonition-title">Always use <code>-Pn</code> on real engagements</p>
-<p>Without <code>-Pn</code>, nmap sends ICMP/ARP probes first and skips any host that doesn't reply. Modern Windows hosts, hardened Linux servers, and most cloud instances drop ICMP by default — you'll miss them entirely. Make <code>-Pn</code> your default and only drop it when sweeping a range where you genuinely don't know which hosts exist.</p>
-</div>
-<p>RustScan is faster for port discovery on a known-up host — it finds open ports in seconds, then hands off to nmap for service detection:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>rustscan<span class="w"> </span>-a<span class="w"> </span><span class="m">10</span>.10.10.10<span class="w"> </span>--ulimit<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>-oA<span class="w"> </span>quick
-</code></pre></div>
-<hr />
-<h2 id="phase-2-full-port-scan">Phase 2: Full Port Scan<a class="headerlink" href="#phase-2-full-port-scan" title="Permanent link">&para;</a></h2>
-<p>Run in the background while you work on what Phase 1 found. Catches anything above port 1000.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-p-<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>--min-rate<span class="w"> </span><span class="m">1000</span><span class="w"> </span>--open<span class="w"> </span>-oA<span class="w"> </span>full<span class="w"> </span><span class="m">10</span>.10.10.10
-</code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-p-</code></td>
-<td>All 65535 TCP ports</td>
-</tr>
-<tr>
-<td><code>-sS</code></td>
-<td>SYN stealth scan (requires root, faster and quieter than <code>-sT</code>)</td>
-</tr>
-<tr>
-<td><code>--min-rate 1000</code></td>
-<td>Pin packet rate floor — more reliable than <code>-T4</code> on slow links</td>
-</tr>
-<tr>
-<td><code>--max-retries 2</code></td>
-<td>Cut retransmit time on filtered ports</td>
-</tr>
-</tbody>
-</table>
-<p>If you can't run as root (or you're tunneling through <code>proxychains</code>), use <code>-sT</code> instead — full TCP connect, slower but works without raw socket access.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tuning over timing templates</p>
-<p><code>-T4</code> is fine as a default, but on flaky networks <code>--min-rate</code>/<code>--max-retries</code>/<code>--host-timeout</code> give you finer control. On solid links, <code>--min-rate 5000</code> against a single host is significantly faster than any <code>-T</code> template alone.</p>
-</div>
-<p>For very large ranges (<code>/16</code> and up), drop nmap and use masscan for initial port discovery, then feed the output back into nmap for service detection:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>sudo<span class="w"> </span>masscan<span class="w"> </span>-p1-65535<span class="w"> </span><span class="m">10</span>.10.0.0/16<span class="w"> </span>--rate<span class="o">=</span><span class="m">10000</span><span class="w"> </span>-oG<span class="w"> </span>masscan.gnmap
-</code></pre></div>
-<hr />
-<h2 id="service-script-scan">Service &amp; Script Scan<a class="headerlink" href="#service-script-scan" title="Permanent link">&para;</a></h2>
-<p>Once you have a port list from Phase 1/2, run a focused scan with version detection and the relevant NSE categories:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>-p<span class="w"> </span><span class="m">22</span>,80,443,445,3389<span class="w"> </span>--version-intensity<span class="w"> </span><span class="m">7</span><span class="w"> </span>-Pn<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">     </span>-oA<span class="w"> </span>services<span class="w"> </span><span class="m">10</span>.10.10.10
-</code></pre></div>
-<p>NSE script categories worth knowing — combine with <code>--script</code>:</p>
-<table>
-<thead>
-<tr>
-<th>Category</th>
-<th>Use case</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>default</code>, <code>safe</code></td>
-<td>Run by <code>-sC</code>. Safe to use everywhere.</td>
+<td><code>safe</code></td>
+<td>Lower-risk discovery scripts, not a guarantee of harmless behavior</td>
 </tr>
 <tr>
 <td><code>discovery</code></td>
-<td>Extra enumeration (NetBIOS names, DNS records, SMB shares).</td>
-</tr>
-<tr>
-<td><code>version</code></td>
-<td>Aggressive version probing (combined with <code>-sV --version-intensity 9</code>).</td>
+<td>Additional host, service, share, and directory information</td>
 </tr>
 <tr>
 <td><code>auth</code></td>
-<td>Default-cred and anonymous-bind checks.</td>
+<td>Authentication and anonymous-access checks; may generate auth events</td>
 </tr>
 <tr>
 <td><code>vuln</code></td>
-<td>Known-CVE checks. <strong>Some are intrusive</strong> — see warning below.</td>
+<td>Vulnerability checks with mixed behavior; inspect scripts individually</td>
 </tr>
 <tr>
-<td><code>brute</code></td>
-<td>Credential brute-forcers. Loud and slow — usually not what you want.</td>
-</tr>
-<tr>
-<td><code>exploit</code></td>
-<td>Active exploitation. Treat like <code>vuln</code>.</td>
+<td><code>brute</code>, <code>exploit</code>, <code>dos</code></td>
+<td>Explicit authorization only</td>
 </tr>
 </tbody>
 </table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">445</span><span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;smb-vuln-* and safe&quot;</span><span class="w"> </span><span class="m">10</span>.10.10.10
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>,443<span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;http-enum,http-title,http-headers&quot;</span><span class="w"> </span><span class="m">10</span>.10.10.10
+<h3 id="os-detection">OS Detection<a class="headerlink" href="#os-detection" title="Permanent link">&para;</a></h3>
+<p>OS fingerprinting is most reliable when Nmap can test at least one open and one closed TCP port:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-O<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p&lt;open-port&gt;,&lt;closed-port&gt;<span class="w"> </span>-oA<span class="w"> </span>nmap/os<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p>Use <code>--osscan-limit</code> when scanning multiple hosts so Nmap skips targets without suitable fingerprinting conditions.</p>
+<h3 id="vulnerability-leads">Vulnerability Leads<a class="headerlink" href="#vulnerability-leads" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Only scripts categorized as both vuln and safe</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>nmap<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;vuln and safe&quot;</span><span class="w"> </span>-p&lt;ports&gt;<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1"># Version/CPE matches from the external Vulners service</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>nmap<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>--script<span class="w"> </span>vulners<span class="w"> </span>--script-args<span class="w"> </span>vulners.mincvss<span class="o">=</span><span class="m">7</span>.0<span class="w"> </span>-p&lt;ports&gt;<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p><code>vulners</code> sends detected software names, versions, or CPEs to a third-party API. Use it only when that disclosure is acceptable. A version-to-CVE match is not a verified finding; confirm the installed build, patch state, configuration, and behavior.</p>
+<p>Move confirmed services into the matching <a href="../../information-gathering/">service playbook</a> for deeper enumeration and validation.</p>
+<hr />
+<h2 id="udp-and-ipv6">UDP and IPv6<a class="headerlink" href="#udp-and-ipv6" title="Permanent link">&para;</a></h2>
+<h3 id="udp">UDP<a class="headerlink" href="#udp" title="Permanent link">&para;</a></h3>
+<p>Start with the most common UDP ports, then run version detection against the ports that remain <code>open</code> or <code>open|filtered</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>--top-ports<span class="w"> </span><span class="m">100</span><span class="w"> </span>-oA<span class="w"> </span>nmap/udp-top<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p53,67,68,69,111,123,137,138,161,162,500,4500,514,623,1900,5353<span class="w"> </span>-oA<span class="w"> </span>nmap/udp-targeted<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p>High-value UDP services include DNS, DHCP, TFTP, RPC, NTP, NetBIOS, SNMP, IKE, Syslog, IPMI, SSDP, and mDNS.</p>
+<p>An exhaustive UDP scan is valid when scope, stability, and available time require it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p-<span class="w"> </span>--open<span class="w"> </span>-oA<span class="w"> </span>nmap/udp-full<span class="w"> </span><span class="nv">$IP</span>
+</code></pre></div>
+<p>UDP scans are slow because many open and filtered services do not respond. Use <code>-sV</code> on the reduced result set to help distinguish truly open ports from <code>open|filtered</code>.</p>
+<h3 id="ipv6">IPv6<a class="headerlink" href="#ipv6" title="Permanent link">&para;</a></h3>
+<p>Do not assume IPv4 discovery provides IPv6 coverage. Start with addresses collected from DNS, neighbor tables, application responses, or other reconnaissance rather than attempting to sweep an entire <code>/64</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>ip<span class="w"> </span>-6<span class="w"> </span>neigh<span class="w"> </span>show
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="c1"># Link-local addresses require an interface zone</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-6<span class="w"> </span>-sn<span class="w"> </span>-n<span class="w"> </span><span class="s1">&#39;fe80::1%eth0&#39;</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="c1"># Known IPv6 target</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-6<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p-<span class="w"> </span>--open<span class="w"> </span>-oA<span class="w"> </span>nmap/ipv6-full<span class="w"> </span>&lt;ipv6-target&gt;
 </code></pre></div>
 <hr />
-<h2 id="os-detection">OS Detection<a class="headerlink" href="#os-detection" title="Permanent link">&para;</a></h2>
-<p>Useful when you need to confirm Windows vs Linux before queueing up follow-up tooling. Runs alongside <code>-sV</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-O<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span><span class="m">10</span>.10.10.10
+<h2 id="pivots-and-filtering">Pivots and Filtering<a class="headerlink" href="#pivots-and-filtering" title="Permanent link">&para;</a></h2>
+<h3 id="socks-proxy">SOCKS Proxy<a class="headerlink" href="#socks-proxy" title="Permanent link">&para;</a></h3>
+<p><code>proxychains</code> can proxy TCP connect scans, not raw SYN scans:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>proxychains<span class="w"> </span>nmap<span class="w"> </span>-sT<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-p22,80,443,445,3389<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
-<p>Less reliable than fingerprinting a known service (SMB, SSH banners, HTTP <code>Server</code> headers) — treat the result as a hint, not gospel.</p>
-<hr />
-<h2 id="udp-targeted">UDP (Targeted)<a class="headerlink" href="#udp-targeted" title="Permanent link">&para;</a></h2>
-<p>UDP is slow and noisy — never <code>-sU -p-</code>. Scan for the specific services you actually care about:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>--top-ports<span class="w"> </span><span class="m">50</span><span class="w"> </span>-Pn<span class="w"> </span><span class="m">10</span>.10.10.10
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>-sV<span class="w"> </span>-p<span class="w"> </span><span class="m">53</span>,69,111,123,161,500,4500,514,623<span class="w"> </span>-Pn<span class="w"> </span><span class="m">10</span>.10.10.10
-</code></pre></div>
-<p>Common high-value UDP ports: DNS (53), TFTP (69), NTP (123), SNMP (161), IKE (500/4500), Syslog (514), IPMI (623).</p>
-<hr />
-<h2 id="firewall-ids-evasion">Firewall / IDS Evasion<a class="headerlink" href="#firewall-ids-evasion" title="Permanent link">&para;</a></h2>
-<p>When something's clearly between you and the host, escalate carefully — these flags make scans louder, not quieter, against any halfway competent monitoring stack.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>nmap<span class="w"> </span>-Pn<span class="w"> </span>-f<span class="w"> </span>-D<span class="w"> </span>RND:5<span class="w"> </span>--source-port<span class="w"> </span><span class="m">53</span><span class="w"> </span>--data-length<span class="w"> </span><span class="m">24</span><span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>,443<span class="w"> </span><span class="m">10</span>.10.10.10
-</code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Flag</th>
-<th>Effect</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>-Pn</code></td>
-<td>Skip discovery — covered above. The single most useful evasion flag.</td>
-</tr>
-<tr>
-<td><code>-f</code> / <code>--mtu 16</code></td>
-<td>Fragment packets to slip past simple packet inspection.</td>
-</tr>
-<tr>
-<td><code>-D RND:5</code></td>
-<td>Spoof 5 random decoy source IPs alongside your real one.</td>
-</tr>
-<tr>
-<td><code>--source-port 53</code></td>
-<td>Many old ACLs trust source port 53/DNS. Worth trying against ancient firewalls.</td>
-</tr>
-<tr>
-<td><code>--data-length 24</code></td>
-<td>Pad packets to dodge length-based signatures.</td>
-</tr>
-<tr>
-<td><code>-T2</code> / <code>-T1</code></td>
-<td>"Polite"/"sneaky" timing. Useful when you actually need to evade IDS.</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition warning">
-<p class="admonition-title">Authorization</p>
-<p>Evasion techniques can produce alerts that look like a real attack and may breach engagement scope. Only use them when explicitly in-scope and coordinated with the blue team or client.</p>
-</div>
-<hr />
-<h2 id="saving-reusing-output">Saving &amp; Reusing Output<a class="headerlink" href="#saving-reusing-output" title="Permanent link">&para;</a></h2>
-<p>Always save with <code>-oA</code> — the grepable (<code>.gnmap</code>) format pipes cleanly into shell tools, the XML feeds tools like Metasploit (<code>db_import</code>) and EyeWitness (<code>-x</code>), and the normal output is what you'll paste into the report.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Pull just the open ports as a comma-separated list</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>grep<span class="w"> </span>-oP<span class="w"> </span><span class="s1">&#39;\d+/open&#39;</span><span class="w"> </span>full.gnmap<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d/<span class="w"> </span>-f1<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-nu<span class="w"> </span><span class="p">|</span><span class="w"> </span>paste<span class="w"> </span>-sd,
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Feed into the next nmap run</span>
-<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="nv">ports</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span>-oP<span class="w"> </span><span class="s1">&#39;\d+/open&#39;</span><span class="w"> </span>full.gnmap<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d/<span class="w"> </span>-f1<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-nu<span class="w"> </span><span class="p">|</span><span class="w"> </span>paste<span class="w"> </span>-sd,<span class="k">)</span>
-<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>-p<span class="s2">&quot;</span><span class="nv">$ports</span><span class="s2">&quot;</span><span class="w"> </span>-Pn<span class="w"> </span>-oA<span class="w"> </span>services<span class="w"> </span><span class="m">10</span>.10.10.10
-</code></pre></div>
-<p>For multi-host scans, drive nmap from a target file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>-Pn<span class="w"> </span>-iL<span class="w"> </span>targets.txt<span class="w"> </span>-oA<span class="w"> </span>sweep
-</code></pre></div>
-<hr />
-<h2 id="vulnerability-scanning">Vulnerability Scanning<a class="headerlink" href="#vulnerability-scanning" title="Permanent link">&para;</a></h2>
-<p>Quick CVE-aware sweep across whatever services Phase 1/2 turned up. Useful for picking out low-hanging fruit before deep-diving each service — not a substitute for a real vulnerability scanner.</p>
-<h3 id="general-sweep-broad">General sweep (broad)<a class="headerlink" href="#general-sweep-broad" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;vuln and safe&quot;</span><span class="w"> </span>-p<span class="w"> </span>&lt;ports&gt;<span class="w"> </span><span class="m">10</span>.10.10.10
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span>--script<span class="w"> </span>vulners<span class="w"> </span>-p<span class="w"> </span>&lt;ports&gt;<span class="w"> </span><span class="m">10</span>.10.10.10
-</code></pre></div>
-<p><code>vulners</code> is the highest-signal script in the box — it takes <code>-sV</code> banners and queries vulners.com for matching CVEs. Run it on every engagement.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span>--script<span class="w"> </span>vulners<span class="w"> </span>--script-args<span class="w"> </span><span class="nv">mincvss</span><span class="o">=</span><span class="m">7</span>.0<span class="w"> </span>-p<span class="w"> </span>&lt;ports&gt;<span class="w"> </span><span class="m">10</span>.10.10.10
+<p>Scan a focused port set first. Full connect scans through a high-latency proxy can be extremely slow and may overload the pivot. Route-based tunnels such as Ligolo-ng can support normal routed tooling; see <a href="../../port-forwarding/">Port Forwarding</a>.</p>
+<h3 id="filtering-diagnostics">Filtering Diagnostics<a class="headerlink" href="#filtering-diagnostics" title="Permanent link">&para;</a></h3>
+<p>Use state reasons and a small packet trace before changing scan techniques:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Explain why each port received its state</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>--reason<span class="w"> </span>-p22,80,443<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Map whether a firewall permits packets; ACK scans do not identify open ports</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sA<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>--reason<span class="w"> </span>-p22,80,443<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># Inspect one port without producing an unmanageable trace</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>--packet-trace<span class="w"> </span>-p443<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <div class="admonition warning">
-<p class="admonition-title"><code>--script vuln</code> is intrusive</p>
-<p>The unfiltered <code>vuln</code> category includes scripts that send real exploit payloads (<code>smb-vuln-ms17-010</code>, <code>http-shellshock</code>, etc.) and can crash unpatched services. Default to <code>"vuln and safe"</code> and only widen the filter when you've scoped exploitation with the client.</p>
+<p class="admonition-title">Authorized evasion testing</p>
+<p>Test fragmentation, source-port manipulation, padding, timing changes, or controlled decoys one at a time and only when they are explicitly in scope. Avoid random decoys: spoofed third-party addresses create unnecessary traffic, and unsuitable decoys can reduce accuracy or contribute to SYN-flood-like behavior. Fragmentation and decoys also do not cover Nmap version detection or NSE connections.</p>
 </div>
-<h3 id="targeted-scripts-by-service">Targeted scripts by service<a class="headerlink" href="#targeted-scripts-by-service" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Service</th>
-<th>Useful scripts</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SSL/TLS (443, 8443, 636, 993, 995)</td>
-<td><code>ssl-heartbleed</code>, <code>ssl-poodle</code>, <code>ssl-ccs-injection</code>, <code>ssl-dh-params</code>, <code>ssl-cert</code>, <code>ssl-enum-ciphers</code></td>
-</tr>
-<tr>
-<td>HTTP/HTTPS (80, 443, 8080, 8443)</td>
-<td><code>http-vuln-*</code>, <code>http-shellshock</code>, <code>http-enum</code>, <code>http-title</code>, <code>http-headers</code>, <code>http-methods</code>, <code>http-robots.txt</code></td>
-</tr>
-<tr>
-<td>SMB (139, 445)</td>
-<td><code>smb-vuln-ms17-010</code>, <code>smb-vuln-ms08-067</code>, <code>smb2-security-mode</code>, <code>smb-os-discovery</code> — see <a href="../../information-gathering/service-analysis/smb/">SMB</a></td>
-</tr>
-<tr>
-<td>RDP (3389)</td>
-<td><code>rdp-ntlm-info</code>, <code>rdp-vuln-ms12-020</code>, <code>rdp-enum-encryption</code></td>
-</tr>
-<tr>
-<td>DNS (53)</td>
-<td><code>dns-recursion</code>, <code>dns-zone-transfer</code>, <code>dns-cache-snoop</code></td>
-</tr>
-<tr>
-<td>FTP (21)</td>
-<td><code>ftp-anon</code>, <code>ftp-vsftpd-backdoor</code>, <code>ftp-proftpd-backdoor</code></td>
-</tr>
-<tr>
-<td>SSH (22)</td>
-<td><code>ssh2-enum-algos</code>, <code>ssh-hostkey</code>, <code>ssh-auth-methods</code></td>
-</tr>
-<tr>
-<td>SMTP (25, 465, 587)</td>
-<td><code>smtp-enum-users</code>, <code>smtp-vuln-cve2010-4344</code>, <code>smtp-open-relay</code></td>
-</tr>
-<tr>
-<td>SNMP (161/udp)</td>
-<td><code>snmp-info</code>, <code>snmp-brute</code>, <code>snmp-processes</code>, <code>snmp-win32-software</code></td>
-</tr>
-</tbody>
-</table>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># SSL/TLS posture on every HTTPS-ish port at once</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span>-p<span class="w"> </span><span class="m">443</span>,636,993,995,8443<span class="w"> </span><span class="se">\</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span>--script<span class="w"> </span><span class="s2">&quot;ssl-heartbleed,ssl-poodle,ssl-ccs-injection,ssl-enum-ciphers&quot;</span><span class="w"> </span><span class="m">10</span>.10.10.10
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1"># HTTP enumeration + common CVE checks</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-Pn<span class="w"> </span>-p<span class="w"> </span><span class="m">80</span>,443,8080<span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;http-enum,http-title,http-methods,http-vuln-*&quot;</span><span class="w"> </span><span class="m">10</span>.10.10.10
+<hr />
+<h2 id="output-and-handoff">Output and Handoff<a class="headerlink" href="#output-and-handoff" title="Permanent link">&para;</a></h2>
+<p><code>-oA &lt;basename&gt;</code> saves normal, XML, and grepable output. Grepable output remains convenient for one-off shell extraction but is deprecated; prefer XML for durable automation.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Exact open TCP states from grepable output; excludes open|filtered</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>grep<span class="w"> </span>-oP<span class="w"> </span><span class="s1">&#39;\d+(?=/open/tcp)&#39;</span><span class="w"> </span>nmap/full.gnmap<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-nu<span class="w"> </span><span class="p">|</span><span class="w"> </span>paste<span class="w"> </span>-sd,
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Exact open TCP states from XML</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>xmlstarlet<span class="w"> </span>sel<span class="w"> </span>-t<span class="w"> </span>-m<span class="w"> </span><span class="s1">&#39;//port[@protocol=&quot;tcp&quot;][state/@state=&quot;open&quot;]&#39;</span><span class="w"> </span>-v<span class="w"> </span><span class="s1">&#39;@portid&#39;</span><span class="w"> </span>-n<span class="w"> </span>nmap/full.xml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-nu<span class="w"> </span><span class="p">|</span><span class="w"> </span>paste<span class="w"> </span>-sd,
 </code></pre></div>
-<p>Service-specific exploitation, default-cred testing, and deep enumeration live in the <a href="../../information-gathering/">Services</a> section — each port has its own page.</p>
+<p>Guard against an empty port list before launching the service scan:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nv">ports</span><span class="o">=</span><span class="k">$(</span>grep<span class="w"> </span>-oP<span class="w"> </span><span class="s1">&#39;\d+(?=/open/tcp)&#39;</span><span class="w"> </span>nmap/full.gnmap<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-nu<span class="w"> </span><span class="p">|</span><span class="w"> </span>paste<span class="w"> </span>-sd,<span class="k">)</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$ports</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">  </span>sudo<span class="w"> </span>nmap<span class="w"> </span>-sS<span class="w"> </span>-Pn<span class="w"> </span>-n<span class="w"> </span>-sV<span class="w"> </span>-sC<span class="w"> </span>-p<span class="s2">&quot;</span><span class="nv">$ports</span><span class="s2">&quot;</span><span class="w"> </span>-oA<span class="w"> </span>nmap/services<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="k">fi</span>
+</code></pre></div>
+<p>Nmap overwrites an existing basename, so use a separate directory or a target- and date-specific name for repeated scans. Resume an interrupted scan from its saved output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>--resume<span class="w"> </span>nmap/full.nmap
+</code></pre></div>
+<p>After confirming a service, continue with the relevant <a href="../../information-gathering/">service-analysis page</a>, such as <a href="../../information-gathering/service-analysis/http-80-443/">HTTP/HTTPS</a>, <a href="../../information-gathering/service-analysis/smb/">SMB</a>, <a href="../../information-gathering/service-analysis/ldap/">LDAP</a>, or <a href="../../information-gathering/service-analysis/snmp/">SNMP</a>.</p>
 
 
 
@@ -4488,7 +6036,7 @@
         
           <button type="button" class="md-top md-icon" data-md-component="top" hidden>
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
   Back to top
 </button>
         
@@ -4507,14 +6055,15 @@
   
 </div>
       
-        <div class="md-social">
+        
+<div class="md-social">
   
     
     
     
     
     <a href="https://taylorelder.com" target="_blank" rel="noopener" title="Portfolio — taylorelder.com" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.2-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.4c2.2 20.4 3.3 41.8 3.3 64zm28.8-64h123.1c5.3 20.5 8.1 41.9 8.1 64s-2.8 43.5-8.1 64H380.8c2.1-20.6 3.2-42 3.2-64s-1.1-43.4-3.2-64zm112.6-32H376.7c-10-63.9-29.8-117.4-55.3-151.6 78.3 20.7 142 77.5 171.9 151.6zm-149.1 0H167.7c6.1-36.4 15.5-68.6 27-94.7 10.5-23.6 22.2-40.7 33.5-51.5C239.4 3.2 248.7 0 256 0s16.6 3.2 27.8 13.8c11.3 10.8 23 27.9 33.5 51.5 11.6 26 20.9 58.2 27 94.7zm-209 0H18.6c30-74.1 93.6-130.9 172-151.6-25.5 34.2-45.3 87.7-55.3 151.6zM8.1 192h123.1c-2.1 20.6-3.2 42-3.2 64s1.1 43.4 3.2 64H8.1C2.8 299.5 0 278.1 0 256s2.8-43.5 8.1-64zm186.6 254.6c-11.6-26-20.9-58.2-27-94.6h176.6c-6.1 36.4-15.5 68.6-27 94.6-10.5 23.6-22.2 40.7-33.5 51.5-11.2 10.7-20.5 13.9-27.8 13.9s-16.6-3.2-27.8-13.8c-11.3-10.8-23-27.9-33.5-51.5zM135.3 352c10 63.9 29.8 117.4 55.3 151.6-78.4-20.7-142-77.5-172-151.6h116.7zm358.1 0c-30 74.1-93.6 130.9-171.9 151.6 25.5-34.2 45.2-87.7 55.3-151.6h116.6z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M351.9 280H161c2.9 64.5 17.2 123.9 37.5 167.4 11.4 24.5 23.7 41.8 35.1 52.4 11.2 10.5 18.9 12.2 22.9 12.2s11.7-1.7 22.9-12.2c11.4-10.6 23.7-28 35.1-52.4 20.3-43.5 34.6-102.9 37.5-167.4zm-191-48h190.9c-2.8-64.5-17.1-123.9-37.4-167.4-11.4-24.4-23.7-41.8-35.1-52.4C268.1 1.7 260.4 0 256.4 0s-11.7 1.7-22.9 12.2c-11.4 10.6-23.7 28-35.1 52.4-20.3 43.5-34.6 102.9-37.5 167.4m-48 0c3.5-85.6 25.6-165.1 57.9-217.3C78.7 47.3 10.9 131.2 1.5 232zM1.5 280c9.4 100.8 77.2 184.7 169.3 217.3-32.3-52.2-54.4-131.7-57.9-217.3zm398.4 0c-3.5 85.6-25.6 165.1-57.9 217.3 92.1-32.7 159.9-116.5 169.3-217.3zm111.4-48C501.9 131.2 434.1 47.3 342 14.7c32.3 52.2 54.4 131.7 57.9 217.3z"/></svg>
     </a>
   
     
@@ -4522,7 +6071,7 @@
     
     
     <a href="https://github.com/aelder202" target="_blank" rel="noopener" title="GitHub" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
     
@@ -4530,7 +6079,7 @@
     
     
     <a href="https://www.linkedin.com/in/taylor-elder/" target="_blank" rel="noopener" title="LinkedIn" class="md-social__link">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3M135.4 416H69V202.2h66.5V416zM102.2 96a38.5 38.5 0 1 1 0 77 38.5 38.5 0 1 1 0-77m282.1 320h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9z"/></svg>
     </a>
   
 </div>
@@ -4545,10 +6094,15 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/runbook-variables.js"></script>
       
     
   </body>

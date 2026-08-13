@@ -4,7 +4,7 @@
     For parameter fuzzing, `x8` is faster than ffuf for discovering hidden parameters in existing endpoints. For subdomain fuzzing, filter by response size, wildcard DNS returns 200 for everything.
 
 !!! warning "Watch out"
-    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.example.com"`, changing the URL path won't work.
+    Virtual host fuzzing requires the `Host` header, not the URL. Use `ffuf -H "Host: FUZZ.$DOMAIN"`, changing the URL path won't work.
 
 ---
 
@@ -13,13 +13,13 @@
 ### subfinder
 
 ```sh
-subfinder -d example.com
+subfinder -d $DOMAIN
 ```
 
 ### amass
 
 ```sh
-amass enum -passive -d example.com
+amass enum -passive -d $DOMAIN
 ```
 
 - `-passive` → Runs passive enumeration to avoid triggering alerts.
@@ -27,13 +27,13 @@ amass enum -passive -d example.com
 ### gobuster
 
 ```sh
-gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+gobuster dns -d $DOMAIN -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
 ```
 
 ### ffuf (vhost fuzzing)
 
 ```sh
-ffuf -u 'http://example.com' -H 'Host: FUZZ.example.com' -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -fs <baseline-size>
+ffuf -u 'http://$DOMAIN' -H 'Host: FUZZ.$DOMAIN' -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -fs <baseline-size>
 ```
 
 Capture the baseline response size for the default host first (wildcard DNS returns 200 for everything), then filter it out with `-fs`. You can also filter by word or line count: `-fw <n>` / `-fl <n>`.
@@ -45,13 +45,13 @@ Capture the baseline response size for the default host first (wildcard DNS retu
 ### ffuf
 
 ```bash
-ffuf -u "http://10.10.10.10/page.php?FUZZ=value" -w /usr/share/seclists/Fuzzing/special-chars.txt
+ffuf -u "http://$IP/page.php?FUZZ=value" -w /usr/share/seclists/Fuzzing/special-chars.txt
 ```
 
 ### arjun
 
 ```bash
-arjun -u http://10.10.10.10/page.php -w /usr/share/seclists/Fuzzing/special-chars.txt
+arjun -u http://$IP/page.php -w /usr/share/seclists/Fuzzing/special-chars.txt
 ```
 
 - Automates parameter fuzzing for GET and POST requests.

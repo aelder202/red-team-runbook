@@ -13,13 +13,13 @@
 ### From Linux (`bloodhound-python`)
 
 ```bash
-bloodhound-python -c all -d example.com -u <user> -p '<pass>' -ns 10.10.10.10 --zip
+bloodhound-python -c all -d $DOMAIN -u <user> -p '<pass>' -ns $DC_IP --zip
 ```
 
 Noise-reduced (LDAP only, no sessionenum):
 
 ```bash
-bloodhound-python -c DCOnly -d example.com -u <user> -p '<pass>' -ns 10.10.10.10 --zip
+bloodhound-python -c DCOnly -d $DOMAIN -u <user> -p '<pass>' -ns $DC_IP --zip
 ```
 
 ### From Windows (SharpHound)
@@ -33,7 +33,7 @@ bloodhound-python -c DCOnly -d example.com -u <user> -p '<pass>' -ns 10.10.10.10
 ### From Linux with `nxc`
 
 ```bash
-nxc ldap 10.10.10.10 -u <user> -p '<pass>' --bloodhound --collection All --dns-server 10.10.10.10
+nxc ldap $DC_IP -u <user> -p '<pass>' --bloodhound --collection All --dns-server $DC_IP
 ```
 
 ---
@@ -43,36 +43,36 @@ nxc ldap 10.10.10.10 -u <user> -p '<pass>' --bloodhound --collection All --dns-s
 ### ldapsearch: anonymous bind check
 
 ```bash
-ldapsearch -x -H ldap://10.10.10.10 -b "DC=example,DC=com" -s base
+ldapsearch -x -H ldap://$DC_IP -b "$BASE_DN" -s base
 ```
 
 ### Authenticated queries
 
 ```bash
 # All domain users
-ldapsearch -x -H ldap://10.10.10.10 -D '<user>@example.com' -w '<pass>' -b "DC=example,DC=com" "(objectClass=user)" samaccountname
+ldapsearch -x -H ldap://$DC_IP -D '<user>@$DOMAIN' -w '<pass>' -b "$BASE_DN" "(objectClass=user)" samaccountname
 
 # Users with SPNs (kerberoastable)
-ldapsearch -x -H ldap://10.10.10.10 -D '<user>@example.com' -w '<pass>' -b "DC=example,DC=com" "(&(objectClass=user)(servicePrincipalName=*))" samaccountname servicePrincipalName
+ldapsearch -x -H ldap://$DC_IP -D '<user>@$DOMAIN' -w '<pass>' -b "$BASE_DN" "(&(objectClass=user)(servicePrincipalName=*))" samaccountname servicePrincipalName
 
 # Users without Kerberos pre-auth (ASREP-roastable)
-ldapsearch -x -H ldap://10.10.10.10 -D '<user>@example.com' -w '<pass>' -b "DC=example,DC=com" "(&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))" samaccountname
+ldapsearch -x -H ldap://$DC_IP -D '<user>@$DOMAIN' -w '<pass>' -b "$BASE_DN" "(&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))" samaccountname
 
 # Domain Admins
-ldapsearch -x -H ldap://10.10.10.10 -D '<user>@example.com' -w '<pass>' -b "DC=example,DC=com" "(memberOf=CN=Domain Admins,CN=Users,DC=example,DC=com)" samaccountname
+ldapsearch -x -H ldap://$DC_IP -D '<user>@$DOMAIN' -w '<pass>' -b "$BASE_DN" "(memberOf=CN=Domain Admins,CN=Users,$BASE_DN)" samaccountname
 
 # Password policy
-ldapsearch -x -H ldap://10.10.10.10 -D '<user>@example.com' -w '<pass>' -b "DC=example,DC=com" -s base "(objectClass=*)" minPwdLength lockoutThreshold
+ldapsearch -x -H ldap://$DC_IP -D '<user>@$DOMAIN' -w '<pass>' -b "$BASE_DN" -s base "(objectClass=*)" minPwdLength lockoutThreshold
 ```
 
 ### nxc (quick AD overview)
 
 ```bash
-nxc smb 10.10.10.10 -u <user> -p '<pass>' --users
-nxc smb 10.10.10.10 -u <user> -p '<pass>' --groups
-nxc smb 10.10.10.10 -u <user> -p '<pass>' --pass-pol
-nxc smb 10.10.10.10 -u <user> -p '<pass>' --loggedon-users
-nxc smb 10.10.10.10 -u <user> -p '<pass>' --shares
+nxc smb $DC_IP -u <user> -p '<pass>' --users
+nxc smb $DC_IP -u <user> -p '<pass>' --groups
+nxc smb $DC_IP -u <user> -p '<pass>' --pass-pol
+nxc smb $DC_IP -u <user> -p '<pass>' --loggedon-users
+nxc smb $DC_IP -u <user> -p '<pass>' --shares
 ```
 
 ---
@@ -123,7 +123,7 @@ Get-DomainUser -Identity $env:USERNAME -Properties memberof
 | AS-REP disabled + admin | Highest value | Combine above |
 | Unconstrained delegation | Coerce + dump TGT | `Get-DomainComputer -Unconstrained` |
 | Constrained delegation | S4U2Self/S4U2Proxy | `Get-DomainUser -TrustedToAuth` |
-| ms-DS-MachineAccountQuota | Can you join machines? | `(Get-DomainObject -Identity "DC=example,DC=com").'ms-DS-MachineAccountQuota'` |
+| ms-DS-MachineAccountQuota | Can you join machines? | `(Get-DomainObject -Identity "$BASE_DN").'ms-DS-MachineAccountQuota'` |
 
 ---
 
@@ -138,7 +138,7 @@ Get-ForestTrust
 From Linux:
 
 ```bash
-nxc smb 10.10.10.10 -u <user> -p '<pass>' -M enum_trusts
+nxc smb $DC_IP -u <user> -p '<pass>' -M enum_trusts
 ```
 
 Any bidirectional trust or "Forest" trust is worth mapping in BloodHound, misconfigurations in parent/child trusts frequently let a child DA hop to the forest root.

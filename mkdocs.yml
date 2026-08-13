@@ -1,5 +1,5 @@
 site_name: Red Team Runbook
-site_description: An operator-focused offensive security reference for moving from first signal to verified impact across web, network, and Active Directory assessments.
+site_description: A practical command and methodology reference for network, web application, and Active Directory assessments.
 site_author: Taylor Elder
 site_url: https://taylorelder.com/red-team-runbook/
 repo_url: https://github.com/aelder202/red-team-runbook
@@ -23,6 +23,9 @@ theme:
 
 extra_css:
   - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/runbook-variables.js
 
 extra:
   generator: false

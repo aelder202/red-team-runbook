@@ -1,14 +1,14 @@
 # Telnet (23)
 
 !!! tip "Start here"
-    Connect and check the banner: `telnet 10.10.10.10`. The banner often reveals the device type, OS, and version. Everything is cleartext, if you can capture traffic on the same segment, you get credentials for free.
+    Connect and check the banner: `telnet $IP`. The banner often reveals the device type, OS, and version. Everything is cleartext, if you can capture traffic on the same segment, you get credentials for free.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 23 --script telnet-ntlm-info,telnet-encryption 10.10.10.10
+nmap -p 23 --script telnet-ntlm-info,telnet-encryption $IP
 ```
 
 ---
@@ -16,9 +16,9 @@ nmap -p 23 --script telnet-ntlm-info,telnet-encryption 10.10.10.10
 ## Connect
 
 ```bash
-telnet 10.10.10.10
-telnet 10.10.10.10 23
-nc -nv 10.10.10.10 23
+telnet $IP
+telnet $IP 23
+nc -nv $IP 23
 ```
 
 ---
@@ -26,8 +26,8 @@ nc -nv 10.10.10.10 23
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt telnet://10.10.10.10
-hydra -l admin -P /usr/share/wordlists/rockyou.txt telnet://10.10.10.10
+hydra -L users.txt -P passwords.txt telnet://$IP
+hydra -l admin -P /usr/share/wordlists/rockyou.txt telnet://$IP
 ```
 
 Common default credentials by device type:

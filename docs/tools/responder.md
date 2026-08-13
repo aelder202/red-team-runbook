@@ -31,7 +31,7 @@ sudo responder -I tun0 -wrf
 Responder writes captured hashes to:
 
 ```bash
-Responder/logs/10.10.10.10-SMB-NTLMv2-<timestamp>.txt
+Responder/logs/$IP-SMB-NTLMv2-<timestamp>.txt
 ```
 
 ---

@@ -1,14 +1,14 @@
 # Oracle TNS (1521)
 
 !!! tip "Start here"
-    Enumerate SIDs first, you can't connect without one: `odat.py sidguesser -s 10.10.10.10`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@10.10.10.10:1521/<SID>`.
+    Enumerate SIDs first, you can't connect without one: `odat.py sidguesser -s $IP`. Once you have a SID, try default credentials: `SCOTT:tiger`, `SYS:oracle`, `SYSTEM:manager`. Connect with `sqlplus <user>/<pass>@$IP:1521/<SID>`.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 1521 --script oracle-tns-version,oracle-sid-brute 10.10.10.10
+nmap -p 1521 --script oracle-tns-version,oracle-sid-brute $IP
 ```
 
 ---
@@ -16,8 +16,8 @@ nmap -p 1521 --script oracle-tns-version,oracle-sid-brute 10.10.10.10
 ## SID Enumeration
 
 ```bash
-odat.py sidguesser -s 10.10.10.10
-odat.py passwordguesser -s 10.10.10.10 -d <SID>
+odat.py sidguesser -s $IP
+odat.py passwordguesser -s $IP -d <SID>
 ```
 
 ---
@@ -25,7 +25,7 @@ odat.py passwordguesser -s 10.10.10.10 -d <SID>
 ## Authentication
 
 ```bash
-sqlplus <user>/<pass>@10.10.10.10:1521/<SID>
+sqlplus <user>/<pass>@$IP:1521/<SID>
 ```
 
 Default credentials to try:

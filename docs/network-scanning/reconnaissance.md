@@ -8,8 +8,8 @@
 ### WHOIS
 
 ```bash
-whois example.com
-whois 10.10.10.10
+whois $DOMAIN
+whois $IP
 ```
 
 ---
@@ -19,18 +19,18 @@ whois 10.10.10.10
 Use `dig`, `nslookup` is dated and harder to parse.
 
 ```bash
-dig example.com ANY +noall +answer
-dig example.com MX +short
-dig example.com NS +short
-dig -x 10.10.10.10 +short              # reverse lookup
-dig @<dc-ip> example.com AXFR           # zone transfer
+dig $DOMAIN ANY +noall +answer
+dig $DOMAIN MX +short
+dig $DOMAIN NS +short
+dig -x $IP +short              # reverse lookup
+dig @$DC_IP $DOMAIN AXFR           # zone transfer
 ```
 
 `dnsrecon` automates the same checks and attempts AXFR across every nameserver:
 
 ```bash
-dnsrecon -d example.com
-dnsrecon -d example.com -t axfr
+dnsrecon -d $DOMAIN
+dnsrecon -d $DOMAIN -t axfr
 ```
 
 ---
@@ -40,7 +40,7 @@ dnsrecon -d example.com -t axfr
 CT logs are the single best passive source for subdomains, every public cert issued is logged.
 
 ```bash
-curl -s 'https://crt.sh/?q=%25.example.com&output=json' \
+curl -s 'https://crt.sh/?q=%25.$DOMAIN&output=json' \
   | jq -r '.[].name_value' | sort -u
 ```
 
@@ -49,16 +49,16 @@ curl -s 'https://crt.sh/?q=%25.example.com&output=json' \
 ### Subdomain Enumeration (Passive)
 
 ```bash
-subfinder -d example.com -silent
-amass enum -passive -d example.com
-assetfinder --subs-only example.com
-theHarvester -d example.com -b all
+subfinder -d $DOMAIN -silent
+amass enum -passive -d $DOMAIN
+assetfinder --subs-only $DOMAIN
+theHarvester -d $DOMAIN -b all
 ```
 
 Pipe results into `httpx` to probe which subdomains are live:
 
 ```bash
-subfinder -d example.com -silent | httpx -silent -status-code -title
+subfinder -d $DOMAIN -silent | httpx -silent -status-code -title
 ```
 
 ---
@@ -68,8 +68,8 @@ subfinder -d example.com -silent | httpx -silent -status-code -title
 Archived paths often reveal old admin panels, backup files, and forgotten endpoints.
 
 ```bash
-waybackurls example.com | tee wayback.txt
-gau example.com | tee gau.txt
+waybackurls $DOMAIN | tee wayback.txt
+gau $DOMAIN | tee gau.txt
 ```
 
 ---
@@ -80,8 +80,8 @@ Leaked credentials, API keys, and internal hostnames frequently end up in public
 
 ```bash
 # Manual GitHub dorks
-"example.com" password
-"example.com" api_key
+"$DOMAIN" password
+"$DOMAIN" api_key
 org:example filename:.env
 
 # Automated
@@ -94,10 +94,10 @@ gitleaks detect --source . --verbose
 ### Google Dorking
 
 ```
-site:example.com filetype:pdf
-site:example.com ext:xml
-site:example.com intitle:"index of"
-site:example.com inurl:admin
+site:$DOMAIN filetype:pdf
+site:$DOMAIN ext:xml
+site:$DOMAIN intitle:"index of"
+site:$DOMAIN inurl:admin
 ```
 
 ---
@@ -106,7 +106,7 @@ site:example.com inurl:admin
 
 ```bash
 shodan search "Apache country:US org:\"Example Corp\""
-shodan host 10.10.10.10
+shodan host $IP
 ```
 
 ---
@@ -116,7 +116,7 @@ shodan host 10.10.10.10
 Netcraft's site report returns hosting, nameservers, and tech stack for a given domain. Use the URL directly, there's no grep-from-homepage shortcut.
 
 ```
-https://sitereport.netcraft.com/?url=example.com
+https://sitereport.netcraft.com/?url=$DOMAIN
 ```
 
 ---
@@ -126,8 +126,8 @@ https://sitereport.netcraft.com/?url=example.com
 ### DNS Brute-Forcing
 
 ```bash
-dnsrecon -d example.com -D /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t brt
-gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+dnsrecon -d $DOMAIN -D /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t brt
+gobuster dns -d $DOMAIN -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
 ```
 
 ---
@@ -137,7 +137,7 @@ gobuster dns -d example.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1
 When a webserver hosts multiple vhosts on the same IP, brute-force the `Host` header:
 
 ```bash
-ffuf -u http://10.10.10.10 -H "Host: FUZZ.example.com" \
+ffuf -u http://$IP -H "Host: FUZZ.$DOMAIN" \
   -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
   -fs <size-to-filter>
 ```
@@ -151,14 +151,14 @@ ffuf -u http://10.10.10.10 -H "Host: FUZZ.example.com" \
 Sweep a range for live hosts before full port scans:
 
 ```bash
-nmap -sn -PE -PA21,23,80,3389 10.10.10.0/24
+nmap -sn -PE -PA21,23,80,3389 $SUBNET
 ```
 
 For local-segment work, ARP is faster and more reliable than ICMP:
 
 ```bash
 sudo arp-scan -l
-sudo netdiscover -r 192.168.1.0/24
+sudo netdiscover -r $SUBNET
 ```
 
 See [Network Scanning](network-scanning.md) for port scanning and service detection.
@@ -170,9 +170,9 @@ See [Network Scanning](network-scanning.md) for port scanning and service detect
 Quick version checks without full `-sV`:
 
 ```bash
-nc -nv 10.10.10.10 80
-curl -I http://10.10.10.10
-curl -sI https://10.10.10.10 -k | grep -iE 'server|x-powered-by'
+nc -nv $IP 80
+curl -I http://$IP
+curl -sI https://$IP -k | grep -iE 'server|x-powered-by'
 ```
 
 ---
@@ -182,7 +182,7 @@ curl -sI https://10.10.10.10 -k | grep -iE 'server|x-powered-by'
 When direct scanning is blocked or you're pivoting through a SOCKS proxy:
 
 ```bash
-proxychains nmap -sT -Pn -p 80,443 10.10.10.10
+proxychains nmap -sT -Pn -p 80,443 $IP
 ```
 
 TCP connect (`-sT`) is required, `proxychains` can't tunnel raw SYN packets. See [Tunneling](../port-forwarding/index.md).

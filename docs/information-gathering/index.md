@@ -9,7 +9,7 @@ Solid enumeration wins engagements. The goal here isn't to run every tool, it's 
 ### 1. Host Discovery
 
 ```bash
-nmap -sn 10.10.10.0/24
+nmap -sn $SUBNET
 ```
 
 !!! tip "Real-world"
@@ -23,17 +23,17 @@ The approach: kick off a quick Rustscan to get ports fast, then run a full nmap 
 
 **Quick scan:**
 ```bash
-rustscan -a <target> --ulimit 5000 -- -sV -sC
+rustscan -a $IP --ulimit 5000 -- -sV -sC
 ```
 
 **Full TCP (background):**
 ```bash
-nmap -p- -sV -sC --open -oA nmap_tcp <target>
+nmap -p- -sV -sC --open -oA nmap_tcp $IP
 ```
 
 **UDP (background):**
 ```bash
-sudo nmap -sU --top-ports 100 -oN nmap_udp.txt <target>
+sudo nmap -sU --top-ports 100 -oN nmap_udp.txt $IP
 ```
 
 !!! tip "Real-world"

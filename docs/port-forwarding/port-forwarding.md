@@ -1,7 +1,7 @@
 # Port Forwarding
 
 !!! tip "Tip"
-    SSH local port forward: `ssh -L 8080:internal-host:80 pivot@10.10.10.10`, makes `internal-host:80` accessible at `localhost:8080` on your machine. Remote forward: `ssh -R 4444:localhost:4444 pivot@10.10.10.10`, routes target's port back to you.
+    SSH local port forward: `ssh -L 8080:internal-host:80 pivot@$IP`, makes `internal-host:80` accessible at `localhost:8080` on your machine. Remote forward: `ssh -R 4444:localhost:4444 pivot@$IP`, routes target's port back to you.
 
 ---
 
@@ -34,7 +34,7 @@ Access the internal web server at `http://localhost:8080/`.
 ## SSH Dynamic Port Forwarding (SOCKS Proxy)
 
 ```bash
-ssh -D 1080 <user>@10.10.10.10
+ssh -D 1080 <user>@$IP
 ```
 
 Add to `/etc/proxychains4.conf`:
@@ -57,10 +57,10 @@ proxychains smbclient -L //10.10.10.20/ -U <user>
 No agent needed on the target, only SSH access. `sshuttle` transparently tunnels traffic for specified subnets through the SSH session. Tools run natively (no proxychains).
 
 ```bash
-sshuttle -r <user>@10.10.10.10 10.10.20.0/24
+sshuttle -r <user>@$IP $SUBNET
 
 # Multiple subnets + include DNS
-sshuttle -r <user>@10.10.10.10 10.10.20.0/24 10.10.30.0/24 --dns
+sshuttle -r <user>@$IP $SUBNET <additional-subnet> --dns
 ```
 
 !!! tip "Real-world"
