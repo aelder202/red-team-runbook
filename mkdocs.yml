@@ -26,6 +26,7 @@ extra_css:
 
 extra_javascript:
   - javascripts/runbook-variables.js
+  - javascripts/runbook-onboarding.js
 
 extra:
   generator: false

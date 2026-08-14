@@ -1086,3 +1086,141 @@
     transition: none;
   }
 }
+
+/* First-visit orientation and optional quick tour. */
+.runbook-onboarding-welcome,
+.runbook-tour {
+  position: fixed;
+  z-index: 210;
+  right: 1rem;
+  bottom: 1rem;
+  width: min(23rem, calc(100vw - 2rem));
+  padding: 1.1rem;
+  border: 1px solid var(--runbook-border-strong);
+  border-radius: 0.65rem;
+  background: linear-gradient(155deg, #18212a 0%, #11181f 100%);
+  color: var(--runbook-muted);
+  box-shadow: 0 1.1rem 3rem rgba(0, 0, 0, 0.42);
+}
+
+.runbook-onboarding-welcome[hidden],
+.runbook-tour[hidden] {
+  display: none;
+}
+
+.runbook-onboarding__eyebrow,
+.runbook-onboarding-welcome h2,
+.runbook-onboarding-welcome > p,
+.runbook-tour h2,
+.runbook-tour > p {
+  margin: 0;
+}
+
+.runbook-onboarding__eyebrow {
+  color: var(--runbook-green);
+  font-family: var(--md-code-font-family);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.runbook-onboarding-welcome h2,
+.runbook-tour h2 {
+  margin-top: 0.3rem;
+  color: var(--runbook-text);
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.runbook-onboarding-welcome > p:not(.runbook-onboarding__eyebrow),
+.runbook-tour > p:not(.runbook-onboarding__eyebrow) {
+  margin-top: 0.5rem;
+  color: #aebdb9;
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+.runbook-onboarding__actions,
+.runbook-tour__actions,
+.runbook-tour__navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.runbook-onboarding__actions {
+  margin-top: 0.9rem;
+}
+
+.runbook-tour__actions {
+  justify-content: space-between;
+  margin-top: 0.9rem;
+}
+
+.runbook-onboarding__primary,
+.runbook-onboarding__secondary {
+  min-height: 2rem;
+  padding: 0.42rem 0.72rem;
+  border-radius: 0.34rem;
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.runbook-onboarding__primary {
+  border: 1px solid var(--runbook-green-deep);
+  background: var(--runbook-green-deep);
+  color: #06130e;
+}
+
+.runbook-onboarding__primary:hover,
+.runbook-onboarding__primary:focus-visible {
+  border-color: var(--runbook-green);
+  background: var(--runbook-green);
+}
+
+.runbook-onboarding__secondary {
+  border: 1px solid rgba(147, 173, 190, 0.25);
+  background: transparent;
+  color: var(--runbook-muted);
+}
+
+.runbook-onboarding__secondary:hover,
+.runbook-onboarding__secondary:focus-visible {
+  border-color: var(--runbook-amber);
+  color: var(--runbook-amber);
+}
+
+.runbook-tour-target {
+  position: relative;
+  z-index: 6;
+  outline: 2px solid var(--runbook-amber);
+  outline-offset: 0.3rem;
+  border-radius: 0.35rem;
+  box-shadow: 0 0 0 0.35rem rgba(243, 180, 78, 0.1);
+}
+
+.md-typeset .runbook-tour-replay {
+  margin-top: 0.35rem;
+}
+
+@media screen and (max-width: 44.9844em) {
+  .runbook-onboarding-welcome,
+  .runbook-tour {
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem 1.1rem max(1rem, env(safe-area-inset-bottom));
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 0.75rem 0.75rem 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runbook-tour-target {
+    scroll-behavior: auto;
+  }
+}
