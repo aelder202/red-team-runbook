@@ -5442,34 +5442,33 @@
 <table>
 <thead>
 <tr>
-<th>Priority</th>
+<th>Initial attention</th>
 <th>Services</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>High</td>
-<td>SMB, WinRM, MSSQL, LDAP, RDP</td>
+<td>High-value unauthenticated checks</td>
+<td>HTTP/HTTPS, SMB, LDAP, Kerberos, DNS, Docker API, Redis, Elasticsearch</td>
 </tr>
 <tr>
-<td>High</td>
-<td>SSH, FTP, HTTP/HTTPS</td>
+<td>High-value with credentials</td>
+<td>WinRM, RDP, SSH, MSSQL, MySQL, PostgreSQL, Oracle TNS, MongoDB</td>
 </tr>
 <tr>
-<td>Medium</td>
-<td>DNS, SMTP, SNMP, NFS, Rsync, Kerberos</td>
+<td>Infrastructure-dependent</td>
+<td>FTP, NFS, Rsync, SNMP, SMTP, IPMI, IKE/ISAKMP</td>
 </tr>
 <tr>
-<td>Medium</td>
-<td>Redis, Docker API, PostgreSQL, MySQL</td>
-</tr>
-<tr>
-<td>Low</td>
-<td>IMAP, POP3, VNC, Telnet, R-Services, TFTP</td>
+<td>Situational or legacy</td>
+<td>IMAP, POP3, VNC, Telnet, R-Services, TFTP, SNMP Multiplexer</td>
 </tr>
 </tbody>
 </table>
 <p>See the Service Analysis pages for per-protocol enumeration commands.</p>
+<p>The site-level variables cover common targets (<code>$IP</code>, <code>$SUBNET</code>, <code>$LHOST</code>, <code>$DOMAIN</code>, and <code>$DC_IP</code>). When a command uses a service-specific shell variable such as <code>$USERNAME</code>, <code>$PASSWORD</code>, <code>$SHARE</code>, or <code>$DATABASE</code>, set it locally before running the command. Password prompts are preferred where a client supports them.</p>
+<p>Authentication-testing examples assume an approved target list, a checked lockout policy, and deliberately scoped <code>users.txt</code> and <code>passwords.txt</code> inputs. Do not substitute broad public wordlists during a live engagement without a specific test plan.</p>
+<p>Service pages name a CVE only when the service or product can be identified reliably and a stable, non-exploit validation check is useful. Treat banners as leads and confirm affected versions against the vendor advisory before exploitation; product-specific vulnerability catalogs do not belong on every port page.</p>
 
 
 

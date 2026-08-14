@@ -8,8 +8,10 @@
 ## Enumeration
 
 ```bash
-nmap -p 25,465,587 --script smtp-commands,smtp-enum-users,smtp-open-relay $IP
+nmap -p 25,465,587 --script smtp-commands $IP
 nc -nv $IP 25
+openssl s_client -connect $IP:587 -starttls smtp
+openssl s_client -connect $IP:465
 ```
 
 ---
@@ -18,14 +20,16 @@ nc -nv $IP 25
 
 ```bash
 smtp-user-enum -M VRFY -U /usr/share/seclists/Usernames/top-usernames-shortlist.txt -t $IP
-smtp-user-enum -M RCPT -U users.txt -t $IP
+smtp-user-enum -M RCPT -U users.txt -D $DOMAIN -t $IP
 ```
 
 Via Nmap:
 
 ```bash
-nmap -p 25 --script smtp-enum-users --script-args smtp-enum-users.methods={VRFY,EXPN,RCPT} $IP
+nmap -p 25 --script smtp-enum-users --script-args 'smtp-enum-users.methods={VRFY,EXPN,RCPT}' $IP
 ```
+
+User enumeration scripts issue repeated `VRFY`, `EXPN`, or `RCPT TO` requests and are classified as intrusive. Use a scoped user list and stop if the server begins throttling.
 
 ---
 
@@ -35,11 +39,13 @@ nmap -p 25 --script smtp-enum-users --script-args smtp-enum-users.methods={VRFY,
 nmap -p 25,465,587 --script smtp-open-relay $IP
 ```
 
-If an open relay is confirmed, send a spoofed email:
+Validate relay acceptance without sending a message body:
 
 ```bash
-sendemail -f spoofed@$DOMAIN -t victim@$DOMAIN -s $IP:25 -u "Test" -m "Message body"
+swaks --server $IP --from tester@external.example --to recipient@external.example --quit-after RCPT
 ```
+
+A `250` response to the external recipient is evidence of relay acceptance. Do not proceed to `DATA` unless delivery is explicitly required and approved.
 
 ---
 
@@ -48,6 +54,3 @@ sendemail -f spoofed@$DOMAIN -t victim@$DOMAIN -s $IP:25 -u "Test" -m "Message b
 ```bash
 hydra -L users.txt -P passwords.txt smtp://$IP
 ```
-
-!!! tip "Real-world"
-    SMTP user enumeration is a solid early step. VRFY and EXPN are often left enabled on internal mail servers. An open relay is worth documenting as a finding even if you don't exploit it; it's straightforwardly demonstrable (send a spoofed email) and clients understand the risk immediately.

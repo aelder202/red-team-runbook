@@ -5425,12 +5425,9 @@
 <h2 id="group-id-xauth-enumeration">Group ID / XAUTH Enumeration<a class="headerlink" href="#group-id-xauth-enumeration" title="Permanent link">&para;</a></h2>
 <p>On legacy Cisco VPN stacks, valid group names return different responses. Enumerate them, then brute XAUTH:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>python3<span class="w"> </span>ikeforce.py<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-e<span class="w"> </span>-w<span class="w"> </span>groupnames.txt
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>python3<span class="w"> </span>ikeforce.py<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-b<span class="w"> </span>-i<span class="w"> </span>&lt;group-id&gt;<span class="w"> </span>-k<span class="w"> </span>&lt;psk&gt;<span class="w"> </span>-U<span class="w"> </span>users.txt<span class="w"> </span>-w<span class="w"> </span>passwords.txt
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>python3<span class="w"> </span>ikeforce.py<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-b<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$GROUP_ID</span><span class="s2">&quot;</span><span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PSK</span><span class="s2">&quot;</span><span class="w"> </span>-U<span class="w"> </span>users.txt<span class="w"> </span>-w<span class="w"> </span>passwords.txt
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>IKE on external assessments usually means a VPN gateway. Aggressive Mode is disabled on modern configurations, but legacy Cisco ASA and older Juniper/Checkpoint devices still have it enabled. Check both 500/udp and 4500/udp, 4500 is NAT-T and shows up when traffic passes through NAT.</p>
-</div>
+<p><code>ikeforce.py</code> is a third-party script rather than a packaged command; confirm its local <code>--help</code> output before use because forks expose different option sets.</p>
 
 
 

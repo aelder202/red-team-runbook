@@ -1,14 +1,14 @@
 # MongoDB (27017)
 
 !!! tip "Start here"
-    Connect without credentials: `mongosh --host $IP` (or legacy `mongo --host $IP`). MongoDB before 3.6 bound to `0.0.0.0` by default with no authentication, unauthenticated access is still extremely common on internal deployments and exposed cloud instances.
+    Attempt an unauthenticated connection with `mongosh --host $IP`, then verify what the account can actually list or read. Current MongoDB packages bind to localhost by default; remote exposure indicates an explicit network configuration.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 27017 -sV --script mongodb-info,mongodb-databases $IP
+nmap -p 27017 -sV --script mongodb-info $IP
 mongosh --host $IP --eval "db.version()"
 ```
 
@@ -23,12 +23,12 @@ mongosh --host $IP
 Once connected:
 
 ```javascript
-show dbs                              // list databases
-use <database>
-show collections                      // list collections (tables)
-db.<collection>.find().pretty()       // dump a collection
-db.<collection>.count()               // row count
-db.getUsers()                         // list MongoDB users
+show dbs                                      // list databases
+use DATABASE_NAME
+show collections                              // list collections
+db.getCollection("COLLECTION_NAME").find()   // dump a collection
+db.getCollection("COLLECTION_NAME").countDocuments({})
+db.getUsers()                                 // users in the current database
 ```
 
 ---
@@ -36,7 +36,7 @@ db.getUsers()                         // list MongoDB users
 ## Authenticated Access
 
 ```bash
-mongosh --host $IP -u <user> -p <pass> --authenticationDatabase admin
+mongosh --host $IP -u "$USERNAME" -p --authenticationDatabase admin
 ```
 
 ---
@@ -45,13 +45,13 @@ mongosh --host $IP -u <user> -p <pass> --authenticationDatabase admin
 
 ```bash
 mongodump --host $IP --out ./mongo_dump
-mongodump --host $IP -d <database> -c <collection> --out ./mongo_dump
+mongodump --host $IP -d "$DATABASE" -c "$COLLECTION" --out ./mongo_dump
 ```
 
 Dump with authentication:
 
 ```bash
-mongodump --host $IP -u <user> -p <pass> --authenticationDatabase admin --out ./mongo_dump
+mongodump --host $IP -u "$USERNAME" --authenticationDatabase admin --out ./mongo_dump
 ```
 
 ---
@@ -67,11 +67,13 @@ db.getCollectionNames().forEach(function(c) {
 });
 ```
 
-Dump everything and grep offline, faster than querying interactively:
+Convert BSON to JSON before searching it offline:
 
 ```bash
 mongodump --host $IP --out ./mongo_dump
-grep -riE 'password|token|api[_-]?key|secret' ./mongo_dump
+find ./mongo_dump -type f -name '*.bson' -print0 \
+  | while IFS= read -r -d '' file; do bsondump "$file"; done \
+  | rg -i 'password|token|api[_-]?key|secret'
 ```
 
 ---
@@ -83,6 +85,3 @@ use auxiliary/scanner/mongodb/mongodb_login
 set RHOSTS $IP
 run
 ```
-
-!!! tip "Real-world"
-    MongoDB was responsible for one of the largest classes of data exposure incidents in the 2017-2019 timeframe, tens of thousands of internet-facing instances without authentication. Modern defaults (3.6+) bind to localhost and require auth, but internal deployments, development environments, and lift-and-shift migrations frequently end up back at the old configuration. Dump everything and treat it like an Elasticsearch index, the value is usually in application data, not the database engine itself.

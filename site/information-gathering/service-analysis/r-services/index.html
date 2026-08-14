@@ -5396,17 +5396,17 @@
 <h1 id="r-services-512514">R-Services (512–514)<a class="headerlink" href="#r-services-512514" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">Start here</p>
-<p>Try passwordless rlogin immediately: <code>rlogin -l root $IP</code>. If <code>.rhosts</code> contains <code>+ +</code> or trusts your source IP, you get a shell with no credentials. Also test <code>rsh -l root $IP id</code>. These services are rare but almost always misconfigured when present.</p>
+<p>Test whether host-based trust permits a scoped account: <code>rlogin -l $USERNAME $IP</code> or <code>rsh -l $USERNAME $IP id</code>. Successful access depends on <code>/etc/hosts.equiv</code>, <code>.rhosts</code>, source identity, and server policy.</p>
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">512</span>-514<span class="w"> </span>--script<span class="w"> </span>rexec-brute,rsh-brute,rlogin-brute<span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-p<span class="w"> </span><span class="m">512</span>-514<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="trust-based-access-rlogin-rsh">Trust-Based Access (rlogin / rsh)<a class="headerlink" href="#trust-based-access-rlogin-rsh" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>rlogin<span class="w"> </span>-l<span class="w"> </span>root<span class="w"> </span><span class="nv">$IP</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>rsh<span class="w"> </span>-l<span class="w"> </span>root<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>id
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>rsh<span class="w"> </span>-l<span class="w"> </span>root<span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>rlogin<span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>rsh<span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>id
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>rsh<span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <p>Authentication relies on <code>/etc/hosts.equiv</code> and <code>~/.rhosts</code>. If either contains <code>+ +</code>, any host can authenticate as any user.</p>
 <hr />
@@ -5416,12 +5416,8 @@
 </code></pre></div>
 <hr />
 <h2 id="remote-execution-rexec">Remote Execution (rexec)<a class="headerlink" href="#remote-execution-rexec" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>rexec<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-l<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;pass&gt;<span class="w"> </span><span class="s2">&quot;id&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>rexec<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-l<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;id&quot;</span>
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>R-services predate SSH and have no encryption, all traffic including credentials is cleartext. They're nearly extinct on modern systems but occasionally show up on legacy Unix hosts, embedded devices, or old network appliances. When you find them, trust-based access is the first thing to check before touching brute force.</p>
-</div>
 
 
 

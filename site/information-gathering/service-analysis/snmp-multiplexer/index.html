@@ -5330,14 +5330,14 @@
 <h1 id="snmp-multiplexer-199">SNMP Multiplexer (199)<a class="headerlink" href="#snmp-multiplexer-199" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">Start here</p>
-<p>UDP 199 is the SNMP MUX, it forwards queries to the SNMP engine. If port 161 is filtered but 199 is open, try querying directly: <code>snmpwalk -v1 -c public $IP:199</code>. Otherwise, treat this as a signal that SNMP is running and focus enumeration on port 161.</p>
+<p>SMUX is a legacy TCP protocol used between an SNMP agent and cooperating subagents. It is not an alternate endpoint for <code>snmpwalk</code>. Treat an exposed listener as a fingerprinting lead, then enumerate the actual SNMP service on UDP 161.</p>
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-sU<span class="w"> </span>-p<span class="w"> </span><span class="m">199</span><span class="w"> </span><span class="nv">$IP</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>snmpwalk<span class="w"> </span>-v1<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span><span class="nv">$IP</span>:199
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-p<span class="w"> </span><span class="m">199</span><span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>nc<span class="w"> </span>-nv<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span><span class="m">199</span>
 </code></pre></div>
-<p>If SNMP on port 161 is accessible, see the <a href="../snmp/">SNMP (161, 162)</a> page for full enumeration.</p>
+<p>Do not send SNMP queries to port 199; SMUX peers establish a structured session with the agent over TCP. If UDP 161 is accessible, continue with <a href="../snmp/">SNMP enumeration</a>.</p>
 
 
 

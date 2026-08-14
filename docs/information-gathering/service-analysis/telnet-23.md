@@ -1,7 +1,7 @@
 # Telnet (23)
 
 !!! tip "Start here"
-    Connect and check the banner: `telnet $IP`. The banner often reveals the device type, OS, and version. Everything is cleartext, if you can capture traffic on the same segment, you get credentials for free.
+    Connect and check the banner: `telnet $IP`. Telnet provides no transport encryption, so credentials and session content are observable to a suitably positioned network monitor.
 
 ---
 
@@ -27,7 +27,6 @@ nc -nv $IP 23
 
 ```bash
 hydra -L users.txt -P passwords.txt telnet://$IP
-hydra -l admin -P /usr/share/wordlists/rockyou.txt telnet://$IP
 ```
 
 Common default credentials by device type:
@@ -47,8 +46,6 @@ Common default credentials by device type:
 If positioned on the same network segment, Telnet credentials are cleartext:
 
 ```bash
-sudo tcpdump -i eth0 port 23 -A -w telnet.pcap
+sudo tcpdump -i eth0 -nn -A 'tcp port 23'       # inspect printable payloads live
+sudo tcpdump -i eth0 -nn -w telnet.pcap 'tcp port 23'  # save a packet capture
 ```
-
-!!! tip "Real-world"
-    Telnet on modern servers is almost always a misconfiguration or a forgotten legacy install. On network gear (routers, switches, industrial control systems), it's much more common and often the only management interface available. Default credentials are worth trying before brute force, most network gear ships with known defaults and they rarely get changed.

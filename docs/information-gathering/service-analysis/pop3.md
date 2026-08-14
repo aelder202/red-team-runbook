@@ -1,7 +1,7 @@
 # POP3 (110, 995)
 
 !!! tip "Start here"
-    Connect directly and authenticate: `nc $IP 110`, then `USER <username>` / `PASS <password>`. Once in, `LIST` shows available messages and `RETR 1` downloads the first one. Same credentials often work on IMAP, SMTP, and other internal services.
+    Connect with `nc $IP 110` and send `CAPA` before authenticating. If `STLS` is available, establish TLS rather than sending approved credentials over cleartext POP3.
 
 ---
 
@@ -20,10 +20,12 @@ nc $IP 110
 
 USER admin
 PASS password
-LIST            # list messages
-RETR 1          # read message 1
+LIST
+RETR 1
 QUIT
 ```
+
+`LIST` returns message numbers and sizes; `RETR 1` retrieves message 1. Do not append shell-style comments to protocol commands.
 
 For POP3S (port 995):
 
@@ -37,21 +39,18 @@ openssl s_client -connect $IP:110 -starttls pop3
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt pop3://$IP
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt -s 995 pop3s://$IP
+hydra -L users.txt -P passwords.txt pop3://$IP
+hydra -L users.txt -P passwords.txt pop3s://$IP
 ```
 
 ---
 
 ## Cleartext Auth Check
 
-If port 110 is open without TLS, credentials are sent in cleartext. Check what auth methods are advertised:
+Check capabilities without submitting credentials:
 
 ```bash
-openssl s_client -connect $IP:110 -starttls pop3
+printf 'CAPA\r\nQUIT\r\n' | nc -nv $IP 110
 ```
 
-Look for `AUTH PLAIN` or `AUTH LOGIN` in the capability response, if present on an unencrypted connection, credentials are interceptable.
-
-!!! tip "Real-world"
-    POP3 is low priority compared to IMAP, it downloads and deletes messages rather than leaving them server-side, so you get less visibility. That said, compromised POP3 credentials are worth testing across SMB, WinRM, and VPN immediately. IT staff email is often a goldmine for internal hostnames and credentials in forwarded threads.
+If `STLS` is absent and the service accepts `USER`/`PASS`, authentication traffic is unencrypted. When `STLS` is present, inspect the protected session separately with `openssl s_client -connect $IP:110 -starttls pop3`.

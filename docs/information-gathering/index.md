@@ -48,12 +48,17 @@ sudo nmap -sU --top-ports 100 -oN nmap_udp.txt $IP
 
 Work through open ports methodically. Prioritise based on what's most likely to move the engagement forward:
 
-| Priority | Services |
+| Initial attention | Services |
 |---|---|
-| High | SMB, WinRM, MSSQL, LDAP, RDP |
-| High | SSH, FTP, HTTP/HTTPS |
-| Medium | DNS, SMTP, SNMP, NFS, Rsync, Kerberos |
-| Medium | Redis, Docker API, PostgreSQL, MySQL |
-| Low | IMAP, POP3, VNC, Telnet, R-Services, TFTP |
+| High-value unauthenticated checks | HTTP/HTTPS, SMB, LDAP, Kerberos, DNS, Docker API, Redis, Elasticsearch |
+| High-value with credentials | WinRM, RDP, SSH, MSSQL, MySQL, PostgreSQL, Oracle TNS, MongoDB |
+| Infrastructure-dependent | FTP, NFS, Rsync, SNMP, SMTP, IPMI, IKE/ISAKMP |
+| Situational or legacy | IMAP, POP3, VNC, Telnet, R-Services, TFTP, SNMP Multiplexer |
 
 See the Service Analysis pages for per-protocol enumeration commands.
+
+The site-level variables cover common targets (`$IP`, `$SUBNET`, `$LHOST`, `$DOMAIN`, and `$DC_IP`). When a command uses a service-specific shell variable such as `$USERNAME`, `$PASSWORD`, `$SHARE`, or `$DATABASE`, set it locally before running the command. Password prompts are preferred where a client supports them.
+
+Authentication-testing examples assume an approved target list, a checked lockout policy, and deliberately scoped `users.txt` and `passwords.txt` inputs. Do not substitute broad public wordlists during a live engagement without a specific test plan.
+
+Service pages name a CVE only when the service or product can be identified reliably and a stable, non-exploit validation check is useful. Treat banners as leads and confirm affected versions against the vendor advisory before exploitation; product-specific vulnerability catalogs do not belong on every port page.

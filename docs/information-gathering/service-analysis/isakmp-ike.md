@@ -50,8 +50,7 @@ On legacy Cisco VPN stacks, valid group names return different responses. Enumer
 
 ```bash
 python3 ikeforce.py $IP -e -w groupnames.txt
-python3 ikeforce.py $IP -b -i <group-id> -k <psk> -U users.txt -w passwords.txt
+python3 ikeforce.py $IP -b -i "$GROUP_ID" -k "$PSK" -U users.txt -w passwords.txt
 ```
 
-!!! tip "Real-world"
-    IKE on external assessments usually means a VPN gateway. Aggressive Mode is disabled on modern configurations, but legacy Cisco ASA and older Juniper/Checkpoint devices still have it enabled. Check both 500/udp and 4500/udp, 4500 is NAT-T and shows up when traffic passes through NAT.
+`ikeforce.py` is a third-party script rather than a packaged command; confirm its local `--help` output before use because forks expose different option sets.

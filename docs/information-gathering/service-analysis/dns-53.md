@@ -1,14 +1,14 @@
 # DNS (53)
 
 !!! tip "Start here"
-    Try zone transfer first: `dig axfr @$DC_IP $DOMAIN`. Internal DNS servers are commonly misconfigured and will hand you the full record set, subdomains, internal IPs, mail servers, everything.
+    Try an authorized zone transfer early: `dig axfr @$DC_IP $DOMAIN`. A successful AXFR returns the zone's published record set and can replace substantial active subdomain guessing.
 
 ---
 
 ## Banner Grabbing
 
 ```bash
-nmap -sU -p 53 --script dns-nsid,dns-version $DC_IP
+nmap -sSU -p 53 --script dns-nsid $DC_IP
 dig CH TXT version.bind @$DC_IP
 ```
 
@@ -19,7 +19,8 @@ dig CH TXT version.bind @$DC_IP
 ```bash
 dig axfr @$DC_IP $DOMAIN
 host -t axfr $DOMAIN $DC_IP
-nmap --script=dns-zone-transfer -p 53 $DC_IP
+nmap -p 53 --script dns-zone-transfer \
+  --script-args "dns-zone-transfer.domain=$DOMAIN" $DC_IP
 ```
 
 ---
@@ -35,11 +36,6 @@ amass enum -passive -d $DOMAIN
 gobuster dns -d $DOMAIN -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -t 50
 dnsenum --dnsserver $DC_IP -f /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt $DOMAIN
 ```
-
-!!! tip "Real-world"
-    Start with passive enumeration (`subfinder`, `amass -passive`) before touching the target's DNS server, passive techniques are invisible to the client's logging. Save active brute force for later or when passive results are thin.
-
----
 
 ## Reverse DNS Lookup
 
@@ -57,5 +53,7 @@ dig A $DOMAIN @$DC_IP       # IPv4 address
 dig MX $DOMAIN @$DC_IP      # Mail servers
 dig NS $DOMAIN @$DC_IP      # Name servers
 dig TXT $DOMAIN @$DC_IP     # SPF, DKIM, verification records
-dig ANY $DOMAIN @$DC_IP     # All records
+dig ANY $DOMAIN @$DC_IP     # Server-selected records; often intentionally minimal
 ```
+
+Query record types individually when completeness matters. Modern authoritative servers may return a minimal response to `ANY` queries.

@@ -5400,32 +5400,32 @@
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">25</span>,465,587<span class="w"> </span>--script<span class="w"> </span>smtp-commands,smtp-enum-users,smtp-open-relay<span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">25</span>,465,587<span class="w"> </span>--script<span class="w"> </span>smtp-commands<span class="w"> </span><span class="nv">$IP</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>nc<span class="w"> </span>-nv<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span><span class="m">25</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span><span class="nv">$IP</span>:587<span class="w"> </span>-starttls<span class="w"> </span>smtp
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>openssl<span class="w"> </span>s_client<span class="w"> </span>-connect<span class="w"> </span><span class="nv">$IP</span>:465
 </code></pre></div>
 <hr />
 <h2 id="user-enumeration">User Enumeration<a class="headerlink" href="#user-enumeration" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>smtp-user-enum<span class="w"> </span>-M<span class="w"> </span>VRFY<span class="w"> </span>-U<span class="w"> </span>/usr/share/seclists/Usernames/top-usernames-shortlist.txt<span class="w"> </span>-t<span class="w"> </span><span class="nv">$IP</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>smtp-user-enum<span class="w"> </span>-M<span class="w"> </span>RCPT<span class="w"> </span>-U<span class="w"> </span>users.txt<span class="w"> </span>-t<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>smtp-user-enum<span class="w"> </span>-M<span class="w"> </span>RCPT<span class="w"> </span>-U<span class="w"> </span>users.txt<span class="w"> </span>-D<span class="w"> </span><span class="nv">$DOMAIN</span><span class="w"> </span>-t<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <p>Via Nmap:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">25</span><span class="w"> </span>--script<span class="w"> </span>smtp-enum-users<span class="w"> </span>--script-args<span class="w"> </span>smtp-enum-users.methods<span class="o">={</span>VRFY,EXPN,RCPT<span class="o">}</span><span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">25</span><span class="w"> </span>--script<span class="w"> </span>smtp-enum-users<span class="w"> </span>--script-args<span class="w"> </span><span class="s1">&#39;smtp-enum-users.methods={VRFY,EXPN,RCPT}&#39;</span><span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
+<p>User enumeration scripts issue repeated <code>VRFY</code>, <code>EXPN</code>, or <code>RCPT TO</code> requests and are classified as intrusive. Use a scoped user list and stop if the server begins throttling.</p>
 <hr />
 <h2 id="open-relay-check">Open Relay Check<a class="headerlink" href="#open-relay-check" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">25</span>,465,587<span class="w"> </span>--script<span class="w"> </span>smtp-open-relay<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
-<p>If an open relay is confirmed, send a spoofed email:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sendemail<span class="w"> </span>-f<span class="w"> </span>spoofed@<span class="nv">$DOMAIN</span><span class="w"> </span>-t<span class="w"> </span>victim@<span class="nv">$DOMAIN</span><span class="w"> </span>-s<span class="w"> </span><span class="nv">$IP</span>:25<span class="w"> </span>-u<span class="w"> </span><span class="s2">&quot;Test&quot;</span><span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Message body&quot;</span>
+<p>Validate relay acceptance without sending a message body:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>swaks<span class="w"> </span>--server<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span>--from<span class="w"> </span>tester@external.example<span class="w"> </span>--to<span class="w"> </span>recipient@external.example<span class="w"> </span>--quit-after<span class="w"> </span>RCPT
 </code></pre></div>
+<p>A <code>250</code> response to the external recipient is evidence of relay acceptance. Do not proceed to <code>DATA</code> unless delivery is explicitly required and approved.</p>
 <hr />
 <h2 id="brute-force">Brute Force<a class="headerlink" href="#brute-force" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>hydra<span class="w"> </span>-L<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>passwords.txt<span class="w"> </span>smtp://<span class="nv">$IP</span>
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>SMTP user enumeration is a solid early step. VRFY and EXPN are often left enabled on internal mail servers. An open relay is worth documenting as a finding even if you don't exploit it; it's straightforwardly demonstrable (send a spoofed email) and clients understand the risk immediately.</p>
-</div>
 
 
 

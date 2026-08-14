@@ -5382,7 +5382,7 @@
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>-p<span class="w"> </span><span class="m">161</span><span class="w"> </span>--script<span class="w"> </span><span class="s2">&quot;snmp-*&quot;</span><span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>nmap<span class="w"> </span>-sU<span class="w"> </span>-p<span class="w"> </span><span class="m">161</span><span class="w"> </span>--script<span class="w"> </span>snmp-info,snmp-sysdescr<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="community-string-brute-force">Community String Brute Force<a class="headerlink" href="#community-string-brute-force" title="Permanent link">&para;</a></h2>
@@ -5401,10 +5401,6 @@
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>snmpwalk<span class="w"> </span>-v1<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span><span class="m">1</span>.3.6.1.2.1.25.6.3.1.2<span class="w">  </span><span class="c1"># installed software</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>snmpwalk<span class="w"> </span>-v1<span class="w"> </span>-c<span class="w"> </span>public<span class="w"> </span><span class="nv">$IP</span><span class="w"> </span><span class="m">1</span>.3.6.1.2.1.6.13.1.3<span class="w">    </span><span class="c1"># open TCP ports</span>
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>SNMP with <code>public</code> still shows up constantly on network gear, switches, printers, UPS devices, routers. The OID for running processes and installed software often reveals the exact OS and application versions you need for exploit selection. If you find a read-write community string (<code>private</code>), you can potentially modify device config.</p>
-</div>
 
 
 

@@ -5417,21 +5417,22 @@
 </code></pre></div>
 <hr />
 <h2 id="uploading-files">Uploading Files<a class="headerlink" href="#uploading-files" title="Permanent link">&para;</a></h2>
-<p>If the server allows writes, upload to a web-accessible path for a shell:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>atftp<span class="w"> </span>--put<span class="w"> </span>--local-file<span class="w"> </span>shell.php<span class="w"> </span>--remote-file<span class="w"> </span>/var/www/html/shell.php<span class="w"> </span><span class="nv">$IP</span>
+<p>TFTP normally exposes paths relative to a configured server root and provides no directory listing. If writes are allowed, validate with a harmless text file:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;runbook-write-check\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>tftp-write-check.txt
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>atftp<span class="w"> </span>--put<span class="w"> </span>--local-file<span class="w"> </span>tftp-write-check.txt<span class="w"> </span>--remote-file<span class="w"> </span>tftp-write-check.txt<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="pxe-boot-abuse">PXE Boot Abuse<a class="headerlink" href="#pxe-boot-abuse" title="Permanent link">&para;</a></h2>
 <p>If the TFTP server is used for PXE booting, download boot files and check if they're writable:</p>
+<div class="admonition warning">
+<p class="admonition-title">Watch out</p>
+<p>Replacing a referenced boot image can affect every client that next boots from PXE. Do not upload or overwrite boot files outside an isolated lab or an explicitly approved disruptive test.</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>tftp<span class="w"> </span><span class="nv">$IP</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>tftp&gt;<span class="w"> </span>get<span class="w"> </span>pxelinux.0
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>tftp&gt;<span class="w"> </span>get<span class="w"> </span>boot.cfg
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>tftp&gt;<span class="w"> </span>put<span class="w"> </span>malicious_pxeboot.efi
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>TFTP mostly shows up on network gear (Cisco, Juniper) used for config backups, and on Windows Deployment Services for PXE. The config backup case is straightforward. Pull and read. PXE write access is rare but devastating: any device that PXE boots will execute your image on reboot.</p>
-</div>
 
 
 

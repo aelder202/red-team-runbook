@@ -35,10 +35,11 @@ shadow
 
 ## Uploading Files
 
-If the server allows writes, upload to a web-accessible path for a shell:
+TFTP normally exposes paths relative to a configured server root and provides no directory listing. If writes are allowed, validate with a harmless text file:
 
 ```bash
-atftp --put --local-file shell.php --remote-file /var/www/html/shell.php $IP
+printf 'runbook-write-check\n' > tftp-write-check.txt
+atftp --put --local-file tftp-write-check.txt --remote-file tftp-write-check.txt $IP
 ```
 
 ---
@@ -47,12 +48,12 @@ atftp --put --local-file shell.php --remote-file /var/www/html/shell.php $IP
 
 If the TFTP server is used for PXE booting, download boot files and check if they're writable:
 
+!!! warning "Watch out"
+    Replacing a referenced boot image can affect every client that next boots from PXE. Do not upload or overwrite boot files outside an isolated lab or an explicitly approved disruptive test.
+
 ```bash
 tftp $IP
 tftp> get pxelinux.0
 tftp> get boot.cfg
 tftp> put malicious_pxeboot.efi
 ```
-
-!!! tip "Real-world"
-    TFTP mostly shows up on network gear (Cisco, Juniper) used for config backups, and on Windows Deployment Services for PXE. The config backup case is straightforward. Pull and read. PXE write access is rare but devastating: any device that PXE boots will execute your image on reboot.

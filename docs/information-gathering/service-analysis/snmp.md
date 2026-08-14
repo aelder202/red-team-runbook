@@ -11,7 +11,7 @@
 ## Enumeration
 
 ```bash
-sudo nmap -sU -p 161 --script "snmp-*" $IP
+sudo nmap -sU -p 161 --script snmp-info,snmp-sysdescr $IP
 ```
 
 ---
@@ -41,6 +41,3 @@ snmpwalk -v1 -c public $IP 1.3.6.1.2.1.25.4.2.1.2  # running processes
 snmpwalk -v1 -c public $IP 1.3.6.1.2.1.25.6.3.1.2  # installed software
 snmpwalk -v1 -c public $IP 1.3.6.1.2.1.6.13.1.3    # open TCP ports
 ```
-
-!!! tip "Real-world"
-    SNMP with `public` still shows up constantly on network gear, switches, printers, UPS devices, routers. The OID for running processes and installed software often reveals the exact OS and application versions you need for exploit selection. If you find a read-write community string (`private`), you can potentially modify device config.
