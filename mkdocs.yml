@@ -69,11 +69,11 @@ nav:
     - Operator Workflow: workflow.md
     - About & Standards: about.md
   - Command Index: command-index.md
-  - Recon:
-    - Overview: network-scanning/index.md
-    - Network Scanning: network-scanning/network-scanning.md
-    - Reconnaissance: network-scanning/reconnaissance.md
-    - Traffic Capture: network-scanning/traffic-capture.md
+  - Enumeration:
+    - Quick Start: enumeration/index.md
+    - Network Scanning: enumeration/network-scanning.md
+    - Reconnaissance: enumeration/reconnaissance.md
+    - Traffic Capture: enumeration/traffic-capture.md
   - Services:
     - Overview: information-gathering/index.md
     - DNS (53): information-gathering/service-analysis/dns-53.md

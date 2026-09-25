@@ -12,7 +12,7 @@ ARP is the most reliable way to identify reachable IPv4 hosts on the local broad
 ```bash
 sudo arp-scan --interface=eth0 $SUBNET
 sudo netdiscover -i eth0 -r $SUBNET
-sudo nmap -sn -PR -n $SUBNET -oA nmap/hosts-arp
+sudo nmap -sn -PR -n $SUBNET -oA hosts-arp
 ```
 
 ### Routed Subnet
@@ -20,7 +20,7 @@ sudo nmap -sn -PR -n $SUBNET -oA nmap/hosts-arp
 Mix ICMP, TCP SYN/ACK, and UDP probes. A response to any probe is enough for Nmap to mark the host up.
 
 ```bash
-sudo nmap -sn -PE -PP -PS22,80,443,3389 -PA80,443 -PU53,161 -n $SUBNET -oA nmap/hosts-routed
+sudo nmap -sn -PE -PP -PS22,80,443,3389 -PA80,443 -PU53,161 -n $SUBNET -oA hosts-routed
 ```
 
 If a known host does not respond to discovery, retry the port scan with `-Pn`. For ranges, scan the discovered hosts first and use `-Pn` selectively for coverage gaps.
@@ -36,7 +36,7 @@ nmap -sL -n -iL targets.txt
 Exclude prohibited or out-of-scope addresses from range scans:
 
 ```bash
-sudo nmap -sn -n -iL targets.txt --excludefile exclude.txt -oA nmap/hosts
+sudo nmap -sn -n -iL targets.txt --excludefile exclude.txt -oA hosts
 ```
 
 `-n` disables reverse-DNS lookups. Remove it when PTR records are useful and DNS queries are acceptable.
@@ -50,7 +50,7 @@ sudo nmap -sn -n -iL targets.txt --excludefile exclude.txt -oA nmap/hosts
 Use the first pass for port discovery only. Run version detection and NSE after the port list is known.
 
 ```bash
-sudo nmap -sS -Pn -n --top-ports 1000 --open -oA nmap/quick $IP
+sudo nmap -sS -Pn -n --top-ports 1000 --open -oA quick $IP
 ```
 
 Nmap's default set is the 1,000 most commonly observed TCP ports, not ports 1 through 1000.
@@ -58,7 +58,7 @@ Nmap's default set is the 1,000 most commonly observed TCP ports, not ports 1 th
 ### Full TCP Scan
 
 ```bash
-sudo nmap -sS -Pn -n -p- --open -oA nmap/full $IP
+sudo nmap -sS -Pn -n -p- --open -oA full $IP
 ```
 
 `-p-` scans TCP ports 1 through 65535, including the ports checked by the quick scan. If raw-packet access is unavailable, use `-sT` instead of `-sS`.
@@ -66,7 +66,7 @@ sudo nmap -sS -Pn -n -p- --open -oA nmap/full $IP
 For a stable link with a measured acceptable packet rate:
 
 ```bash
-sudo nmap -sS -Pn -n -p- --open --min-rate <tested-pps> --max-retries <tested-retries> -oA nmap/full-fast $IP
+sudo nmap -sS -Pn -n -p- --open --min-rate <tested-pps> --max-retries <tested-retries> -oA full-fast $IP
 ```
 
 `--min-rate` sets a speed floor; it does not improve reliability. Rates that exceed the path or target capacity can cause missed ports. Repeat important high-speed results with adaptive timing or a lower rate.
@@ -76,7 +76,7 @@ sudo nmap -sS -Pn -n -p- --open --min-rate <tested-pps> --max-retries <tested-re
 RustScan performs fast TCP connect scans, then passes the discovered ports and everything after `--` to Nmap:
 
 ```bash
-rustscan -a $IP -- -Pn -n -sV -oA nmap/rustscan
+rustscan -a $IP -- -Pn -n -sV -oA rustscan
 ```
 
 `-Pn` is passed to Nmap because RustScan has already demonstrated that the target accepted a TCP connection. Without it, the Nmap handoff can still stop when its separate discovery probes are filtered.
@@ -88,9 +88,9 @@ Tune RustScan with `-b <batch-size>` and `-T <timeout-ms>`. Higher batch sizes a
 Use Masscan for large, explicitly scoped ranges, then confirm every result with Nmap:
 
 ```bash
-sudo masscan $SUBNET -p1-65535 --rate <tested-pps> --excludefile exclude.txt -oX nmap/masscan.xml
+sudo masscan $SUBNET -p1-65535 --rate <tested-pps> --excludefile exclude.txt -oX masscan.xml
 
-nmap -Pn -n -sV -p<ports-from-masscan> -oA nmap/services <host-from-masscan>
+nmap -Pn -n -sV -p<ports-from-masscan> -oA services <host-from-masscan>
 ```
 
 Start with a conservative rate and raise it only after confirming that the scanning host, network path, and target environment can handle the traffic.
@@ -104,7 +104,7 @@ Start with a conservative rate and raise it only after confirming that the scann
 Run version detection only against confirmed ports:
 
 ```bash
-sudo nmap -sS -Pn -n -sV -p22,80,443,445,3389 -oA nmap/services $IP
+sudo nmap -sS -Pn -n -sV -p22,80,443,445,3389 -oA services $IP
 ```
 
 Treat banners and CPE matches as leads. Proxies, load balancers, backported packages, and deliberately altered banners can produce misleading versions.
@@ -115,7 +115,7 @@ Treat banners and CPE matches as leads. Proxies, load balancers, backported pack
 
 ```bash
 # Default scripts on confirmed ports
-sudo nmap -sS -Pn -n -sV -sC -p22,80,443,445 -oA nmap/default-scripts $IP
+sudo nmap -sS -Pn -n -sV -sC -p22,80,443,445 -oA default-scripts $IP
 
 # Focused HTTP checks
 nmap -Pn -n -sV -p80,443,8080,8443 --script "http-title,http-headers,http-methods" $IP
@@ -145,7 +145,7 @@ nmap --script-help "vuln and safe"
 OS fingerprinting is most reliable when Nmap can test at least one open and one closed TCP port:
 
 ```bash
-sudo nmap -O -Pn -n -p<open-port>,<closed-port> -oA nmap/os $IP
+sudo nmap -O -Pn -n -p<open-port>,<closed-port> -oA os $IP
 ```
 
 Use `--osscan-limit` when scanning multiple hosts so Nmap skips targets without suitable fingerprinting conditions.
@@ -173,9 +173,9 @@ Move confirmed services into the matching [service playbook](../information-gath
 Start with the most common UDP ports, then run version detection against the ports that remain `open` or `open|filtered`:
 
 ```bash
-sudo nmap -sU -Pn -n --top-ports 100 -oA nmap/udp-top $IP
+sudo nmap -sU -Pn -n --top-ports 100 -oA udp-top $IP
 
-sudo nmap -sU -sV -Pn -n -p53,67,68,69,111,123,137,138,161,162,500,4500,514,623,1900,5353 -oA nmap/udp-targeted $IP
+sudo nmap -sU -sV -Pn -n -p53,67,68,69,111,123,137,138,161,162,500,4500,514,623,1900,5353 -oA udp-targeted $IP
 ```
 
 High-value UDP services include DNS, DHCP, TFTP, RPC, NTP, NetBIOS, SNMP, IKE, Syslog, IPMI, SSDP, and mDNS.
@@ -183,7 +183,7 @@ High-value UDP services include DNS, DHCP, TFTP, RPC, NTP, NetBIOS, SNMP, IKE, S
 An exhaustive UDP scan is valid when scope, stability, and available time require it:
 
 ```bash
-sudo nmap -sU -Pn -n -p- --open -oA nmap/udp-full $IP
+sudo nmap -sU -Pn -n -p- --open -oA udp-full $IP
 ```
 
 UDP scans are slow because many open and filtered services do not respond. Use `-sV` on the reduced result set to help distinguish truly open ports from `open|filtered`.
@@ -199,7 +199,7 @@ ip -6 neigh show
 sudo nmap -6 -sn -n 'fe80::1%eth0'
 
 # Known IPv6 target
-sudo nmap -6 -sS -Pn -n -p- --open -oA nmap/ipv6-full <ipv6-target>
+sudo nmap -6 -sS -Pn -n -p- --open -oA ipv6-full <ipv6-target>
 ```
 
 ---
@@ -242,26 +242,26 @@ sudo nmap -sS -Pn -n --packet-trace -p443 $IP
 
 ```bash
 # Exact open TCP states from grepable output; excludes open|filtered
-grep -oP '\d+(?=/open/tcp)' nmap/full.gnmap | sort -nu | paste -sd,
+grep -oP '\d+(?=/open/tcp)' full.gnmap | sort -nu | paste -sd,
 
 # Exact open TCP states from XML
-xmlstarlet sel -t -m '//port[@protocol="tcp"][state/@state="open"]' -v '@portid' -n nmap/full.xml | sort -nu | paste -sd,
+xmlstarlet sel -t -m '//port[@protocol="tcp"][state/@state="open"]' -v '@portid' -n full.xml | sort -nu | paste -sd,
 ```
 
 Guard against an empty port list before launching the service scan:
 
 ```bash
-ports=$(grep -oP '\d+(?=/open/tcp)' nmap/full.gnmap | sort -nu | paste -sd,)
+PORTS=$(grep -oP '\d+(?=/open/tcp)' full.gnmap | sort -nu | paste -sd,)
 
-if [ -n "$ports" ]; then
-  sudo nmap -sS -Pn -n -sV -sC -p"$ports" -oA nmap/services $IP
+if [ -n "$PORTS" ]; then
+  sudo nmap -sS -Pn -n -sV -sC -p"$PORTS" -oA services $IP
 fi
 ```
 
-Nmap overwrites an existing basename, so use a separate directory or a target- and date-specific name for repeated scans. Resume an interrupted scan from its saved output:
+Nmap overwrites an existing basename, so change the basename when you want to keep an earlier scan. All examples save in the current directory. Resume an interrupted scan from its saved output:
 
 ```bash
-sudo nmap --resume nmap/full.nmap
+sudo nmap --resume full.nmap
 ```
 
 After confirming a service, continue with the relevant [service-analysis page](../information-gathering/index.md), such as [HTTP/HTTPS](../information-gathering/service-analysis/http-80-443.md), [SMB](../information-gathering/service-analysis/smb.md), [LDAP](../information-gathering/service-analysis/ldap.md), or [SNMP](../information-gathering/service-analysis/snmp.md).

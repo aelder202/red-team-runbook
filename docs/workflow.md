@@ -19,8 +19,8 @@ Use this page when you know what you have and need to decide where to go next. S
 
 ## You have a target
 
-1. Use [Network Scanning](network-scanning/network-scanning.md) to identify live hosts and open ports.
-2. Use [Reconnaissance](network-scanning/reconnaissance.md) for DNS, ownership, technology, and other supporting context.
+1. Use [Enumeration](enumeration/index.md) for TCP/UDP scans and the first checks on each service. Use [Network Scanning](enumeration/network-scanning.md) for scan commands.
+2. Use [Reconnaissance](enumeration/reconnaissance.md) for DNS, ownership, technology, and other supporting context.
 3. Take each confirmed service to the matching [service playbook](information-gathering/index.md).
 4. Save the scan output and note anything that was excluded, filtered, or left untested.
 

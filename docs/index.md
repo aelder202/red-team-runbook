@@ -29,21 +29,21 @@ Choose the closest match and continue from there.
 
 <div class="runbook-entry-grid">
 
-<a class="runbook-entry-card" href="network-scanning/network-scanning/">
+<a class="runbook-entry-card" href="enumeration/">
   <span class="runbook-entry-card__number">01</span>
   <strong>I have a target</strong>
-  <small>Run host discovery, scan ports, and identify exposed services.</small>
-  <span class="runbook-entry-card__link">Scan the target <b>&rarr;</b></span>
+  <small>Scan TCP and UDP ports, then run the first checks for each service.</small>
+  <span class="runbook-entry-card__link">Start enumeration <b>&rarr;</b></span>
 </a>
 
 <a class="runbook-entry-card" href="information-gathering/">
   <span class="runbook-entry-card__number">02</span>
   <strong>I found a service</strong>
-  <small>Use the protocol-specific checks for the service and version you found.</small>
+  <small>Choose the first checks and see what to try from each result.</small>
   <span class="runbook-entry-card__link">Open service playbooks <b>&rarr;</b></span>
 </a>
 
-<a class="runbook-entry-card" href="workflow/#i-have-credentials">
+<a class="runbook-entry-card" href="workflow/#you-have-credentials">
   <span class="runbook-entry-card__number">03</span>
   <strong>I have credentials</strong>
   <small>Check where they work and enumerate the access they provide.</small>

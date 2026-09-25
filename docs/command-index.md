@@ -13,17 +13,16 @@ The commands you reach for first, grouped by workflow. Set `$IP`, `$SUBNET`, `$L
 
 ```bash
 # Local Layer 2 host discovery
-sudo nmap -sn -n -PR $SUBNET -oA nmap/hosts-l2
+sudo nmap -sn -n -PR $SUBNET -oA hosts-l2
 
-# Reliable full TCP scan, followed by targeted service enumeration
-sudo nmap -sS -Pn -n -p- --open -oA nmap/tcp-all $IP
-sudo nmap -sS -Pn -n -sV -sC -p <ports> -oA nmap/tcp-services $IP
+# Full TCP scan and service identification in one command
+sudo nmap -sS -sV -Pn -n -p- --open -oA tcp-all $IP
 
 # Initial UDP coverage
-sudo nmap -sU -Pn -n --top-ports 100 --open -oA nmap/udp-top100 $IP
+sudo nmap -sU -Pn -n --top-ports 100 --open -oA udp-top100 $IP
 ```
 
-More: [Network Scanning](network-scanning/network-scanning.md) · [Reconnaissance](network-scanning/reconnaissance.md)
+More: [Network Scanning](enumeration/network-scanning.md) · [Reconnaissance](enumeration/reconnaissance.md)
 
 ## Enumerate exposed services
 

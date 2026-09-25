@@ -28,7 +28,7 @@ The runbook is maintained as a field reference for fast recall without hiding th
 
 | Current state | Recommended entry point |
 |---|---|
-| A target or subnet | [Network scanning](docs/network-scanning/network-scanning.md) |
+| A target or subnet | [Enumeration](docs/enumeration/index.md) |
 | An open service | [Service analysis](docs/information-gathering/index.md) |
 | A web application | [Application testing](docs/applications/index.md) |
 | Valid credentials | [NetExec workflows](docs/tools/netexec.md) |
@@ -38,7 +38,7 @@ The complete [operator workflow](docs/workflow.md) uses a five-step decision loo
 
 ## Coverage
 
-- **Recon:** host discovery, network scanning, traffic capture, and screenshots
+- **Enumeration:** host discovery, network scanning, traffic capture, and screenshots
 - **Services:** protocol-specific enumeration for 30 common services
 - **Applications:** enumeration, authentication testing, web exploits, and tooling
 - **Exploitation:** shells, credential attacks, and binary exploitation
